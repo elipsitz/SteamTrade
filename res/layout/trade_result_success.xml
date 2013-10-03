@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/trade_result"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:gravity="center"
+        android:text="@string/trade_completed"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/trade_success_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="0dip"
+        android:gravity="center_horizontal"
+        android:text="x new items acquired" android:textAppearance="?android:attr/textAppearanceLarge"/>
+    <ListView android:id="@+id/trade_result_items" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dip"></ListView>
+
+</LinearLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Item Image</string>
+
+    <color name="color_quality_normal">#B2B2B2</color>
+    <color name="color_quality_unique">#FFD700</color>
+    <color name="color_quality_vintage">#476291</color>
+    <color name="color_quality_genuine">#4D7455</color>
+    <color name="color_quality_strange">#CF6A32</color>
+    <color name="color_quality_unusual">#8650AC</color>
+    <color name="color_quality_haunted">#38F3AB</color>
+    <color name="color_quality_community">#70B04A</color>
+    <color name="color_quality_selfmade">#70B04A</color>
+    <color name="color_quality_valve">#A50F79</color>
+    <color name="color_quality_normal_bg">#B2B2B2</color>
+    <color name="color_quality_unique_bg">#AC920E</color>
+    <color name="color_quality_vintage_bg">#354664</color>
+    <color name="color_quality_genuine_bg">#2F4332</color>
+    <color name="color_quality_strange_bg">#8D4B26</color>
+    <color name="color_quality_unusual_bg">#664580</color>
+    <color name="color_quality_haunted_bg">#309168</color>
+    <color name="color_quality_community_bg">#559131</color>
+    <color name="color_quality_selfmade_bg">#559131</color>
+    <color name="color_quality_valve_bg">#880A63</color>
+    <color name="color_quality_normal_outline">#FFFFFF</color>
+    <color name="color_quality_unique_outline">#FFD800</color>
+    <color name="color_quality_vintage_outline">#456292</color>
+    <color name="color_quality_genuine_outline">#4C7554</color>
+    <color name="color_quality_strange_outline">#D06A2E</color>
+    <color name="color_quality_unusual_outline">#8650AC</color>
+    <color name="color_quality_haunted_outline">#38F3AB</color>
+    <color name="color_quality_community_outline">#70B04A</color>
+    <color name="color_quality_selfmade_outline">#70B04A</color>
+    <color name="color_quality_valve_outline">#A50F79</color>
+
+    <string name="inv_error_private">This backpack is private.</string>
+    <string name="inventory">Inventory</string>
+    <string name="backpack">Backpack</string>
+
+    <color name="color_backpack_bg">#2B2724</color>
+
+    <string name="search_inventory">Search inventory</string>
+    <string name="toggle_view_mode">Toggle View Mode<color></color></string>
+    <string name="inv_not_craftable">Not Craftable</string>
+    <string name="inv_gifted">Gifted</string>
+
+</resources>

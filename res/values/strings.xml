@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Ice</string>
+    <string name="error_disconnected">Disconnected from the Steam Network</string>
+    <string name="drawer_open">Open Drawer</string>
+    <string name="drawer_close">Close Drawer</string>
+    <string name="steam_avatar">Avatar</string>
+    <string name="chat">Chat</string>
+    <string name="trade">Trade</string>
+    <string name="friends">Friends</string>
+    <string name="eula">&lt;b&gt;Eula&lt;/b&gt;&lt;br&gt;
+While great effort has been made to ensure that this software is as bug-free and glitch-free as possible, no guarantee of this can be made.&lt;br&gt;
+The software developer is not responsible for any damage to your account, including but not limited to the loss of items.
+&lt;br&gt;&lt;br&gt;
+This Application uses Google Analytics to collect usage data. No personally identifiable data will be uploaded.
+&lt;br&gt;&lt;br&gt;
+This Application is not owned by, created by, sponsored by, endorsed by, or otherwise affiliated with Valve Corporation in any way. Steam and related trademarks are the property of Valve Corporation.
+&lt;br&gt;&lt;br&gt;
+This Application uses the Steam WebAPI. Data retreived form the Steam WebAPI is provided "as-is".<a href="http://steampowered.com">Powered by Steam</a></string>
+    <string name="updates">&lt;b&gt;Updates&lt;/b&gt;&lt;br&gt;&lt;ul&gt;&lt;li&gt;. . .&lt;/li&gt;&lt;/ul&gt;</string>
+
+    <string-array name="app_sections">
+        <item>Home</item>
+        <item>Me</item>
+        <item>Friends</item>
+        <item>Inventory</item>
+        <item>Sign Out</item>
+    </string-array>
+
+    <string name="send_button">Send</string>
+    <string name="chat_hint">Tap to chat</string>
+    <string name="app_crashed_toast">&quot;Uh oh! I've crashed, but a report has been sent to the developer to help fix the issue!&quot;</string>
+    <string name="playing">Playing</string>
+    <string name="cancel">Cancel</string>
+    <string name="x_new_messages">%1$d new messages</string>
+    <string name="from">From %1$s</string>
+    <string name="signingout">Signing out…</string>
+    <string name="error_authenticating">Error authenticating with SteamWeb…</string>
+    <string name="logging_on">Logging on…</string>
+    <string name="connecting">Connecting…</string>
+    <string name="steamguard">SteamGuard</string>
+    <string name="cannot_connect_to_steam">Cannot connect to Steam!</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="change_display_name">Change Display Name</string>
+    <string name="change_display_name_prompt">Please enter your new display name:</string>
+    <string name="set_currently_playing_game">Set Currently Playing Game</string>
+
+    <string-array name="e_persona_state">
+        <item>Offline</item>
+        <item>Online</item>
+        <item>Busy</item>
+        <item>Away</item>
+        <item>Snooze</item>
+        <item>Looking to Trade</item>
+        <item>Looking to Play</item>
+    </string-array>
+    <string-array name="allowed_states">
+        <item>Online</item>
+        <item>Away</item>
+        <item>Busy</item>
+        <item>Snooze</item>
+        <item>Looking to Trade</item>
+        <item>Looking to Play</item>
+    </string-array>
+
+    <string name="change">Change</string>
+    <string name="dismiss">Dismiss</string>
+
+</resources>

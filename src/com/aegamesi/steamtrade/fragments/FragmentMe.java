@@ -1,0 +1,128 @@
+package com.aegamesi.steamtrade.fragments;
+
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.steam.SteamUtil;
+import com.loopj.android.image.SmartImageView;
+
+public class FragmentMe extends FragmentBase implements OnClickListener, OnItemSelectedListener {
+	public SmartImageView avatarView;
+	public TextView nameView;
+	public Spinner statusSpinner;
+	public Button changeNameButton;
+	public Button changeGameButton;
+
+	public int[] states = new int[] { 1, 3, 2, 4, 5, 6 }; // online, away, busy, snooze, lookingtotrade, lookingtoplay
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+
+		fragmentName = "FragmentMe";
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_me, container, false);
+		avatarView = (SmartImageView) view.findViewById(R.id.profile_avatar);
+		nameView = (TextView) view.findViewById(R.id.profile_name);
+		statusSpinner = (Spinner) view.findViewById(R.id.profile_status_spinner);
+		changeNameButton = (Button) view.findViewById(R.id.me_set_name);
+		changeGameButton = (Button) view.findViewById(R.id.me_set_game);
+
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity(), R.array.allowed_states, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		statusSpinner.setAdapter(adapter);
+		statusSpinner.setOnItemSelectedListener(this);
+		changeNameButton.setOnClickListener(this);
+		changeGameButton.setOnClickListener(this);
+
+		updateView();
+		return view;
+	}
+
+	@SuppressWarnings("unused")
+	public void updateView() {
+		activity().getSupportActionBar().setTitle(activity().steamFriends.getPersonaName());
+		EPersonaState state = activity().steamFriends.getPersonaState();
+		String name = activity().steamFriends.getPersonaName();
+		String avatar = null; // TODO get avatar
+
+		activity().getSupportActionBar().setTitle(name);
+		nameView.setText(name);
+		statusSpinner.setSelection(stateToIndex(state));
+
+		avatarView.setImageResource(R.drawable.default_avatar);
+		if (avatar != null && !avatar.equals("0000000000000000000000000000000000000000"))
+			avatarView.setImageUrl("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg");
+
+		nameView.setTextColor(SteamUtil.colorOnline);
+		//statusSpinner.setTextColor(SteamUtil.colorOnline);
+		avatarView.setBackgroundColor(SteamUtil.colorOnline);
+	}
+
+	public int stateToIndex(EPersonaState state) {
+		for (int i = 0; i < states.length; i++)
+			if (states[i] == state.v())
+				return i;
+		return 0;
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+		if (parent == statusSpinner) {
+			activity().steamFriends.setPersonaState(EPersonaState.f(states[pos]));
+			updateView();
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (v == changeNameButton) {
+			//SteamFriends f = activity().steamFriends;
+			//f.requestFriendInfo(new SteamID(76561198000739785L));
+			AlertDialog.Builder alert = new AlertDialog.Builder(activity());
+			alert.setTitle(activity().getString(R.string.change_display_name));
+			alert.setMessage(activity().getString(R.string.change_display_name_prompt));
+			final EditText input = new EditText(activity());
+			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+			input.setText(activity().steamFriends.getPersonaName());
+			alert.setView(input);
+			alert.setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					String name = input.getText().toString().trim();
+					if (name.length() != 0) {
+						activity().steamFriends.setPersonaName(name);
+						updateView();
+					}
+				}
+			});
+			alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+				}
+			});
+			alert.show();
+		}
+	}
+}

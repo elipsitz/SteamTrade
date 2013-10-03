@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <com.loopj.android.image.SmartImageView
+        android:id="@+id/friend_avatar_left"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_gravity="center"
+        android:layout_margin="2dip"
+        android:layout_weight="0"
+        android:contentDescription="@string/friend_avatar"
+        android:padding="2dip"
+        android:src="@drawable/default_avatar" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/friend_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dip"
+            android:layout_marginTop="4dip"
+            android:singleLine="true"
+            android:text="@string/placeholder_friend_name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/friend_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dip"
+            android:layout_marginStart="5dip"
+            android:singleLine="true"
+            android:text="@string/placeholder_friend_status"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/friend_chat_button"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:contentDescription="@string/chat" android:src="@drawable/ic_social_chat"/>
+
+</LinearLayout>

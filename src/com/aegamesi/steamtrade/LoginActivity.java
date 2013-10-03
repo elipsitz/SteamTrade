@@ -1,0 +1,261 @@
+package com.aegamesi.steamtrade;
+
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EUniverse;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
+import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
+import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.aegamesi.steamtrade.fragments.FragmentEula;
+import com.aegamesi.steamtrade.steam.SteamMessageHandler;
+import com.aegamesi.steamtrade.steam.SteamService;
+import com.google.analytics.tracking.android.EasyTracker;
+
+public class LoginActivity extends SherlockFragmentActivity {
+	private UserLoginTask mAuthTask = null;
+
+	// Values for email and password at the time of the login attempt.
+	public static String username;
+	public static String password;
+	private String steamGuard;
+
+	// UI references.
+	private EditText textUsername;
+	private EditText textPassword;
+	private EditText textSteamguard;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_login);
+
+		getSupportActionBar().hide();
+
+		// show the eula
+		FragmentEula eula = new FragmentEula();
+		if (eula.shouldCreateDialog(this))
+			eula.show(getSupportFragmentManager(), "tag");
+
+		// go to main activity if already logged in
+		if (SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getConnectedUniverse() != null && SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid) {
+			Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+			LoginActivity.this.startActivity(intent);
+			finish();
+		}
+
+		// prepare login form
+		textSteamguard = (EditText) findViewById(R.id.steamguard);
+		textSteamguard.setVisibility(View.GONE);
+		textUsername = (EditText) findViewById(R.id.username);
+		textPassword = (EditText) findViewById(R.id.password);
+		textPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+				if (id == R.id.login || id == EditorInfo.IME_NULL) {
+					attemptLogin();
+					return true;
+				}
+				return false;
+			}
+		});
+
+		if (getPreferences(MODE_PRIVATE).getBoolean("rememberDetails", true)) {
+			textUsername.setText(getPreferences(MODE_PRIVATE).getString("username", ""));
+			textPassword.setText(getPreferences(MODE_PRIVATE).getString("password", ""));
+		}
+
+		findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				attemptLogin();
+			}
+		});
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		if (!SteamService.running) {
+			Intent intent = new Intent(getApplicationContext(), SteamService.class);
+			startService(intent);
+		}
+		EasyTracker.getInstance(this).activityStart(this); // Google Analytics
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		EasyTracker.getInstance(this).activityStop(this); // Google Analytics
+	}
+
+	public void attemptLogin() {
+		if (mAuthTask != null)
+			return;
+
+		textUsername.setError(null);
+		textPassword.setError(null);
+		textSteamguard.setError(null);
+
+		// Store values at the time of the login attempt.
+		username = textUsername.getText().toString();
+		password = textPassword.getText().toString();
+		steamGuard = textSteamguard.getText().toString();
+
+		boolean cancel = false;
+		View focusView = null;
+
+		// Check for a valid password.
+		if (TextUtils.isEmpty(password)) {
+			textPassword.setError(getString(R.string.error_field_required));
+			focusView = textPassword;
+			cancel = true;
+		}
+		// Check for a valid username.
+		if (TextUtils.isEmpty(username)) {
+			textUsername.setError(getString(R.string.error_field_required));
+			focusView = textUsername;
+			cancel = true;
+		}
+		if (TextUtils.isEmpty(steamGuard))
+			steamGuard = null;
+
+		if (cancel) {
+			focusView.requestFocus();
+		} else {
+			if (((CheckBox) findViewById(R.id.remember)).isChecked()) {
+				SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+				editor.putString("username", username);
+				editor.putString("password", password);
+				editor.commit();
+			}
+
+			mAuthTask = new UserLoginTask();
+			mAuthTask.execute();
+		}
+	}
+
+	// asynchronous login
+	public class UserLoginTask extends AsyncTask<Void, String, EResult> implements SteamMessageHandler {
+		private EResult result;
+		private ProgressDialog dialog;
+
+		@Override
+		protected EResult doInBackground(Void... params) {
+			SteamService.singleton.messageHandler = this;
+			Bundle bundle = new Bundle();
+			bundle.putString("username", username);
+			bundle.putString("password", password);
+			bundle.putString("steamguard", steamGuard);
+			publishProgress(getString(R.string.connecting));
+			SteamService.singleton.attemptLogon(bundle);
+
+			// busy-waiting
+			result = null;
+			while (true) {
+				if (result != null)
+					return result;
+				if (SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid)
+					publishProgress(getString(R.string.logging_on));
+
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		protected void onProgressUpdate(String... progress) {
+			dialog.setMessage(progress[0]);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			dialog = new ProgressDialog(LoginActivity.this);
+			dialog.setCancelable(false);
+			dialog.show();
+		}
+
+		@Override
+		protected void onPostExecute(final EResult status) {
+			mAuthTask = null;
+			dialog.dismiss();
+
+			if (status == EResult.InvalidPassword) {
+				textPassword.setError(getString(R.string.error_incorrect_password));
+				textPassword.requestFocus();
+			} else if (status == EResult.ConnectFailed) {
+				Toast.makeText(LoginActivity.this, R.string.cannot_connect_to_steam, Toast.LENGTH_LONG).show();
+			} else if (status == EResult.AccountLogonDenied || status == EResult.AccountLogonDeniedNoMailSent || status == EResult.AccountLogonDeniedVerifiedEmailRequired) {
+				textSteamguard.setVisibility(View.VISIBLE);
+				textSteamguard.setError(getString(R.string.error_steamguard_required));
+				textSteamguard.requestFocus();
+				Toast.makeText(LoginActivity.this, "SteamGuard", Toast.LENGTH_LONG).show();
+			} else if (status == EResult.InvalidLoginAuthCode) {
+				textSteamguard.setVisibility(View.VISIBLE);
+				textSteamguard.setError(getString(R.string.error_incorrect_steamguard));
+				textSteamguard.requestFocus();
+			} else if (status != EResult.OK) {
+				// who knows what this is. perhaps a bug report will reveal
+				Toast.makeText(LoginActivity.this, "Cannot Login: " + status.toString(), Toast.LENGTH_LONG).show();
+			} else {
+				SteamService.singleton.steamClient.getHandler(SteamFriends.class).setPersonaState(EPersonaState.Online);
+				Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+				intent.putExtra("isLoggingIn", true);
+				LoginActivity.this.startActivity(intent);
+				finish();
+			}
+		}
+
+		@Override
+		protected void onCancelled() {
+			mAuthTask = null;
+		}
+
+		@Override
+		public void handleSteamMessage(CallbackMsg msg) {
+			msg.handle(LoggedOnCallback.class, new ActionT<LoggedOnCallback>() {
+				@Override
+				public void call(LoggedOnCallback callback) {
+					result = callback.getResult();
+				}
+			});
+			msg.handle(ConnectedCallback.class, new ActionT<ConnectedCallback>() {
+				@Override
+				public void call(ConnectedCallback callback) {
+					if (callback.getResult() != EResult.OK)
+						result = EResult.ConnectFailed;
+				}
+			});
+			msg.handle(DisconnectedCallback.class, new ActionT<DisconnectedCallback>() {
+				@Override
+				public void call(DisconnectedCallback callback) {
+					if (result == null)
+						result = EResult.ConnectFailed;
+				}
+			});
+		}
+	}
+}
