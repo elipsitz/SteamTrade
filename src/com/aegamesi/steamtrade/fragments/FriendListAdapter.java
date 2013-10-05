@@ -121,12 +121,12 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 			ImageButton chatButton = (ImageButton) v.findViewById(R.id.friend_chat_button);
 
 			name.setText(p.name);
-			if (p.game != null && !p.game.isEmpty())
+			if (p.game != null && p.game.length() > 0)
 				status.setText("Playing " + p.game);
 			else
 				status.setText(p.state.toString());
 
-			if (p.game != null && !p.game.isEmpty()) {
+			if (p.game != null && p.game.length() > 0) {
 				// 8BC53F (AED04E ?) game
 				name.setTextColor(SteamUtil.colorGame);
 				status.setTextColor(SteamUtil.colorGame);
@@ -193,9 +193,11 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 			this.game = steamFriends.getFriendGamePlayedName(steamid);
 			category = FriendListCategory.get(SteamUtil.getQuantizedPersonaState(state, game));
 
-			String imgHash = SteamUtil.bytesToHex(steamFriends.getFriendAvatar(steamid)).toLowerCase(Locale.US);
-			if (!imgHash.equals("0000000000000000000000000000000000000000"))
-				avatar_url = "http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg";
+			if (steamFriends.getFriendAvatar(steamid) != null) {
+				String imgHash = SteamUtil.bytesToHex(steamFriends.getFriendAvatar(steamid)).toLowerCase(Locale.US);
+				if (imgHash != null && !imgHash.equals("0000000000000000000000000000000000000000"))
+					avatar_url = "http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg";
+			}
 		}
 	}
 

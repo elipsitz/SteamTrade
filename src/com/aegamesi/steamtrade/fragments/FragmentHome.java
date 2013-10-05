@@ -1,5 +1,6 @@
 package com.aegamesi.steamtrade.fragments;
 
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,15 @@ public class FragmentHome extends FragmentBase {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_home, container, false);
+		String version = "v0.1.0";
+		try {
+			version = activity().getPackageManager().getPackageInfo(activity().getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		webView = (WebView) v.findViewById(R.id.news_webview);
-		webView.loadUrl("http://aegamesi.com/steamtrade/news.html");
+		webView.loadUrl("http://aegamesi.com/steamtrade/news.php?v=" + version);
 		webView.setBackgroundColor(0x00000000);
 
 		return v;

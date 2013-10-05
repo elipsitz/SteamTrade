@@ -144,7 +144,7 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 			inventory = result;
 			// get rid of UI stuff,
 			loading_view.setVisibility(View.GONE);
-			if (inventory.items != null) {
+			if (inventory != null && inventory.items != null) {
 				Toast.makeText(activity(), "Loaded Inventory", Toast.LENGTH_LONG).show();
 				inventoryGrid.setAdapter(adapter);
 				inventoryList.setAdapter(adapter);

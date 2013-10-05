@@ -57,7 +57,10 @@ public class SteamUtil {
 			@Override
 			protected void onPostExecute(Void result) {
 				super.onPostExecute(result);
-				dialog.dismiss();
+				try {
+					dialog.dismiss();
+				} catch (IllegalArgumentException e) {
+				}
 			}
 
 			@Override

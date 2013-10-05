@@ -24,8 +24,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.widget.Toast;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
@@ -77,6 +79,14 @@ public class SteamChatHandler {
 				delivered = delivered || receiver.receiveChatLine(line, delivered);
 		if (!delivered) {
 			// use a notification
+			if (line.steamId != null) {
+				final String text = SteamService.singleton.steamClient.getHandler(SteamFriends.class).getFriendPersonaName(line.steamId) + ": " + line.message;
+				MainActivity.instance.runOnUiThread(new Runnable() {
+					public void run() {
+						Toast.makeText(SteamService.singleton, text, Toast.LENGTH_LONG).show();
+					}
+				});
+			}
 			unreadMessages.put(key, unreadMessages.containsKey(key) ? unreadMessages.get(key) + 1 : 1);
 			updateNotification();
 		}
@@ -106,6 +116,13 @@ public class SteamChatHandler {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(SteamService.singleton).setSmallIcon(R.drawable.ic_launcher);
 		builder.setContentTitle(title).setContentText(body);
 		// builder.setAutoCancel(true);
+		// lights, sound, vibrate
+		builder.setLights(0xFFAEDEDC, 750, 750);
+		builder.setVibrate(new long[] { 100, 300, 150, 300 });
+		//builder.setStyle(new NotificationCompat.InboxStyle());
+		builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+		// and the intent
 		Intent intent = new Intent(SteamService.singleton, MainActivity.class);
 		intent.putExtra("fromNotification", true);
 		intent.putExtra("notificationSteamID", unreadMessages.size() == 1 ? ((SteamID) unreadMessages.keySet().toArray()[0]).convertToLong() : 0);

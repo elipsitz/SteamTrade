@@ -68,8 +68,11 @@ public class SteamInventory {
 
 		public String fullname() {
 			SteamInventoryAttribute seriesAttribute = getAttribute(187);
-			String series = seriesAttribute == null ? "" : " Series #" + ((int) seriesAttribute.float_value);//187
-			return (def().proper_name ? "The " : "") + (quality.prefix ? quality.name + " " : "") + def().item_name + series;
+			String series_str = seriesAttribute == null ? "" : " Series #" + ((int) seriesAttribute.float_value);//187
+			String proper_str = (def().proper_name ? "The " : "");
+			String quality_str = (quality.prefix ? quality.name + " " : "");
+			String name_str = (custom_name != null ? "\"" + custom_name + "\"" : def().item_name);
+			return  proper_str + quality_str + name_str  + series_str;
 		}
 
 		public SteamInventoryAttribute getAttribute(int defindex) {
@@ -144,7 +147,7 @@ public class SteamInventory {
 
 	public SteamInventoryItem getItem(long id) {
 		for (final SteamInventoryItem item : items)
-			if (item.id == id)
+			if (item != null && item.id == id)
 				return item;
 		return null;
 	}
