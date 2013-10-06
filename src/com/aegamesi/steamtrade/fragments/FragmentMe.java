@@ -1,5 +1,7 @@
 package com.aegamesi.steamtrade.fragments;
 
+import java.util.Locale;
+
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.loopj.android.image.SmartImageView;
 
@@ -58,12 +61,11 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		return view;
 	}
 
-	@SuppressWarnings("unused")
 	public void updateView() {
 		activity().getSupportActionBar().setTitle(activity().steamFriends.getPersonaName());
 		EPersonaState state = activity().steamFriends.getPersonaState();
 		String name = activity().steamFriends.getPersonaName();
-		String avatar = null; // TODO get avatar
+		String avatar = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(SteamService.singleton.steamClient.getSteamId())).toLowerCase(Locale.US);
 
 		activity().getSupportActionBar().setTitle(name);
 		nameView.setText(name);

@@ -88,10 +88,12 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 		list.setAdapter(adapter);
 		updateFriends();
 
-		for (int i = 0; i < adapter.getGroupCount(); i++)
-			list.expandGroup(i);
-		if ((FriendListCategory) adapter.getGroup(adapter.getGroupCount() - 1) == FriendListCategory.OFFLINE)
-			list.collapseGroup(adapter.getGroupCount() - 1);
+		for (int i = 0; i < adapter.getGroupCount(); i++) {
+			if (((FriendListCategory) adapter.getGroup(i)) == FriendListCategory.OFFLINE)
+				list.collapseGroup(i);
+			else
+				list.expandGroup(i);
+		}
 		return view;
 	}
 

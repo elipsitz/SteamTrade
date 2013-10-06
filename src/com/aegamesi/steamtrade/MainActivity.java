@@ -160,6 +160,10 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 			public void call(PersonaStateCallback obj) {
 				// TODO investigate friend requests, etc.
 				// update various user UI interfaces
+
+				// update current user avatar
+				if (obj.getFriendID().equals(steamUser.getSteamId()))
+					steamFriends.cache.getLocalUser().avatarHash = obj.getAvatarHash();
 				FragmentChat chatFragment = getFragmentByClass(FragmentChat.class);
 				if (chatFragment != null && chatFragment.id.equals(obj.getFriendID()))
 					chatFragment.updateView();
