@@ -69,5 +69,7 @@ This Application uses the Steam WebAPI. Data retreived form the Steam WebAPI is 
 
     <string name="change">Change</string>
     <string name="dismiss">Dismiss</string>
+    <string name="authenticating">Authenticating…</string>
+    <string name="cannot_auth_with_steamweb">Unable to authenticate with SteamWeb.</string>
 
 </resources>

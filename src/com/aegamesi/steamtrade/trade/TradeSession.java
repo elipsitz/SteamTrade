@@ -26,7 +26,7 @@ public class TradeSession {
 	public String appID;
 
 	public TradeSession(String sessionID, String steamLogin, SteamID otherID, String appID) {
-		this.steamLogin = steamLogin.trim(); // TODO make sure logged on to steam
+		this.steamLogin = steamLogin.trim();
 		this.sessionID = sessionID;
 		this.otherID = otherID;
 		this.appID = appID;

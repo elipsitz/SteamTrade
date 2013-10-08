@@ -195,7 +195,7 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 
 			if (steamFriends.getFriendAvatar(steamid) != null) {
 				String imgHash = SteamUtil.bytesToHex(steamFriends.getFriendAvatar(steamid)).toLowerCase(Locale.US);
-				if (imgHash != null && !imgHash.equals("0000000000000000000000000000000000000000"))
+				if (imgHash != null && !imgHash.equals("0000000000000000000000000000000000000000") && imgHash.length() == 40)
 					avatar_url = "http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg";
 			}
 		}

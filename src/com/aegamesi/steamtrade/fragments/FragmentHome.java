@@ -31,7 +31,7 @@ public class FragmentHome extends FragmentBase {
 		}
 
 		webView = (WebView) v.findViewById(R.id.news_webview);
-		webView.loadUrl("http://aegamesi.com/steamtrade/news.php?v=" + version);
+		webView.loadUrl("http://aegamesi.com/ice/news.php?v=" + version);
 		webView.setBackgroundColor(0x00000000);
 
 		return v;

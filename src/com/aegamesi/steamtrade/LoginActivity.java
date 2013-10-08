@@ -5,6 +5,7 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EUniverse;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
@@ -41,6 +42,8 @@ public class LoginActivity extends SherlockFragmentActivity {
 	private EditText textUsername;
 	private EditText textPassword;
 	private EditText textSteamguard;
+
+	public static EResult result = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,13 +97,13 @@ public class LoginActivity extends SherlockFragmentActivity {
 	protected void onStart() {
 		super.onStart();
 
-		if (!SteamService.running) {
+		if (!SteamService.running || SteamService.singleton == null) {
 			Intent intent = new Intent(getApplicationContext(), SteamService.class);
 			startService(intent);
 		}
 		EasyTracker.getInstance(this).activityStart(this); // Google Analytics
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -156,7 +159,6 @@ public class LoginActivity extends SherlockFragmentActivity {
 
 	// asynchronous login
 	public class UserLoginTask extends AsyncTask<Void, String, EResult> implements SteamMessageHandler {
-		private EResult result;
 		private ProgressDialog dialog;
 
 		@Override
@@ -172,11 +174,17 @@ public class LoginActivity extends SherlockFragmentActivity {
 			// busy-waiting
 			result = null;
 			while (true) {
-				if (result != null)
-					return result;
-				if (SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid)
-					publishProgress(getString(R.string.logging_on));
+				String message = "";
 
+				if (result != null && (result != EResult.OK || (result == EResult.OK && SteamService.singleton.token != null)))
+					return result;
+				if (SteamService.singleton.steamClient.getConnectedUniverse() != null && SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid)
+					message = getString(R.string.logging_on);
+				if (result == EResult.OK && SteamService.singleton.token == null)
+					message = getString(R.string.authenticating);
+
+				if (message.length() > 0)
+					publishProgress(message);
 				try {
 					Thread.sleep(250);
 				} catch (InterruptedException e) {
@@ -208,6 +216,8 @@ public class LoginActivity extends SherlockFragmentActivity {
 				textPassword.requestFocus();
 			} else if (status == EResult.ConnectFailed) {
 				Toast.makeText(LoginActivity.this, R.string.cannot_connect_to_steam, Toast.LENGTH_LONG).show();
+			} else if (status == EResult.ServiceUnavailable) {
+				Toast.makeText(LoginActivity.this, R.string.cannot_auth_with_steamweb, Toast.LENGTH_LONG).show();
 			} else if (status == EResult.AccountLogonDenied || status == EResult.AccountLogonDeniedNoMailSent || status == EResult.AccountLogonDeniedVerifiedEmailRequired) {
 				textSteamguard.setVisibility(View.VISIBLE);
 				textSteamguard.setError(getString(R.string.error_steamguard_required));
@@ -254,6 +264,12 @@ public class LoginActivity extends SherlockFragmentActivity {
 				public void call(DisconnectedCallback callback) {
 					if (result == null)
 						result = EResult.ConnectFailed;
+				}
+			});
+			msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
+				@Override
+				public void call(LoginKeyCallback callback) {
+					SteamService.singleton.authenticate(callback);
 				}
 			});
 		}

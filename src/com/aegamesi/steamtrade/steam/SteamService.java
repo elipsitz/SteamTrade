@@ -36,7 +36,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -283,11 +282,7 @@ public class SteamService extends Service {
 					} catch (final Exception e) {
 						if (--tries == 0) {
 							Log.e("Steam", "FATAL(ish): Unable to authenticate with SteamWeb. Tried several times");
-							new Handler(Looper.getMainLooper()).post(new Runnable() {
-								public void run() {
-									SteamUtil.disconnectWithDialog(SteamService.this, getString(R.string.error_authenticating));
-								}
-							});
+							LoginActivity.result = EResult.ServiceUnavailable;
 							break;
 						}
 						Log.e("Steam", "Error authenticating! Retrying...");

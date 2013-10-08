@@ -12,7 +12,6 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.SessionStar
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeProposedCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeResultCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
-import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
@@ -39,8 +38,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.aegamesi.steamtrade.fragments.FragmentChat;
 import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.fragments.FragmentHome;
-import com.aegamesi.steamtrade.fragments.FragmentMe;
 import com.aegamesi.steamtrade.fragments.FragmentInventory;
+import com.aegamesi.steamtrade.fragments.FragmentMe;
 import com.aegamesi.steamtrade.fragments.FragmentProfile;
 import com.aegamesi.steamtrade.steam.SteamMessageHandler;
 import com.aegamesi.steamtrade.steam.SteamService;
@@ -65,6 +64,13 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		instance = this;
+		
+		if(SteamService.singleton == null) {
+			// something went wrong. Go to login to be safe
+			Intent intent = new Intent(this, LoginActivity.class);
+			startActivity(intent);
+			finish();
+		}
 
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawerList = (ListView) findViewById(R.id.left_drawer);
@@ -147,12 +153,6 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 				MainActivity.this.startActivity(intent);
 				Toast.makeText(MainActivity.this, R.string.error_disconnected, Toast.LENGTH_LONG).show();
 				finish();
-			}
-		});
-		msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
-			@Override
-			public void call(LoginKeyCallback callback) {
-				SteamService.singleton.authenticate(callback);
 			}
 		});
 		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
