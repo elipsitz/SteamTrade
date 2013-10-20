@@ -250,6 +250,8 @@ public class LoginActivity extends SherlockFragmentActivity {
 				@Override
 				public void call(LoggedOnCallback callback) {
 					result = callback.getResult();
+					if(result == EResult.OK)
+						SteamService.singleton.webapiKey = callback.getWebAPIUserNonce();
 				}
 			});
 			msg.handle(ConnectedCallback.class, new ActionT<ConnectedCallback>() {

@@ -59,6 +59,7 @@ public class SteamService extends Service {
 
 	public String sessionID = null;
 	public String token = null;
+	public String webapiKey = null;
 
 	private Handler handler;
 	Timer myTimer;
@@ -263,7 +264,7 @@ public class SteamService extends Service {
 		final RSACrypto rsa = new RSACrypto(KeyDictionary.getPublicKey(steamClient.getConnectedUniverse()));
 		cryptedSessionKey = rsa.encrypt(sessionKey);
 		final byte[] loginKey = new byte[20];
-		System.arraycopy(callback.getLoginKey().getBytes(), 0, loginKey, 0, callback.getLoginKey().length());
+		System.arraycopy(webapiKey.getBytes(), 0, loginKey, 0, webapiKey.length());
 		// aes encrypt the loginkey with our session key
 		final byte[] cryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
 
