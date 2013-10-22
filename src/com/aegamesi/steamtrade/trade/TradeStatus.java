@@ -18,6 +18,7 @@ public class TradeStatus {
 		public short ready;
 		public short confirmed;
 		public int sec_since_touch;
+		public List<TradeSessionAsset> assets;
 	}
 
 	public class TradeEvent {
@@ -28,5 +29,12 @@ public class TradeStatus {
 		public String text;
 		public int contextid;
 		public long assetid;
+	}
+
+	public static class TradeSessionAsset {
+		public int contextid;
+		public long assetid;
+		public int appid;
+		public int amount;
 	}
 }

@@ -46,7 +46,7 @@ public class FragmentEula extends SherlockDialogFragment {
 		// Show the Eula
 		String title = getActivity().getString(R.string.app_name) + " v" + versionInfo.versionName;
 		// Includes the updates as well so users know what changed.
-		String message = getActivity().getString(R.string.updates) + "<br><br><br>" + getActivity().getString(R.string.eula);
+		String message = getActivity().getString(R.string.eula);
 
 		AlertDialog dialog = new AlertDialog.Builder(getActivity()).setTitle(title).setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
 			@Override

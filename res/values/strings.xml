@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="updates">&lt;b&gt;Updates&lt;/b&gt;&lt;br&gt;- Crash fixes</string>
     <string name="eula">&lt;b&gt;Eula&lt;/b&gt;&lt;br&gt;
 While great effort has been made to ensure that this software is as bug-free and glitch-free as possible, no guarantee of this can be made.&lt;br&gt;
 The software developer is not responsible for any damage to your account, including but not limited to the loss of items.

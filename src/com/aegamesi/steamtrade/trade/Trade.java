@@ -16,6 +16,7 @@ import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.aegamesi.steamtrade.steam.steamweb.SteamWeb;
 import com.aegamesi.steamtrade.trade.TradeStatus.TradeEvent;
+import com.aegamesi.steamtrade.trade.TradeStatus.TradeSessionAsset;
 
 public class Trade extends Thread {
 	public enum Error {
@@ -130,6 +131,18 @@ public class Trade extends Thread {
 			// Update version
 			if (status.newversion) {
 				session.version = status.version;
+				// copy assets
+				MyTrade.clear();
+				OtherTrade.clear();
+				if (status.me.assets != null)
+					for (TradeSessionAsset asset : status.me.assets)
+						MyTrade.add(asset.assetid);
+				if (status.them.assets != null)
+					for (TradeSessionAsset asset : status.them.assets)
+						OtherTrade.add(asset.assetid);
+
+				tradeListener.onOfferUpdated(true);
+				tradeListener.onOfferUpdated(false);
 			} else {
 				if (session.version > session.version) {
 					// uh oh...we missed a version! abort.
@@ -150,7 +163,6 @@ public class Trade extends Thread {
 						if (!isUs) {
 							if (OtherInventory == null)
 								loadPrivateBP(evt);
-							OtherTrade.add(evt.assetid);
 							SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
 							SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
 							tradeListener.onUserAddItem(schemaItem, item);
@@ -163,7 +175,6 @@ public class Trade extends Thread {
 						if (!isUs) {
 							if (OtherInventory == null)
 								loadPrivateBP(evt);
-							OtherTrade.remove(evt.assetid);
 							SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
 							SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
 							tradeListener.onUserRemoveItem(schemaItem, item);

@@ -1,12 +1,14 @@
 package com.aegamesi.steamtrade;
 
 import java.io.File;
+import java.util.Random;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
+
 import com.aegamesi.steamtrade.steam.SteamUtil;
 
 @ReportsCrashes(
@@ -28,6 +30,9 @@ public class SteamTrade extends Application {
 		ACRA.init(this);
 		filesDir = getFilesDir();
 
-		SteamUtil.apikey = this.getString(R.string.steam_apikey);
+		Random r = new Random();
+		r.setSeed(System.currentTimeMillis());
+		String[] keys = getResources().getStringArray(R.array.steam_apikey);
+		SteamUtil.apikey = keys[r.nextInt(keys.length)];
 	}
 }

@@ -1,6 +1,7 @@
 package com.aegamesi.steamtrade.trade;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,14 @@ import java.util.Map;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 import com.aegamesi.steamtrade.steam.steamweb.SteamWeb;
+import com.aegamesi.steamtrade.trade.TradeStatus.TradeUserObj;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 public class TradeSession {
 	public static String steamCommunityDomain = "steamcommunity.com";
@@ -24,6 +32,8 @@ public class TradeSession {
 	public String sessionID;
 	public SteamID otherID;
 	public String appID;
+	public Gson gson;
+	public Gson regularGson;
 
 	public TradeSession(String sessionID, String steamLogin, SteamID otherID, String appID) {
 		this.steamLogin = steamLogin.trim();
@@ -38,6 +48,19 @@ public class TradeSession {
 		}
 		cookies = "sessionid=" + sessionID.trim() + ";steamLogin=" + steamLogin;
 		baseTradeURL = String.format(steamTradeUrl, otherID.convertToLong());
+
+		regularGson = new Gson(); // haaaaack
+		GsonBuilder b = new GsonBuilder();
+		b.registerTypeAdapter(TradeUserObj.class, new JsonDeserializer<TradeUserObj>() {
+			@Override
+			public TradeUserObj deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
+				JsonObject obj = element.getAsJsonObject();
+				if(obj.has("assets") && !obj.get("assets").isJsonArray())
+					obj.remove("assets");
+				return regularGson.fromJson(element, TradeUserObj.class);
+			}
+		});
+		gson = b.create();
 	}
 
 	public String fetch(String url, String method, Map<String, String> data) {
@@ -52,7 +75,7 @@ public class TradeSession {
 		data.put("version", "" + version);
 
 		String result = fetch(baseTradeURL + "tradestatus", "POST", data);
-		return new Gson().fromJson(result, TradeStatus.class);
+		return gson.fromJson(result, TradeStatus.class);
 	}
 
 	public ForeignInventory getForeignInventory(SteamID otherID, int contextID) {
@@ -74,7 +97,7 @@ public class TradeSession {
 		data.put("version", "" + version);
 
 		String result = fetch(baseTradeURL + "chat", "POST", data);
-		SteamWebResponse response = new Gson().fromJson(result, SteamWebResponse.class);
+		SteamWebResponse response = gson.fromJson(result, SteamWebResponse.class);
 		return response != null && response.success;
 	}
 
@@ -87,7 +110,7 @@ public class TradeSession {
 		data.put("slot", "" + slot);
 
 		String result = fetch(baseTradeURL + "additem", "POST", data);
-		SteamWebResponse response = new Gson().fromJson(result, SteamWebResponse.class);
+		SteamWebResponse response = gson.fromJson(result, SteamWebResponse.class);
 		return response != null && response.success;
 	}
 
@@ -100,7 +123,7 @@ public class TradeSession {
 		data.put("slot", "" + slot);
 
 		String result = fetch(baseTradeURL + "removeitem", "POST", data);
-		SteamWebResponse response = new Gson().fromJson(result, SteamWebResponse.class);
+		SteamWebResponse response = gson.fromJson(result, SteamWebResponse.class);
 		return response != null && response.success;
 	}
 
@@ -111,7 +134,7 @@ public class TradeSession {
 		data.put("version", "" + version);
 
 		String result = fetch(baseTradeURL + "toggleready", "POST", data);
-		SteamWebResponse response = new Gson().fromJson(result, SteamWebResponse.class);
+		SteamWebResponse response = gson.fromJson(result, SteamWebResponse.class);
 		return response != null && response.success;
 	}
 
@@ -121,7 +144,7 @@ public class TradeSession {
 		data.put("version", "" + version);
 
 		String result = fetch(baseTradeURL + "confirm", "POST", data);
-		SteamWebResponse response = new Gson().fromJson(result, SteamWebResponse.class);
+		SteamWebResponse response = gson.fromJson(result, SteamWebResponse.class);
 		return response != null && response.success;
 	}
 
@@ -130,7 +153,7 @@ public class TradeSession {
 		data.put("sessionid", sessionIDEsc);
 
 		String result = fetch(baseTradeURL + "cancel", "POST", data);
-		SteamWebResponse response = new Gson().fromJson(result, SteamWebResponse.class);
+		SteamWebResponse response = gson.fromJson(result, SteamWebResponse.class);
 		return response != null && response.success;
 	}
 
