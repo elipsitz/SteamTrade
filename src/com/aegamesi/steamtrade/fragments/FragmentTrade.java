@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -50,6 +51,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 	public Button tabOfferCancel;
 	public TabOfferingsListAdapter tabOfferMeOfferAdapter;
 	public TabOfferingsListAdapter tabOfferOtherOfferAdapter;
+	public ProgressBar tabOfferStatusCircle;
 	//
 	public ChatAdapter tabChatAdapter;
 	public ListView tabChatList;
@@ -165,6 +167,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 		tabOfferAccept.setOnClickListener(this);
 		tabOfferCancel = (Button) views[1].findViewById(R.id.trade_offer_cancel);
 		tabOfferCancel.setOnClickListener(this);
+		tabOfferStatusCircle = (ProgressBar) views[1].findViewById(R.id.trade_status_progress);
 		// TAB 2: Chat
 		tabChatList = (ListView) view.findViewById(R.id.chat);
 		tabChatInput = (EditText) view.findViewById(R.id.chat_input);
@@ -179,15 +182,12 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 		return view;
 	}
 
-	public void onOfferUpdated(boolean byUs) {
-		if (byUs) {
-			tabOfferMeOfferAdapter.notifyDataSetChanged();
-		} else {
-			tabOfferOtherOfferAdapter.notifyDataSetChanged();
-			if (activity().getSupportActionBar().getSelectedTab().getPosition() != 1) {
-				notifications[1]++;
-				updateTab(1);
-			}
+	public void onOfferUpdated() {
+		tabOfferMeOfferAdapter.notifyDataSetChanged();
+		tabOfferOtherOfferAdapter.notifyDataSetChanged();
+		if (activity() != null && activity().getSupportActionBar() != null && activity().getSupportActionBar().getSelectedTab() != null && activity().getSupportActionBar().getSelectedTab().getPosition() != 1) {
+			notifications[1]++;
+			updateTab(1);
 		}
 	}
 
@@ -239,12 +239,14 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 				}
 			});
 			tabOfferAccept.setEnabled(tabOfferMeReady.isChecked() && tabOfferOtherReady.isChecked());
+			tabOfferStatusCircle.setVisibility(View.GONE);
 		}
 		if (v == tabOfferCancel) {
 			// this is on the correct thread. No need for a runnable
 			SteamService.singleton.tradeManager.cancelTrade();
 		}
 		if (v == tabOfferAccept) {
+			tabOfferStatusCircle.setVisibility(View.VISIBLE);
 			trade().toRun.add(new Runnable() {
 				@Override
 				public void run() {
@@ -326,6 +328,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 					tabOfferMeReady.setChecked(false);
 					tabOfferOtherReady.setChecked(false);
 					tabOfferAccept.setEnabled(false);
+					tabOfferStatusCircle.setVisibility(View.GONE);
 				}
 			});
 

@@ -86,12 +86,12 @@ public class Trade extends Thread {
 		// <------ INITIATE ----->
 		try {
 			// fetch other player's inventory from the Steam API.
-			OtherInventory = SteamInventory.fetchInventory(otherID, SteamUtil.apikey);
+			OtherInventory = SteamInventory.fetchInventory(otherID, SteamUtil.apikey, false, null); // no cache
 			if (OtherInventory == null)
 				throw new Exception("Could not fetch other player's inventory via Steam API!");
 
 			// fetch our inventory from the Steam API.
-			MyInventory = SteamInventory.fetchInventory(myID, SteamUtil.apikey);
+			MyInventory = SteamInventory.fetchInventory(myID, SteamUtil.apikey, false, null); // no cache
 			MyInventory.filterTradable();
 			if (MyInventory == null)
 				throw new Exception("Could not fetch own inventory via Steam API!");
@@ -136,13 +136,14 @@ public class Trade extends Thread {
 				OtherTrade.clear();
 				if (status.me.assets != null)
 					for (TradeSessionAsset asset : status.me.assets)
-						MyTrade.add(asset.assetid);
+						if (asset != null)
+							MyTrade.add(asset.assetid);
 				if (status.them.assets != null)
 					for (TradeSessionAsset asset : status.them.assets)
-						OtherTrade.add(asset.assetid);
+						if (asset != null)
+							OtherTrade.add(asset.assetid);
 
-				tradeListener.onOfferUpdated(true);
-				tradeListener.onOfferUpdated(false);
+				tradeListener.onOfferUpdated();
 			} else {
 				if (session.version > session.version) {
 					// uh oh...we missed a version! abort.
@@ -159,7 +160,6 @@ public class Trade extends Thread {
 
 					switch (evt.action) {
 					case 0: // add item
-						tradeListener.onOfferUpdated(isUs);
 						if (!isUs) {
 							if (OtherInventory == null)
 								loadPrivateBP(evt);
@@ -171,7 +171,6 @@ public class Trade extends Thread {
 						otherReady = false;
 						break;
 					case 1: // remove item
-						tradeListener.onOfferUpdated(isUs);
 						if (!isUs) {
 							if (OtherInventory == null)
 								loadPrivateBP(evt);

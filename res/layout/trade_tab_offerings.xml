@@ -83,6 +83,16 @@
             android:layout_weight="1"
             android:enabled="false"
             android:text="@string/trade_accept" />
+
+        <ProgressBar
+            android:id="@+id/trade_status_progress"
+            style="@style/Widget.Sherlock.Light.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:indeterminate="true"
+            android:scaleX="0.75"
+            android:scaleY="0.75" android:visibility="gone"/>
     </LinearLayout>
 
 </LinearLayout>

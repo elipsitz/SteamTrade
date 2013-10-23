@@ -42,6 +42,6 @@ public class UselessTradeListener extends TradeListener {
 	}
 
 	@Override
-	public void onOfferUpdated(boolean isUs) {
+	public void onOfferUpdated() {
 	}
 }

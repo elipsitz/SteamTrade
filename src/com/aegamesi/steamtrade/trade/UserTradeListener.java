@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.util.Log;
+import android.view.View;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.fragments.FragmentTrade;
@@ -57,12 +58,12 @@ public class UserTradeListener extends TradeListener {
 	}
 
 	@Override
-	public void onOfferUpdated(final boolean isUs) {
+	public void onOfferUpdated() {
 		if (fragment() != null) {
 			MainActivity.instance.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					fragment().onOfferUpdated(isUs);
+					fragment().onOfferUpdated();
 				}
 			});
 		}
@@ -101,6 +102,8 @@ public class UserTradeListener extends TradeListener {
 					fragment().tabOfferMeReady.setChecked(meReady);
 					fragment().tabOfferOtherReady.setChecked(otherReady);
 					fragment().tabOfferAccept.setEnabled(meReady && otherReady);
+					if(!meReady || !otherReady)
+						fragment().tabOfferStatusCircle.setVisibility(View.GONE);
 				}
 			});
 		}

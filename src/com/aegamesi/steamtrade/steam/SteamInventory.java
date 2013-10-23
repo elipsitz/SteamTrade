@@ -1,17 +1,24 @@
 package com.aegamesi.steamtrade.steam;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
+import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,7 +79,7 @@ public class SteamInventory {
 			String proper_str = (def().proper_name ? "The " : "");
 			String quality_str = (quality.prefix ? quality.name + " " : "");
 			String name_str = (custom_name != null ? "\"" + custom_name + "\"" : def().item_name);
-			return  proper_str + quality_str + name_str  + series_str;
+			return proper_str + quality_str + name_str + series_str;
 		}
 
 		public SteamInventoryAttribute getAttribute(int defindex) {
@@ -152,11 +159,44 @@ public class SteamInventory {
 		return null;
 	}
 
-	public static SteamInventory fetchInventory(SteamID id, String apikey) {
+	// *in* is most certainly closed
+	@SuppressWarnings("resource")
+	public static SteamInventory fetchInventory(SteamID id, String apikey, boolean cache, Context context) {
 		try {
-			URL url = new URL("http://api.steampowered.com/IEconItems_440/GetPlayerItems/v0001/?key=" + apikey + "&SteamID=" + id.convertToLong() + "&format=json");
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			InputStream in = new BufferedInputStream(conn.getInputStream());
+			//InputStream in = new BufferedInputStream(conn.getInputStream());
+			File cachedInv = null;
+			InputStream in = null;
+			if (cache) {
+				File invCacheDir = new File(context.getCacheDir(), "inv/");
+				invCacheDir.mkdirs();
+				cachedInv = new File(context.getCacheDir(), "inv/" + id.convertToLong() + ".cache");
+				long cacheTime = 3 * 60 * 1000;// 3 minutes;
+				if (cachedInv.exists() && System.currentTimeMillis() - cachedInv.lastModified() < cacheTime)
+					in = new BufferedInputStream(new FileInputStream(cachedInv));
+			}
+			Log.d("cache", "Inventory cache is: " + (in == null ? " null" : " not null"));
+			if (in == null) {
+				URL url = new URL("http://api.steampowered.com/IEconItems_440/GetPlayerItems/v0001/?key=" + apikey + "&SteamID=" + id.convertToLong() + "&format=json");
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				in = conn.getInputStream();
+				// cache didn't work, read http
+				if (cache) {
+					// read http, and write to the cache...then return an input stream to the cache
+					// I don't know why
+					cachedInv.delete();
+					cachedInv.createNewFile();
+					OutputStream out = new BufferedOutputStream(new FileOutputStream(cachedInv));
+					int bufferSize = 2048;
+					byte[] buffer = new byte[bufferSize];
+					int len = 0;
+					while ((len = in.read(buffer)) != -1)
+						out.write(buffer, 0, len);
+					if (out != null)
+						out.close();
+					in.close();
+					in = new BufferedInputStream(new FileInputStream(cachedInv));
+				}
+			}
 
 			GsonBuilder builder = new GsonBuilder();
 			builder.registerTypeAdapter(SchemaQuality.class, new JsonDeserializer<SchemaQuality>() {

@@ -136,7 +136,7 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 
 		@Override
 		protected SteamInventory doInBackground(SteamID... args) {
-			return SteamInventory.fetchInventory(args[0], SteamUtil.apikey);
+			return SteamInventory.fetchInventory(args[0], SteamUtil.apikey, true, activity());
 		}
 
 		@Override
@@ -200,6 +200,8 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 
 		public void filter(String by) {
 			filteredList.clear();
+			if(inventory == null)
+				return;
 			if (by.trim().length() == 0) {
 				filteredList.addAll(inventory.items);
 			} else {

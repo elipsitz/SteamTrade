@@ -26,5 +26,5 @@ public abstract class TradeListener {
 
 	public abstract void onComplete();
 
-	public abstract void onOfferUpdated(boolean isUs);
+	public abstract void onOfferUpdated();
 }
