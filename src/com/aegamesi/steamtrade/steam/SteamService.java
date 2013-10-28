@@ -107,7 +107,7 @@ public class SteamService extends Service {
 		extras = bundle;
 		steamClient.connect(true);
 
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_launcher).setContentTitle("SteamTrade").setContentText("Connected");
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_notification).setContentTitle("Ice").setContentText("Connected");
 		Intent notificationIntent = new Intent(this, LoginActivity.class);
 		notificationIntent.setAction(Intent.ACTION_MAIN);
 		notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);

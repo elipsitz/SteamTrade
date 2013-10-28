@@ -2,14 +2,15 @@
 <resources>
 
     <string name="eula">&lt;b&gt;Eula&lt;/b&gt;&lt;br&gt;
-While great effort has been made to ensure that this software is as bug-free and glitch-free as possible, no guarantee of this can be made.&lt;br&gt;
-The software developer is not responsible for any damage to your account, including but not limited to the loss of items.
+While great effort has been made to ensure that this software is as bug-free and glitch-free as possible, no guarantee of this can be made.
 &lt;br&gt;&lt;br&gt;
-This Application uses Google Analytics to collect usage data. No personally identifiable data will be uploaded.
+The software developer is not responsible for any damage to your account or device, including but not limited to the loss of items.
 &lt;br&gt;&lt;br&gt;
-This Application is not owned by, created by, sponsored by, endorsed by, or otherwise affiliated with Valve Corporation in any way. Steam and related trademarks are the property of Valve Corporation.
+This Application uses your Steam username and password to access the Steam network. Your username and password will be transmitted only to Steam Servers, and your login data is not saved unless requested by the user.
 &lt;br&gt;&lt;br&gt;
-This Application uses the Steam WebAPI. Data retreived form the Steam WebAPI is provided &quot;as-is&quot;. 
+This Application uses Google Analytics to collect usage data. No personally identifiable data will be uploaded to Google Analytics.
+&lt;br&gt;&lt;br&gt;
+This Application is Powered by Steam. This Application is not owned by, created by, sponsored by, endorsed by, or otherwise affiliated with Valve Corporation in any way. Steam and all related trademarks are the property of Valve Corporation. This Application uses the Steam WebAPI. Data retreived form the Steam WebAPI is provided &quot;as-is&quot;. 
 &lt;a href=&quot;http://steampowered.com&quot;&gt;Powered by Steam&lt;/a&gt;</string>
     <string name="app_name">Ice</string>
     <string name="error_disconnected">Disconnected from the Steam Network</string>

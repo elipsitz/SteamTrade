@@ -143,17 +143,19 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 		protected void onPostExecute(SteamInventory result) {
 			inventory = result;
 			// get rid of UI stuff,
-			loading_view.setVisibility(View.GONE);
-			if (inventory != null && inventory.items != null && inventoryGrid != null && inventoryList != null) {
-				Toast.makeText(activity(), "Loaded Inventory", Toast.LENGTH_LONG).show();
-				inventoryGrid.setAdapter(adapter);
-				inventoryList.setAdapter(adapter);
-				adapter.filter("");
-			} else {
-				inventory = null;
-				error_view.setVisibility(View.VISIBLE);
-				TextView error_text = (TextView) error_view.findViewById(R.id.inventory_error_text);
-				error_text.setText(activity().getString(R.string.inv_error_private));
+			if (activity() != null) {
+				loading_view.setVisibility(View.GONE);
+				if (inventory != null && inventory.items != null && inventoryGrid != null && inventoryList != null) {
+					Toast.makeText(activity(), "Loaded Inventory", Toast.LENGTH_LONG).show();
+					inventoryGrid.setAdapter(adapter);
+					inventoryList.setAdapter(adapter);
+					adapter.filter("");
+				} else {
+					inventory = null;
+					error_view.setVisibility(View.VISIBLE);
+					TextView error_text = (TextView) error_view.findViewById(R.id.inventory_error_text);
+					error_text.setText(activity().getString(R.string.inv_error_private));
+				}
 			}
 		}
 	}
@@ -200,7 +202,7 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 
 		public void filter(String by) {
 			filteredList.clear();
-			if(inventory == null)
+			if (inventory == null)
 				return;
 			if (by.trim().length() == 0) {
 				filteredList.addAll(inventory.items);

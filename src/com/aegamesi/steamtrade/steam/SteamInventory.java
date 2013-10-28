@@ -213,10 +213,12 @@ public class SteamInventory {
 					attribute.defindex = obj.get("defindex").getAsInt();
 					if (obj.has("float_value"))
 						attribute.float_value = obj.get("float_value").getAsFloat();
-					if (obj.has("value") && obj.get("value").getAsJsonPrimitive().isNumber())
-						attribute.long_value = obj.get("value").getAsLong();
-					else
-						attribute.string_value = obj.get("value").getAsString();
+					if (obj.has("value")) {
+						if (obj.get("value").getAsJsonPrimitive().isNumber())
+							attribute.long_value = obj.get("value").getAsLong();
+						else
+							attribute.string_value = obj.get("value").getAsString();
+					}
 					attribute.account_info = context.deserialize(obj.get("account_info"), SteamInventoryAccountInfo.class);
 					return attribute;
 				}

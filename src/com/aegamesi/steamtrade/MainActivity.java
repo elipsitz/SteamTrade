@@ -61,7 +61,7 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(SteamService.singleton == null ? null : savedInstanceState);
 		setContentView(R.layout.activity_main);
 		instance = this;
 		
@@ -70,6 +70,7 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 			Intent intent = new Intent(this, LoginActivity.class);
 			startActivity(intent);
 			finish();
+			return;
 		}
 
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

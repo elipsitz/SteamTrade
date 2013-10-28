@@ -62,6 +62,7 @@ public class LoginActivity extends SherlockFragmentActivity {
 			Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 			LoginActivity.this.startActivity(intent);
 			finish();
+			return;
 		}
 
 		// prepare login form
