@@ -188,6 +188,9 @@ public class SteamChatHandler {
 				return time > other.time ? -1 : 1;
 			}
 		}
+		ArrayList<SteamID> recentChats = new ArrayList<SteamID>();
+		if(SteamService.singleton == null || SteamService.singleton.steamClient == null || SteamService.singleton.steamClient.getSteamId() == null)
+			return recentChats;
 		File logfolder = new File(SteamTrade.filesDir, "logs/" + SteamService.singleton.steamClient.getSteamId().convertToLong());
 		logfolder.mkdirs();
 
@@ -203,7 +206,6 @@ public class SteamChatHandler {
 		}
 		Collections.sort(allChats);
 
-		ArrayList<SteamID> recentChats = new ArrayList<SteamID>();
 		for (ChatTime chat : allChats) {
 			if (System.currentTimeMillis() - chat.time < threshold)
 				recentChats.add(chat.id);
