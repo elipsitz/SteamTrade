@@ -8,6 +8,6 @@
 	<classpathentry kind="lib" path="libs/acra-4.5.0.jar"/>
 	<classpathentry kind="lib" path="libs/android-smart-image-view-1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
-	<classpathentry kind="lib" path="libs/steamkit-1.4.7.0.jar" sourcepath="/steamkit/src"/>
+	<classpathentry kind="lib" path="libs/steamkit-1.4.7.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

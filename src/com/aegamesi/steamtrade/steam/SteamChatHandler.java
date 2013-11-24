@@ -79,7 +79,7 @@ public class SteamChatHandler {
 				delivered = delivered || receiver.receiveChatLine(line, delivered);
 		if (!delivered) {
 			// use a notification
-			if (line.steamId != null) {
+			if (line.steamId != null && !(SteamService.singleton == null || SteamService.singleton.steamClient == null || SteamService.singleton.steamClient.getHandler(SteamFriends.class) == null)) {
 				final String text = SteamService.singleton.steamClient.getHandler(SteamFriends.class).getFriendPersonaName(line.steamId) + ": " + line.message;
 				MainActivity.instance.runOnUiThread(new Runnable() {
 					public void run() {

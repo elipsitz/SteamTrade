@@ -210,7 +210,8 @@ public class LoginActivity extends SherlockFragmentActivity {
 		@Override
 		protected void onPostExecute(final EResult status) {
 			mAuthTask = null;
-			dialog.dismiss();
+			if (dialog != null)
+				dialog.dismiss();
 
 			if (status == EResult.InvalidPassword) {
 				textPassword.setError(getString(R.string.error_incorrect_password));
@@ -251,7 +252,7 @@ public class LoginActivity extends SherlockFragmentActivity {
 				@Override
 				public void call(LoggedOnCallback callback) {
 					result = callback.getResult();
-					if(result == EResult.OK)
+					if (result == EResult.OK)
 						SteamService.singleton.webapiKey = callback.getWebAPIUserNonce();
 				}
 			});

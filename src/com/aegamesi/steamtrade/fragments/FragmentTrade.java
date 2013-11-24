@@ -219,7 +219,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 
 	public void onReceiveMessage(ChatLine line) {
 		tabChatAdapter.addChatLine(line);
-		if (activity().getSupportActionBar().getSelectedTab().getPosition() != 2) {
+		if (activity() != null && activity().getSupportActionBar().getSelectedTab() != null && activity().getSupportActionBar().getSelectedTab().getPosition() != 2) {
 			notifications[2]++;
 			updateTab(2);
 		}

@@ -100,7 +100,7 @@ public class FragmentProfile extends FragmentBase {
 		nameView.setText(name);
 
 		avatarView.setImageResource(R.drawable.default_avatar);
-		if (!avatar.equals("0000000000000000000000000000000000000000"))
+		if (avatar != null && avatar.length() == 40 && !avatar.equals("0000000000000000000000000000000000000000"))
 			avatarView.setImageUrl("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg");
 
 		if (game != null && game.length() > 0)

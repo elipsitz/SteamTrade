@@ -100,7 +100,8 @@ public class Schema {
 		CUSTOMIZED, // unknown
 		STRANGE("Strange", true, 0xFFCF6A32, 0xFF8D4B26, 0xFFD06A2E), //
 		COMPLETED, // unknown
-		HAUNTED("Haunted", true, 0xFF38F3AB, 0xFF309168, 0xFF38F3AB);//
+		HAUNTED("Haunted", true, 0xFF38F3AB, 0xFF309168, 0xFF38F3AB), //
+		COLLECTORS("Collector's", true, 0x830000, 0x830000, 0x830000);//
 
 		public int color = 0xFFB2B2B2;
 		public int bgColor = 0xFFB2B2B2;

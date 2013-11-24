@@ -153,6 +153,8 @@ public class SteamInventory {
 	}
 
 	public SteamInventoryItem getItem(long id) {
+		if(items == null)
+			return null;
 		for (final SteamInventoryItem item : items)
 			if (item != null && item.id == id)
 				return item;

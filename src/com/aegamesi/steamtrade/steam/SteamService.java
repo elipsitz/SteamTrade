@@ -9,6 +9,7 @@ import java.util.TimerTask;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EChatEntryType;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EUniverse;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOffCallback;
@@ -261,7 +262,7 @@ public class SteamService extends Service {
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
 		// rsa encrypt it with the public key for the universe we're on
 		final byte[] cryptedSessionKey;
-		final RSACrypto rsa = new RSACrypto(KeyDictionary.getPublicKey(steamClient.getConnectedUniverse()));
+		final RSACrypto rsa = new RSACrypto(KeyDictionary.getPublicKey(steamClient == null ? EUniverse.Public : steamClient.getConnectedUniverse()));
 		cryptedSessionKey = rsa.encrypt(sessionKey);
 		final byte[] loginKey = new byte[20];
 		System.arraycopy(webapiKey.getBytes(), 0, loginKey, 0, webapiKey.length());
