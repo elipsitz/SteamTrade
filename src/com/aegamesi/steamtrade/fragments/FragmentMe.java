@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamService;
@@ -56,6 +57,7 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		statusSpinner.setOnItemSelectedListener(this);
 		changeNameButton.setOnClickListener(this);
 		changeGameButton.setOnClickListener(this);
+		//changeGameButton.setEnabled(false);
 
 		updateView();
 		return view;
@@ -125,6 +127,9 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 				}
 			});
 			alert.show();
+		}
+		if (v == changeGameButton) {
+			Toast.makeText(activity(), R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
 		}
 	}
 }

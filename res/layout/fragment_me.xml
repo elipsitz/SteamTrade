@@ -51,7 +51,6 @@
         android:id="@+id/me_set_game"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
         android:text="@string/set_currently_playing_game" />
 
 </LinearLayout>

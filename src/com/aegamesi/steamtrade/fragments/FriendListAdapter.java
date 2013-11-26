@@ -68,9 +68,11 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 		categories.clear();
 
 		ArrayList<FriendListItem> tempitems = new ArrayList<FriendListItem>();
-		for (SteamID id : list)
-			if (!recentChats.contains(id))
-				tempitems.add(new FriendListItem(id));
+		synchronized (list) {
+			for (SteamID id : list)
+				if (!recentChats.contains(id))
+					tempitems.add(new FriendListItem(id));
+		}
 		Collections.sort(tempitems, new Comparator<FriendListItem>() {
 			@Override
 			public int compare(FriendListItem lhs, FriendListItem rhs) {

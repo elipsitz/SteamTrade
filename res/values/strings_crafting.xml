@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_craft_result_background">#1D1D1D</color>
+
+    <string-array name="craft_tabs">
+        <item>Inventory</item>
+        <item>Ingredients</item>
+    </string-array>
+    
+    <string name="craft_error">Error Crafting</string>
+    <string name="craft_completed">Crafting Completed</string>
+    <string name="craft_new_items">%1$d new items crafted</string>
+    <string name="craft_cancel">Cancel</string>
+	<string name="craft_result_nontradable">Resulting items will not be tradable.</string>
+	<string name="craft_ingredients">Ingredients</string>
+	<string name="craft_clear">Clear</string>
+	<string name="craft_craft">Craft</string>
+</resources>

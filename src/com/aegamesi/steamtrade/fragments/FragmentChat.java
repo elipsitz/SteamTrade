@@ -143,6 +143,8 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	}
 
 	public void updateView() {
+		if(activity() == null || activity().steamFriends == null)
+			return;
 		String game = activity().steamFriends.getFriendGamePlayedName(id);
 		EPersonaState state = activity().steamFriends.getFriendPersonaState(id);
 		name.setText(activity().steamFriends.getFriendPersonaName(id));

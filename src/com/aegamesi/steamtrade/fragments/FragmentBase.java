@@ -16,7 +16,7 @@ public class FragmentBase extends SherlockFragment {
 	}
 
 	public void setAnalyticsScreen(String name) {
-		activity().tracker().set(Fields.SCREEN_NAME, "FragmentChat");
+		activity().tracker().set(Fields.SCREEN_NAME, name);
 		activity().tracker().send(MapBuilder.createAppView().build());
 	}
 

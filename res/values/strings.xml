@@ -26,6 +26,7 @@ This Application is Powered by Steam. This Application is not owned by, created 
         <item>Me</item>
         <item>Friends</item>
         <item>Inventory</item>
+        <item>Crafting</item>
         <item>Sign Out</item>
     </string-array>
 
@@ -37,27 +38,15 @@ This Application is Powered by Steam. This Application is not owned by, created 
     <string name="x_new_messages">%1$d new messages</string>
     <string name="from">From %1$s</string>
     <string name="signingout">Signing out…</string>
-    <string name="error_authenticating">Error authenticating with SteamWeb…</string>
     <string name="logging_on">Logging on…</string>
     <string name="connecting">Connecting…</string>
-    <string name="steamguard">SteamGuard</string>
     <string name="cannot_connect_to_steam">Cannot connect to Steam!</string>
     <string name="accept">Accept</string>
-    <string name="cancel">Cancel</string>
     <string name="add">Add</string>
     <string name="change_display_name">Change Display Name</string>
     <string name="change_display_name_prompt">Please enter your new display name:</string>
     <string name="set_currently_playing_game">Set Currently Playing Game</string>
-
-    <string-array name="e_persona_state">
-        <item>Offline</item>
-        <item>Online</item>
-        <item>Busy</item>
-        <item>Away</item>
-        <item>Snooze</item>
-        <item>Looking to Trade</item>
-        <item>Looking to Play</item>
-    </string-array>
+    
     <string-array name="allowed_states">
         <item>Online</item>
         <item>Away</item>
@@ -71,5 +60,8 @@ This Application is Powered by Steam. This Application is not owned by, created 
     <string name="dismiss">Dismiss</string>
     <string name="authenticating">Authenticating…</string>
     <string name="cannot_auth_with_steamweb">Unable to authenticate with SteamWeb.</string>
+    <string name="not_connected_to_internet">You are not connected to the internet.</string>
+    <string name="connected_via_mobiledata">You are connected to the internet via mobile data.\nIt may be more difficult to connect to Steam.</string>
+    <string name="feature_not_implemented">Feature not implemented</string>
 
 </resources>

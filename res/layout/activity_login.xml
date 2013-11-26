@@ -10,6 +10,7 @@
 
         <LinearLayout
             style="@style/LoginFormContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
@@ -29,7 +30,8 @@
                 android:hint="@string/prompt_username"
                 android:inputType="textEmailAddress|textNoSuggestions"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true" >
+            </EditText>
 
             <EditText
                 android:id="@+id/password"
@@ -42,8 +44,7 @@
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:singleLine="true" >
-            </EditText>
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/steamguard"
@@ -63,16 +64,44 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="@string/prompt_remember" />
-
-            <Button
-                android:id="@+id/sign_in_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="32dp"
-                android:paddingRight="32dp"
-                android:text="@string/action_sign_in" />
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/login_warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_trade_white"
+            android:paddingBottom="3dip"
+            android:paddingLeft="10dip"
+            android:paddingRight="0dip"
+            android:paddingTop="3dip" android:visibility="gone">
+
+            <TextView
+                android:id="@+id/login_warning_text"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/not_connected_to_internet"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/color_trade_blacktext" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:text="@string/action_sign_in" />
+    </LinearLayout>
 
 </merge>

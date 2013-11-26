@@ -274,7 +274,10 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 		case 3: // inventory
 			browseToFragment(new FragmentInventory(), false);
 			break;
-		case 4: // sign out
+		case 4: // crafting
+			//browseToFragment(new FragmentCrafting(), false);
+			Toast.makeText(this, R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
+		case 5: // sign out
 			SteamUtil.disconnectWithDialog(this, getString(R.string.signingout));
 			return; // ******
 		}

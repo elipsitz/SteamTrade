@@ -161,8 +161,8 @@ public class Trade extends Thread {
 					switch (evt.action) {
 					case 0: // add item
 						if (!isUs) {
-							if (OtherInventory == null)
-								loadPrivateBP(evt);
+							//if (OtherInventory == null)
+							//	loadPrivateBP(evt);
 							SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
 							SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
 							tradeListener.onUserAddItem(schemaItem, item);
@@ -172,8 +172,8 @@ public class Trade extends Thread {
 						break;
 					case 1: // remove item
 						if (!isUs) {
-							if (OtherInventory == null)
-								loadPrivateBP(evt);
+							//if (OtherInventory == null)
+							//	loadPrivateBP(evt);
 							SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
 							SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
 							tradeListener.onUserRemoveItem(schemaItem, item);

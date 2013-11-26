@@ -262,7 +262,8 @@ public class SteamService extends Service {
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
 		// rsa encrypt it with the public key for the universe we're on
 		final byte[] cryptedSessionKey;
-		final RSACrypto rsa = new RSACrypto(KeyDictionary.getPublicKey(steamClient == null ? EUniverse.Public : steamClient.getConnectedUniverse()));
+		EUniverse universe = steamClient == null ? EUniverse.Public : steamClient.getConnectedUniverse();
+		final RSACrypto rsa = new RSACrypto(KeyDictionary.getPublicKey(universe == null ? EUniverse.Public : universe));
 		cryptedSessionKey = rsa.encrypt(sessionKey);
 		final byte[] loginKey = new byte[20];
 		System.arraycopy(webapiKey.getBytes(), 0, loginKey, 0, webapiKey.length());

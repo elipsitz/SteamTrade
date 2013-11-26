@@ -1,5 +1,7 @@
 package com.aegamesi.steamtrade;
 
+import java.util.Locale;
+
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EUniverse;
@@ -11,8 +13,11 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -81,6 +86,19 @@ public class LoginActivity extends SherlockFragmentActivity {
 			}
 		});
 
+		// show any potential warnings...
+		int show_warning = -1;
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		if (activeNetwork == null || !activeNetwork.isConnected())
+			show_warning = R.string.not_connected_to_internet;
+		else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+			show_warning = R.string.connected_via_mobiledata;
+		if (show_warning != -1) {
+			findViewById(R.id.login_warning);
+			((TextView) findViewById(R.id.login_warning_text)).setText(show_warning);
+		}
+
 		if (getPreferences(MODE_PRIVATE).getBoolean("rememberDetails", true)) {
 			textUsername.setText(getPreferences(MODE_PRIVATE).getString("username", ""));
 			textPassword.setText(getPreferences(MODE_PRIVATE).getString("password", ""));
@@ -116,6 +134,11 @@ public class LoginActivity extends SherlockFragmentActivity {
 		if (mAuthTask != null)
 			return;
 
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		if (activeNetwork == null || !activeNetwork.isConnected())
+			Toast.makeText(this, R.string.not_connected_to_internet, Toast.LENGTH_LONG).show();
+
 		textUsername.setError(null);
 		textPassword.setError(null);
 		textSteamguard.setError(null);
@@ -124,6 +147,7 @@ public class LoginActivity extends SherlockFragmentActivity {
 		username = textUsername.getText().toString();
 		password = textPassword.getText().toString();
 		steamGuard = textSteamguard.getText().toString();
+		steamGuard = steamGuard.trim().toUpperCase(Locale.US);
 
 		boolean cancel = false;
 		View focusView = null;

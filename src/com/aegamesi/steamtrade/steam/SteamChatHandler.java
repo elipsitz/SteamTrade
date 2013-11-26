@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.widget.Toast;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
@@ -79,14 +78,6 @@ public class SteamChatHandler {
 				delivered = delivered || receiver.receiveChatLine(line, delivered);
 		if (!delivered) {
 			// use a notification
-			if (line.steamId != null && !(SteamService.singleton == null || SteamService.singleton.steamClient == null || SteamService.singleton.steamClient.getHandler(SteamFriends.class) == null)) {
-				final String text = SteamService.singleton.steamClient.getHandler(SteamFriends.class).getFriendPersonaName(line.steamId) + ": " + line.message;
-				MainActivity.instance.runOnUiThread(new Runnable() {
-					public void run() {
-						Toast.makeText(SteamService.singleton, text, Toast.LENGTH_LONG).show();
-					}
-				});
-			}
 			unreadMessages.put(key, unreadMessages.containsKey(key) ? unreadMessages.get(key) + 1 : 1);
 			updateNotification();
 		}

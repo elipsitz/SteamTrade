@@ -4,7 +4,6 @@
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_steamguard">Steam Guard Code</string><string name="action_sign_in">Sign in</string>
-    <string name="login_progress_signing_in">Signing in&#8230;</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_incorrect_steamguard">The SteamGuard auth code is incorrect</string>

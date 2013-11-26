@@ -14,7 +14,6 @@
         android:layout_weight="1"
         android:text="The Vintage Dead Ringer"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/color_quality_normal"
         android:textStyle="bold" />
 
     <ImageView
