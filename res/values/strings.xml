@@ -37,10 +37,6 @@ This Application is Powered by Steam. This Application is not owned by, created 
     <string name="cancel">Cancel</string>
     <string name="x_new_messages">%1$d new messages</string>
     <string name="from">From %1$s</string>
-    <string name="signingout">Signing out…</string>
-    <string name="logging_on">Logging on…</string>
-    <string name="connecting">Connecting…</string>
-    <string name="cannot_connect_to_steam">Cannot connect to Steam!</string>
     <string name="accept">Accept</string>
     <string name="add">Add</string>
     <string name="change_display_name">Change Display Name</string>
@@ -58,10 +54,6 @@ This Application is Powered by Steam. This Application is not owned by, created 
 
     <string name="change">Change</string>
     <string name="dismiss">Dismiss</string>
-    <string name="authenticating">Authenticating…</string>
-    <string name="cannot_auth_with_steamweb">Unable to authenticate with SteamWeb.</string>
-    <string name="not_connected_to_internet">You are not connected to the internet.</string>
-    <string name="connected_via_mobiledata">You are connected to the internet via mobile data.\nIt may be more difficult to connect to Steam.</string>
     <string name="feature_not_implemented">Feature not implemented</string>
 
 </resources>

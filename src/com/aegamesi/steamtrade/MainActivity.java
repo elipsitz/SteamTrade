@@ -61,11 +61,12 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(SteamService.singleton == null ? null : savedInstanceState);
+		boolean abort = SteamService.singleton == null || SteamService.singleton.steamClient == null;
+		super.onCreate(abort ? null : savedInstanceState);
 		setContentView(R.layout.activity_main);
 		instance = this;
-		
-		if(SteamService.singleton == null) {
+
+		if (abort) {
 			// something went wrong. Go to login to be safe
 			Intent intent = new Intent(this, LoginActivity.class);
 			startActivity(intent);
@@ -253,7 +254,8 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 		} else {
 			// hide IME
 			InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			if (inputManager != null && this.getCurrentFocus() != null)
+				inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
 			drawerLayout.openDrawer(drawerList);
 		}

@@ -68,13 +68,13 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/login_warning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="vertical" >
 
         <LinearLayout
+            android:id="@+id/login_warning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/color_trade_white"
@@ -90,7 +90,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/not_connected_to_internet"
+                android:text="@string/feature_not_implemented"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/color_trade_blacktext" />
         </LinearLayout>

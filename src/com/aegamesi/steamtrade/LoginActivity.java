@@ -86,19 +86,6 @@ public class LoginActivity extends SherlockFragmentActivity {
 			}
 		});
 
-		// show any potential warnings...
-		int show_warning = -1;
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		if (activeNetwork == null || !activeNetwork.isConnected())
-			show_warning = R.string.not_connected_to_internet;
-		else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
-			show_warning = R.string.connected_via_mobiledata;
-		if (show_warning != -1) {
-			findViewById(R.id.login_warning);
-			((TextView) findViewById(R.id.login_warning_text)).setText(show_warning);
-		}
-
 		if (getPreferences(MODE_PRIVATE).getBoolean("rememberDetails", true)) {
 			textUsername.setText(getPreferences(MODE_PRIVATE).getString("username", ""));
 			textPassword.setText(getPreferences(MODE_PRIVATE).getString("password", ""));
@@ -116,10 +103,6 @@ public class LoginActivity extends SherlockFragmentActivity {
 	protected void onStart() {
 		super.onStart();
 
-		if (!SteamService.running || SteamService.singleton == null) {
-			Intent intent = new Intent(getApplicationContext(), SteamService.class);
-			startService(intent);
-		}
 		EasyTracker.getInstance(this).activityStart(this); // Google Analytics
 	}
 
@@ -128,6 +111,31 @@ public class LoginActivity extends SherlockFragmentActivity {
 		super.onStop();
 
 		EasyTracker.getInstance(this).activityStop(this); // Google Analytics
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// show any potential warnings...
+		int show_warning = -1;
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		if (activeNetwork == null || !activeNetwork.isConnected())
+			show_warning = R.string.not_connected_to_internet;
+		else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+			show_warning = R.string.connected_via_mobiledata;
+		if (show_warning != -1) {
+			findViewById(R.id.login_warning).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.login_warning_text)).setText(show_warning);
+		} else {
+			findViewById(R.id.login_warning).setVisibility(View.GONE);
+		}
+
+		if (!SteamService.running || SteamService.singleton == null) {
+			Intent intent = new Intent(getApplicationContext(), SteamService.class);
+			startService(intent);
+		}
 	}
 
 	public void attemptLogin() {

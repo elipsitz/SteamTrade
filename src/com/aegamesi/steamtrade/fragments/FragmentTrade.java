@@ -204,9 +204,13 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 	}
 
 	public void onCompleted(List<SteamInventoryItem> items) {
-		ActionBar actionBar = activity().getSupportActionBar();
-		actionBar.removeAllTabs();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		if (activity() == null)
+			return;
+		if (activity().getSupportActionBar() != null) {
+			ActionBar actionBar = activity().getSupportActionBar();
+			actionBar.removeAllTabs();
+			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		}
 
 		((ViewGroup) getView()).removeAllViews();
 		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_success, null, false);
@@ -383,7 +387,8 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 				v = activity().getLayoutInflater().inflate(R.layout.inventory_item_item, null);
 			SteamInventoryItem item = (SteamInventoryItem) getItem(position);
 
-			item.populateListView(v);
+			if (item != null)
+				item.populateListView(v);
 			return v;
 		}
 	}
