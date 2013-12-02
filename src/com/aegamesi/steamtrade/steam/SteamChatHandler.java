@@ -180,7 +180,7 @@ public class SteamChatHandler {
 			}
 		}
 		ArrayList<SteamID> recentChats = new ArrayList<SteamID>();
-		if(SteamService.singleton == null || SteamService.singleton.steamClient == null || SteamService.singleton.steamClient.getSteamId() == null)
+		if (SteamService.singleton == null || SteamService.singleton.steamClient == null || SteamService.singleton.steamClient.getSteamId() == null)
 			return recentChats;
 		File logfolder = new File(SteamTrade.filesDir, "logs/" + SteamService.singleton.steamClient.getSteamId().convertToLong());
 		logfolder.mkdirs();

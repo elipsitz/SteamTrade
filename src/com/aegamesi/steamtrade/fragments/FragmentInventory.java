@@ -7,7 +7,6 @@ import java.util.Locale;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -126,9 +125,7 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 			new FetchInventoryTask().execute(id);
 	}
 
-	public class FetchInventoryTask extends AsyncTask<SteamID, Integer, SteamInventory> {
-		public ProgressDialog dialog;
-
+	private class FetchInventoryTask extends AsyncTask<SteamID, Integer, SteamInventory> {
 		@Override
 		protected void onPreExecute() {
 			loading_view.setVisibility(View.VISIBLE);

@@ -1,11 +1,11 @@
 package com.aegamesi.steamtrade.fragments;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
@@ -14,8 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -23,32 +23,33 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.fragments.FragmentChat.ChatAdapter;
-import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
 import com.aegamesi.steamtrade.steam.SteamInventory;
 import com.aegamesi.steamtrade.steam.SteamInventory.SteamInventoryItem;
 import com.aegamesi.steamtrade.steam.SteamService;
-import com.aegamesi.steamtrade.trade.Trade;
+import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.aegamesi.steamtrade.trade.Trade.Error;
 
 public class FragmentCrafting extends FragmentBase implements OnClickListener, OnItemClickListener {
 	public View[] views;
+	public SteamInventory inventory = null;
+	public List<Long> selectedItems = new ArrayList<Long>();
 
+	public View loading_view;
+	public View error_view;
+	public View success_view;
 	public ListView tabInventoryList;
 	public EditText tabInventorySearch;
 	public TabInventoryListAdapter tabInventoryListAdapter;
 	//
-	public CheckBox tabOfferMeReady;
-	public CheckBox tabOfferOtherReady;
-	public ListView tabOfferMeOffer;
-	public ListView tabOfferOtherOffer;
-	public Button tabOfferAccept;
-	public Button tabOfferCancel;
-	public TabOfferingsListAdapter tabOfferMeOfferAdapter;
+	public ListView tabMainList;
+	public Button tabMainClear;
+	public Button tabMainCraft;
+	public TabMainListAdapter tabMainListAdapter;
 	public ProgressBar tabMainStatusCircle;
 
 	@Override
@@ -59,6 +60,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		views = new View[2];
 
 		fragmentName = "FragmentCrafting";
+		tabInventoryListAdapter = new TabInventoryListAdapter();
 	}
 
 	@Override
@@ -94,6 +96,14 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+
+		if (inventory == null)
+			new FetchInventoryTask().execute(SteamService.singleton.steamClient.getSteamId());
+	}
+
+	@Override
 	public void onPause() {
 		super.onPause();
 
@@ -111,18 +121,20 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.fragment_trade, container, false);
-		views[0] = view.findViewById(R.id.trade_tab_inventory);
-		views[1] = view.findViewById(R.id.trade_tab_offerings);
-		views[2] = view.findViewById(R.id.trade_tab_chat);
-		if (trade() == null)
-			return view;
+		View view = inflater.inflate(R.layout.fragment_craft, container, false);
+		error_view = view.findViewById(R.id.craft_result_error);
+		success_view = view.findViewById(R.id.craft_result_success);
+		loading_view = view.findViewById(R.id.inventory_loading);
+		views[0] = view.findViewById(R.id.craft_tab_inventory);
+		views[1] = view.findViewById(R.id.craft_tab_main);
 
 		// TAB 0: Inventory
-		tabInventoryList = (ListView) views[0].findViewById(R.id.trade_tab_inventory_list);
-		tabInventoryList.setAdapter(tabInventoryListAdapter = new TabInventoryListAdapter());
+		tabInventoryList = (ListView) views[0].findViewById(R.id.craft_tab_inventory_list);
 		tabInventoryList.setOnItemClickListener(this);
-		tabInventoryListAdapter.filter("");
+		if (inventory != null) {
+			tabInventoryList.setAdapter(tabInventoryListAdapter);
+			tabInventoryListAdapter.filter("");
+		}
 		tabInventorySearch = (EditText) views[0].findViewById(R.id.inventory_search);
 		tabInventorySearch.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -139,31 +151,14 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 			}
 		});
 		// TAB 1: Offers
-		tabOfferMeReady = (CheckBox) views[1].findViewById(R.id.trade_offer_myready);
-		tabOfferMeReady.setOnClickListener(this);
-		tabOfferOtherReady = (CheckBox) views[1].findViewById(R.id.trade_offer_otherready);
-		tabOfferMeOffer = (ListView) views[1].findViewById(R.id.craft_list_ingredients);
-		tabOfferMeOffer.setAdapter(tabOfferMeOfferAdapter = new TabOfferingsListAdapter(trade().MyTrade, trade().MyInventory));
-		tabOfferMeOffer.setOnItemClickListener(this);
-		tabOfferOtherOffer = (ListView) views[1].findViewById(R.id.trade_offer_otherlist);
-		tabOfferOtherOffer.setAdapter(tabOfferOtherOfferAdapter = new TabOfferingsListAdapter(trade().OtherTrade, trade().OtherInventory));
-		tabOfferOtherOffer.setOnItemClickListener(this);
-		tabOfferAccept = (Button) views[1].findViewById(R.id.trade_offer_accept);
-		tabOfferAccept.setOnClickListener(this);
-		tabOfferCancel = (Button) views[1].findViewById(R.id.trade_offer_cancel);
-		tabOfferCancel.setOnClickListener(this);
-		tabOfferStatusCircle = (ProgressBar) views[1].findViewById(R.id.trade_status_progress);
-		// TAB 2: Chat
-		tabChatList = (ListView) view.findViewById(R.id.chat);
-		tabChatInput = (EditText) view.findViewById(R.id.chat_input);
-		tabChatButton = (Button) view.findViewById(R.id.chat_button);
-		tabChatButton.setOnClickListener(this);
-		tabChatList.setAdapter(tabChatAdapter = new ChatAdapter());
-		ArrayList<ChatLine> tabChatBacklog = SteamService.singleton.chat.getChatHistory(trade().otherID, "t", "Trade Started");
-		if (tabChatBacklog != null)
-			for (ChatLine line : tabChatBacklog)
-				tabChatAdapter.addChatLine(line);
-		tabChatList.setSelection(tabChatList.getCount() - 1);
+		tabMainList = (ListView) views[1].findViewById(R.id.craft_main_list_ingredients);
+		tabMainList.setAdapter(tabMainListAdapter = new TabMainListAdapter());
+		tabMainList.setOnItemClickListener(this);
+		tabMainCraft = (Button) views[1].findViewById(R.id.craft_main_craft);
+		tabMainCraft.setOnClickListener(this);
+		tabMainClear = (Button) views[1].findViewById(R.id.craft_main_clear);
+		tabMainClear.setOnClickListener(this);
+		tabMainStatusCircle = (ProgressBar) views[1].findViewById(R.id.craft_main_status_progress);
 		return view;
 	}
 
@@ -196,10 +191,10 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 	@Override
 	public void onClick(View v) {
 		if (v == tabMainClear) {
-			
+
 		}
 		if (v == tabMainCraft) {
-			tabOfferStatusCircle.setVisibility(View.VISIBLE);
+			tabMainStatusCircle.setVisibility(View.VISIBLE);
 			tabMainCraft.setEnabled(false);
 		}
 	}
@@ -237,27 +232,18 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 			SteamInventoryItem item = (SteamInventoryItem) getItem(position);
 
 			CheckBox itemCheckbox = (CheckBox) v.findViewById(R.id.trade_item_checkbox);
-			itemCheckbox.setChecked(trade().MyTrade.contains(item.id));
+			itemCheckbox.setChecked(selectedItems.contains(item.id));
 			itemCheckbox.setTag(item.id);
 			itemCheckbox.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					final long id = (Long) view.getTag();
-					final Trade trade = trade();
-					final boolean checked = ((CheckBox) view).isChecked();
-					trade.toRun.add(new Runnable() {
-						@Override
-						public void run() {
-							if (checked)
-								trade.addItem(id);
-							else
-								trade.removeItem(id);
-						}
-					});
-					tabOfferMeReady.setChecked(false);
-					tabOfferOtherReady.setChecked(false);
-					tabOfferAccept.setEnabled(false);
-					tabOfferStatusCircle.setVisibility(View.GONE);
+					long id = (Long) view.getTag();
+					boolean checked = ((CheckBox) view).isChecked();
+					if (checked)
+						selectedItems.add(id);
+					else
+						selectedItems.remove(id);
+					tabMainListAdapter.notifyDataSetChanged();
 				}
 			});
 
@@ -266,38 +252,33 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		}
 
 		public void filter(String by) {
+			if (inventory == null || inventory.items == null)
+				return;
 			filteredList.clear();
-			if (by.trim().length() == 0) {
-				if (trade() != null && trade().MyInventory != null)
-					filteredList.addAll(trade().MyInventory.items);
-			} else {
-				List<SteamInventoryItem> items = trade().MyInventory.items;
-				for (SteamInventoryItem item : items)
-					if (item.fullname().toLowerCase(Locale.ENGLISH).contains(by.toLowerCase(Locale.ENGLISH)))
-						filteredList.add(item);
+			List<SteamInventoryItem> items = inventory.items;
+			for (SteamInventoryItem item : items) {
+				boolean nameMatch = by.trim().length() == 0 || item.fullname().toLowerCase(Locale.ENGLISH).contains(by.toLowerCase(Locale.ENGLISH));
+				if (nameMatch && !item.flag_cannot_craft)
+					filteredList.add(item);
 			}
 			notifyDataSetChanged();
 		}
 	}
 
 	// TAB OFFERINGS: LIST ADAPTER
-	public class TabOfferingsListAdapter extends BaseAdapter {
-		public List<Long> trade;
-		public SteamInventory inventory;
+	public class TabMainListAdapter extends BaseAdapter {
 
-		public TabOfferingsListAdapter(List<Long> trade, SteamInventory inventory) {
-			this.trade = trade;
-			this.inventory = inventory;
+		public TabMainListAdapter() {
 		}
 
 		@Override
 		public int getCount() {
-			return trade.size();
+			return selectedItems.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return (position >= trade.size()) ? null : inventory.getItem(trade.get(position));
+			return (position >= selectedItems.size()) ? null : inventory.getItem(selectedItems.get(position));
 		}
 
 		@Override
@@ -349,6 +330,37 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 			SteamInventoryItem item = (SteamInventoryItem) getItem(position);
 			item.populateDetailView(v);
 			return v;
+		}
+	}
+
+	private class FetchInventoryTask extends AsyncTask<SteamID, Integer, SteamInventory> {
+		@Override
+		protected void onPreExecute() {
+			loading_view.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected SteamInventory doInBackground(SteamID... args) {
+			return SteamInventory.fetchInventory(args[0], SteamUtil.apikey, true, activity());
+		}
+
+		@Override
+		protected void onPostExecute(SteamInventory result) {
+			inventory = result;
+			// get rid of UI stuff,
+			if (activity() != null) {
+				loading_view.setVisibility(View.GONE);
+				if (inventory != null && inventory.items != null && tabInventoryList != null) {
+					Toast.makeText(activity(), "Loaded Inventory", Toast.LENGTH_LONG).show();
+					tabInventoryList.setAdapter(tabInventoryListAdapter);
+					tabInventoryListAdapter.filter("");
+				} else {
+					inventory = null;
+					error_view.setVisibility(View.VISIBLE);
+					TextView error_text = (TextView) error_view.findViewById(R.id.craft_error_text);
+					error_text.setText(activity().getString(R.string.inv_error_private));
+				}
+			}
 		}
 	}
 }

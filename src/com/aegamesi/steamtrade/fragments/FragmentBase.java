@@ -7,11 +7,11 @@ import com.google.analytics.tracking.android.MapBuilder;
 
 public class FragmentBase extends SherlockFragment {
 	public String fragmentName = "FragmentBase";
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		setAnalyticsScreen(fragmentName);
 	}
 

@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.aegamesi.steamtrade.fragments.FragmentChat;
+import com.aegamesi.steamtrade.fragments.FragmentCrafting;
 import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.fragments.FragmentHome;
 import com.aegamesi.steamtrade.fragments.FragmentInventory;
@@ -277,8 +278,9 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 			browseToFragment(new FragmentInventory(), false);
 			break;
 		case 4: // crafting
-			//browseToFragment(new FragmentCrafting(), false);
-			Toast.makeText(this, R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
+			browseToFragment(new FragmentCrafting(), false);
+			//Toast.makeText(this, R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
+			break;
 		case 5: // sign out
 			SteamUtil.disconnectWithDialog(this, getString(R.string.signingout));
 			return; // ******

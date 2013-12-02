@@ -10,13 +10,14 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.aegamesi.steamtrade.R;
 
 public class FragmentEula extends SherlockDialogFragment {
-	private String EULA_PREFIX = "eula__";
+	private String EULA_PREFIX = "eula___aab__";
 
 	private PackageInfo getPackageInfo(Context context) {
 		PackageInfo pi = null;
@@ -66,6 +67,7 @@ public class FragmentEula extends SherlockDialogFragment {
 		}).create();
 
 		TextView msg = new TextView(getActivity());
+		msg.setMovementMethod(new ScrollingMovementMethod());
 		float scale = getResources().getDisplayMetrics().density;
 		msg.setPadding((int) (10 * scale), (int) (10 * scale), (int) (10 * scale), (int) (10 * scale));
 		msg.setText(Html.fromHtml(message));

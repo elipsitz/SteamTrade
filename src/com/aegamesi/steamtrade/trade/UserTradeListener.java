@@ -102,7 +102,7 @@ public class UserTradeListener extends TradeListener {
 					fragment().tabOfferMeReady.setChecked(meReady);
 					fragment().tabOfferOtherReady.setChecked(otherReady);
 					fragment().tabOfferAccept.setEnabled(meReady && otherReady);
-					if(!meReady || !otherReady)
+					if (!meReady || !otherReady)
 						fragment().tabOfferStatusCircle.setVisibility(View.GONE);
 				}
 			});
@@ -125,7 +125,7 @@ public class UserTradeListener extends TradeListener {
 				@Override
 				public void run() {
 					ArrayList<SteamInventoryItem> items = new ArrayList<SteamInventoryItem>();
-					for(long id : trade.OtherTrade)
+					for (long id : trade.OtherTrade)
 						items.add(trade.OtherInventory.getItem(id));
 					fragment().onCompleted(items);
 				}

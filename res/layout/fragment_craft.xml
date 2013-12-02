@@ -3,6 +3,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <LinearLayout
+        android:id="@+id/inventory_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|center_vertical" />
+    </LinearLayout>
+    
+    <include
+        android:id="@+id/craft_result_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/craft_result_error"
+        android:visibility="gone" />
+    
+    <include
+        android:id="@+id/craft_result_success"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/craft_result_success"
+        android:visibility="gone" />
+
     <include
         android:id="@+id/craft_tab_inventory"
         android:layout_width="match_parent"
@@ -16,4 +45,5 @@
         android:layout_height="match_parent"
         layout="@layout/craft_tab_main"
         android:visibility="gone" />
-</FrameLayout>
+
+</FrameLayout>

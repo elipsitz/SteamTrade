@@ -15,4 +15,5 @@
 	<string name="craft_ingredients">Ingredients</string>
 	<string name="craft_clear">Clear</string>
 	<string name="craft_craft">Craft</string>
+	<string name="craft_cleared">Cleared ingredients list.</string>
 </resources>

@@ -55,7 +55,7 @@ public class TradeSession {
 			@Override
 			public TradeUserObj deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
 				JsonObject obj = element.getAsJsonObject();
-				if(obj.has("assets") && !obj.get("assets").isJsonArray())
+				if (obj.has("assets") && !obj.get("assets").isJsonArray())
 					obj.remove("assets");
 				return regularGson.fromJson(element, TradeUserObj.class);
 			}

@@ -59,7 +59,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 			if (activity().getFragmentByClass(FragmentFriends.class) != null)
 				activity().getFragmentByClass(FragmentFriends.class).adapter.notifyDataSetChanged();
 		}
-		
+
 		fragmentName = "FragmentChat";
 	}
 
@@ -143,7 +143,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	}
 
 	public void updateView() {
-		if(activity() == null || activity().steamFriends == null)
+		if (activity() == null || activity().steamFriends == null)
 			return;
 		String game = activity().steamFriends.getFriendGamePlayedName(id);
 		EPersonaState state = activity().steamFriends.getFriendPersonaState(id);
