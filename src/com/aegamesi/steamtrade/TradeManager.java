@@ -160,6 +160,7 @@ public class TradeManager implements OnClickListener {
 		yesButton.setVisibility(View.GONE);
 		noButton.setVisibility(View.GONE);
 		progress.setVisibility(View.GONE);
+		yesButton.setEnabled(true);
 
 		if (pendingTradeRequest != null) {
 			String name = activity().steamFriends.getFriendPersonaName(pendingTradeRequest);
@@ -170,6 +171,8 @@ public class TradeManager implements OnClickListener {
 				statusText.setText(String.format(activity().getString(R.string.trade_got_request), name)); // also add YES/NO button
 				yesButton.setVisibility(View.VISIBLE);
 				noButton.setVisibility(View.VISIBLE);
+				if (SteamService.singleton.schema == null)
+					yesButton.setEnabled(false);
 			}
 		}
 		if (currentTrade != null) {

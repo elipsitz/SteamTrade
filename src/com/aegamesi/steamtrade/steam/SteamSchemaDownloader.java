@@ -19,6 +19,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.Schema.SchemaAttribute;
 import com.aegamesi.steamtrade.steam.Schema.SchemaItem;
 import com.aegamesi.steamtrade.steam.Schema.SchemaParticle;
@@ -173,8 +174,12 @@ public class SteamSchemaDownloader extends AsyncTask<String, Integer, Schema> {
 	@Override
 	protected void onPostExecute(Schema result) {
 		// get rid of UI stuff,
-		Toast.makeText(context, "Loaded Schema", Toast.LENGTH_LONG).show();
-		SteamService.singleton.schema = result;
+		if (result == null) {
+			Toast.makeText(context, R.string.schema_load_failed, Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(context, R.string.schema_loaded, Toast.LENGTH_LONG).show();
+			SteamService.singleton.schema = result;
+		}
 	}
 
 }

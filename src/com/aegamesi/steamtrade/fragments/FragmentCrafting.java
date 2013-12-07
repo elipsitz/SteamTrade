@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
+import uk.co.thomasc.steamkit.base.gc.tf2.ECraftingRecipe;
+import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed;
+import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
+import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.callbacks.CraftResponseCallback;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,12 +38,12 @@ import com.aegamesi.steamtrade.steam.SteamInventory;
 import com.aegamesi.steamtrade.steam.SteamInventory.SteamInventoryItem;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.aegamesi.steamtrade.trade.Trade.Error;
 
 public class FragmentCrafting extends FragmentBase implements OnClickListener, OnItemClickListener {
 	public View[] views;
 	public SteamInventory inventory = null;
 	public List<Long> selectedItems = new ArrayList<Long>();
+	public ActionBar.TabListener tabListener;
 
 	public View loading_view;
 	public View error_view;
@@ -45,12 +51,14 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 	public ListView tabInventoryList;
 	public EditText tabInventorySearch;
 	public TabInventoryListAdapter tabInventoryListAdapter;
+	public List<Long> craftingResults = null;
 	//
 	public ListView tabMainList;
 	public Button tabMainClear;
 	public Button tabMainCraft;
 	public TabMainListAdapter tabMainListAdapter;
 	public ProgressBar tabMainStatusCircle;
+	public Button tabResultContinueCrafting;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +77,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		// tabs
 		ActionBar actionBar = activity().getSupportActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+		tabListener = new ActionBar.TabListener() {
 			@Override
 			public void onTabSelected(Tab tab, FragmentTransaction ft) {
 				views[tab.getPosition()].setVisibility(View.VISIBLE);
@@ -93,6 +101,15 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		}
 		// etc.
 		//activity().getSupportActionBar().setTitle();
+		// start "playing" tf2
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final ClientMsgProtobuf<CMsgClientGamesPlayed.Builder> playGame = new ClientMsgProtobuf<CMsgClientGamesPlayed.Builder>(CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
+				playGame.getBody().addGamesPlayed(GamePlayed.newBuilder().setGameId(440).build());
+				SteamService.singleton.steamClient.send(playGame);
+			}
+		}).start();
 	}
 
 	@Override
@@ -110,7 +127,6 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		ActionBar actionBar = activity().getSupportActionBar();
 		actionBar.removeAllTabs();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		SteamService.singleton.tradeManager.updateTradeStatus();
 	}
 
 	public void updateTab(int num) {
@@ -127,6 +143,9 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		loading_view = view.findViewById(R.id.inventory_loading);
 		views[0] = view.findViewById(R.id.craft_tab_inventory);
 		views[1] = view.findViewById(R.id.craft_tab_main);
+		
+		error_view.setVisibility(View.GONE);
+		success_view.setVisibility(View.GONE);
 
 		// TAB 0: Inventory
 		tabInventoryList = (ListView) views[0].findViewById(R.id.craft_tab_inventory_list);
@@ -159,19 +178,10 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		tabMainClear = (Button) views[1].findViewById(R.id.craft_main_clear);
 		tabMainClear.setOnClickListener(this);
 		tabMainStatusCircle = (ProgressBar) views[1].findViewById(R.id.craft_main_status_progress);
+		// TAB RESULTS
+		tabResultContinueCrafting = (Button) success_view.findViewById(R.id.craft_result_continue);
+		tabResultContinueCrafting.setOnClickListener(this);
 		return view;
-	}
-
-	public void onError(Error error) {
-		ActionBar actionBar = activity().getSupportActionBar();
-		actionBar.removeAllTabs();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-
-		((ViewGroup) getView()).removeAllViews();
-		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_error, null, false);
-		((ViewGroup) getView()).addView(result);
-		TextView errorText = (TextView) result.findViewById(R.id.trade_error_text);
-		errorText.setText(error.text);
 	}
 
 	public void onCompleted(List<SteamInventoryItem> items) {
@@ -179,23 +189,67 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		actionBar.removeAllTabs();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
-		((ViewGroup) getView()).removeAllViews();
-		View result = activity().getLayoutInflater().inflate(R.layout.craft_result_success, null, false);
-		((ViewGroup) getView()).addView(result);
-		TextView successText = (TextView) result.findViewById(R.id.craft_success_text);
+		success_view.setVisibility(View.VISIBLE);
+		TextView successText = (TextView) success_view.findViewById(R.id.craft_success_text);
 		successText.setText(String.format(activity().getString(R.string.craft_new_items), items.size()));
-		ListView itemList = (ListView) result.findViewById(R.id.craft_result_items);
+		ListView itemList = (ListView) success_view.findViewById(R.id.craft_result_items);
 		itemList.setAdapter(new ResultsListAdapter(items));
+	}
+
+	public void craftResponse(CraftResponseCallback obj) {
+		tabMainStatusCircle.setVisibility(View.GONE);
+		if (obj.getItems().size() == 0) {
+			// unsuccessful
+			Toast.makeText(activity(), R.string.craft_unsuccessful, Toast.LENGTH_LONG).show();
+			tabMainCraft.setEnabled(true);
+		} else {
+			for (int i = 0; i < selectedItems.size(); i++)
+				inventory.items.remove(inventory.getItem(selectedItems.get(i)));
+			
+			craftingResults = new ArrayList<Long>();
+			craftingResults.addAll(obj.getItems());
+			new FetchInventoryTask().execute(SteamService.singleton.steamClient.getSteamId());
+
+			selectedItems.clear();
+			tabMainListAdapter.notifyDataSetChanged();
+			tabInventoryListAdapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (v == tabMainClear) {
+			selectedItems.clear();
+			Toast.makeText(activity(), R.string.craft_cleared, Toast.LENGTH_LONG).show();
 
+			tabMainListAdapter.notifyDataSetChanged();
+			tabInventoryListAdapter.notifyDataSetChanged();
 		}
 		if (v == tabMainCraft) {
+			Toast.makeText(activity(), R.string.craft_crafting, Toast.LENGTH_LONG).show();
 			tabMainStatusCircle.setVisibility(View.VISIBLE);
 			tabMainCraft.setEnabled(false);
+
+			long[] craftItems = new long[selectedItems.size()];
+			for (int i = 0; i < selectedItems.size(); i++)
+				craftItems[i] = selectedItems.get(i);
+			craftingResults = null;
+			activity().steamGC.craft(440, ECraftingRecipe.BestFit, craftItems);
+		}
+		if(v == tabResultContinueCrafting) {
+			error_view.setVisibility(View.GONE);
+			success_view.setVisibility(View.GONE);
+			
+			tabMainListAdapter.notifyDataSetChanged();
+			tabInventoryListAdapter.notifyDataSetChanged();
+			tabInventoryListAdapter.filter(tabInventoryListAdapter.filter);
+			
+			ActionBar actionBar = activity().getSupportActionBar();
+			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			for (int n = 0; n < 2; n++) {
+				actionBar.addTab(actionBar.newTab().setTabListener(tabListener));
+				updateTab(n);
+			}
 		}
 	}
 
@@ -207,7 +261,8 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 
 	// TAB INVENTORY: LIST ADAPTER
 	private class TabInventoryListAdapter extends BaseAdapter {
-		List<SteamInventoryItem> filteredList = new ArrayList<SteamInventoryItem>();
+		public String filter = "";
+		public List<SteamInventoryItem> filteredList = new ArrayList<SteamInventoryItem>();
 
 		@Override
 		public int getCount() {
@@ -244,6 +299,8 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 					else
 						selectedItems.remove(id);
 					tabMainListAdapter.notifyDataSetChanged();
+
+					tabMainCraft.setEnabled(selectedItems.size() > 0);
 				}
 			});
 
@@ -254,6 +311,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		public void filter(String by) {
 			if (inventory == null || inventory.items == null)
 				return;
+			filter = by;
 			filteredList.clear();
 			List<SteamInventoryItem> items = inventory.items;
 			for (SteamInventoryItem item : items) {
@@ -265,7 +323,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		}
 	}
 
-	// TAB OFFERINGS: LIST ADAPTER
+	// TAB MAIN: LIST ADAPTER
 	public class TabMainListAdapter extends BaseAdapter {
 
 		public TabMainListAdapter() {
@@ -341,7 +399,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 
 		@Override
 		protected SteamInventory doInBackground(SteamID... args) {
-			return SteamInventory.fetchInventory(args[0], SteamUtil.apikey, true, activity());
+			return SteamInventory.fetchInventory(args[0], SteamUtil.apikey, false, activity());
 		}
 
 		@Override
@@ -350,15 +408,26 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 			// get rid of UI stuff,
 			if (activity() != null) {
 				loading_view.setVisibility(View.GONE);
-				if (inventory != null && inventory.items != null && tabInventoryList != null) {
-					Toast.makeText(activity(), "Loaded Inventory", Toast.LENGTH_LONG).show();
-					tabInventoryList.setAdapter(tabInventoryListAdapter);
-					tabInventoryListAdapter.filter("");
-				} else {
+				if (inventory == null || inventory.items == null || tabInventoryList == null) {
 					inventory = null;
 					error_view.setVisibility(View.VISIBLE);
 					TextView error_text = (TextView) error_view.findViewById(R.id.craft_error_text);
 					error_text.setText(activity().getString(R.string.inv_error_private));
+					return;
+				}
+
+				if (craftingResults == null) {
+					// initial inventory load
+					Toast.makeText(activity(), "Loaded Inventory", Toast.LENGTH_LONG).show();
+					tabInventoryList.setAdapter(tabInventoryListAdapter);
+					tabInventoryListAdapter.filter("");
+				} else {
+					// loading the craft result
+					Toast.makeText(activity(), "Loaded Crafted Items", Toast.LENGTH_LONG).show();
+					ArrayList<SteamInventoryItem> list = new ArrayList<SteamInventoryItem>();
+					for(long id : craftingResults)
+						list.add(inventory.getItem(id));
+					onCompleted(list);
 				}
 			}
 		}

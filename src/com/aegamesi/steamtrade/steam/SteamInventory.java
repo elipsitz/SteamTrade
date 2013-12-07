@@ -97,6 +97,16 @@ public class SteamInventory {
 			itemName.setTextColor(quality.color);
 			v.findViewById(R.id.inventory_item_gifted).setVisibility(getAttribute(186) == null ? View.GONE : View.VISIBLE); // gifted 186
 			v.findViewById(R.id.inventory_item_notcraftable).setVisibility(!flag_cannot_craft ? View.GONE : View.VISIBLE);
+			v.findViewById(R.id.inventory_item_nottradable).setVisibility(!flag_cannot_trade ? View.GONE : View.VISIBLE);
+			
+			// craft number
+			TextView itemNum = (TextView) v.findViewById(R.id.inventory_item_num);
+			if(getAttribute(229) == null) {
+				itemNum.setVisibility(View.GONE);
+			} else {
+				itemNum.setVisibility(View.VISIBLE);
+				itemNum.setText("#" + getAttribute(229).long_value);
+			}
 
 			// EUGH PAINT
 			SchemaPaint paint = getAttribute(261) == null ? null : SchemaPaint.getByColor((int) getAttribute(261).float_value);// painted 261 floatvalue
@@ -115,6 +125,7 @@ public class SteamInventory {
 		}
 
 		public void populateDetailView(View v) {
+			// TODO move these to strings.xml
 			// #FF4040 negative, #99CCFF positive
 			String description = "<b>Level " + level + " " + def().item_type_name + "</b><br>";
 			if (getAttribute(187) != null)
@@ -129,6 +140,8 @@ public class SteamInventory {
 				description += "<br><font color=\"#99CCFF\">Gift from: " + getAttribute(186).account_info.personaname + "</font>";
 			if (getAttribute(228) != null)
 				description += "<br><font color=\"#99CCFF\">Crafted by " + getAttribute(228).account_info.personaname + "</font>";
+			if (getAttribute(229) != null)
+				description += "<br><font color=\"#99CCFF\">Craft #" + getAttribute(229).long_value + "</font>";
 			description += "<br>";
 
 			SchemaParticle particle = getAttribute(134) == null ? null : SteamService.singleton.schema.particles.get((int) getAttribute(134).float_value);

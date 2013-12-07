@@ -57,6 +57,8 @@ public class FragmentProfile extends FragmentBase {
 
 		nameView.setSelected(true);
 		statusView.setSelected(true);
+		if(SteamService.singleton.schema == null)
+			tradeButton.setEnabled(false);
 
 		chatButton.setOnClickListener(new View.OnClickListener() {
 			@Override

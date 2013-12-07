@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/trade_result"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
         android:gravity="center"
-        android:text="@string/craft_completed" android:textSize="35sp" android:textStyle="bold"/>
+        android:text="@string/craft_completed"
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/craft_success_text"
@@ -19,7 +22,21 @@
         android:layout_gravity="center"
         android:layout_marginTop="0dip"
         android:gravity="center_horizontal"
-        android:text="@string/craft_new_items" android:textAppearance="?android:attr/textAppearanceLarge"/>
-    <ListView android:id="@+id/craft_result_items" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dip"></ListView>
+        android:text="@string/craft_new_items"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ListView
+        android:id="@+id/craft_result_items"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_marginTop="10dip"
+        android:layout_weight="1"
+        tools:listitem="@android:layout/simple_list_item_1" >
+    </ListView>
+
+    <Button
+        android:id="@+id/craft_result_continue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_gravity="bottom" android:text="@string/craft_continue_crafting"/>
 
 </LinearLayout>

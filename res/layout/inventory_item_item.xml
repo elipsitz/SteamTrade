@@ -16,6 +16,29 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/inventory_item_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:background="@drawable/drawable_craft_num_back"
+        android:padding="2dip"
+        android:text="#99"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/color_craft_num_blacktext"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/inventory_item_nottradable"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:contentDescription="@string/inv_not_craftable"
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:src="@drawable/ic_exchange"
+        android:tint="#ff0000" />
+
     <ImageView
         android:id="@+id/inventory_item_notcraftable"
         android:layout_width="wrap_content"

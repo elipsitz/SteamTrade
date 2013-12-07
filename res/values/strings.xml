@@ -43,5 +43,7 @@
     <string name="change">Change</string>
     <string name="dismiss">Dismiss</string>
     <string name="feature_not_implemented">Feature not implemented</string>
+    <string name="schema_loaded">Loaded Schema</string>
+    <string name="schema_load_failed">Error Loading Schema. Some features may not work.</string>
 
 </resources>

@@ -7,6 +7,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendAddedCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.SteamGameCoordinator;
+import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.callbacks.CraftResponseCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.SteamTrading;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.SessionStartCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeProposedCallback;
@@ -209,6 +210,27 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 				}
 			}
 		});
+		// our crafting was completed (or failed)
+		msg.handle(CraftResponseCallback.class, new ActionT<CraftResponseCallback>() {
+			@Override
+			public void call(CraftResponseCallback obj) {
+				FragmentCrafting craftFragment = getFragmentByClass(FragmentCrafting.class);
+				craftFragment.craftResponse(obj);
+				//tabMainCraft.setEnabled(false);
+			}
+		});
+		// GC messages
+		/*msg.handle(MessageCallback.class, new ActionT<MessageCallback>() {
+			@Override
+			public void call(MessageCallback obj) {
+				String infoString = "EMSG: " + obj.getEMsg() + "\n";
+				infoString += "type: " + obj.getMessage().getMsgType() + " source job: " + obj.getMessage().getSourceJobID() + " target job: " + obj.getMessage().getTargetJobID();
+				infoString += "\n  " + new String(obj.getMessage().getData());
+				infoString += "\n is proto a: " + obj.isProto() + "   is proto b: " + obj.getMessage().isProto();
+				Log.i("messagecallback!!!!", infoString);
+				FragmentCrafting craftFragment = getFragmentByClass(FragmentCrafting.class);
+			}
+		});*/
 	}
 
 	public void browseToFragment(Fragment fragment, boolean isSubFragment) {
