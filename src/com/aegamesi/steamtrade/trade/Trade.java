@@ -20,7 +20,7 @@ import com.aegamesi.steamtrade.trade.TradeStatus.TradeSessionAsset;
 
 public class Trade extends Thread {
 	public enum Error {
-		EXCEPTION(false, "Exception"), CANCELLED(true, "Trade Cancelled"), TIMED_OUT(true, "Trade Timed Out"), FAILED(true, "Trade Failed"), VERSION_MISMATCH(true, "Trade Out of Sync");
+		EXCEPTION(false, "Exception"), CANCELLED(true, "Trade Cancelled"), TIMED_OUT(true, "Trade Timed Out"), FAILED(true, "Trade Failed"), VERSION_MISMATCH(true, "Trade Out of Sync"), NO_SCHEMA(true, "Unable to Load Schema"), NO_INVENTORY(true, "Unable to Load Inventory");
 		public boolean severe = false;
 		public String text = "Error";
 
@@ -84,17 +84,27 @@ public class Trade extends Thread {
 	@Override
 	public void run() {
 		// <------ INITIATE ----->
+		if (SteamService.singleton == null || SteamService.singleton.schema == null || SteamService.singleton.schema.items == null || SteamService.singleton.schema.items.size() == 0) {
+			tradeListener.onError(Error.NO_SCHEMA);
+			die = true;
+		}
 		try {
 			// fetch other player's inventory from the Steam API.
 			OtherInventory = SteamInventory.fetchInventory(otherID, SteamUtil.apikey, false, null); // no cache
-			if (OtherInventory == null)
+			if (OtherInventory == null) {
+				tradeListener.onError(Error.NO_INVENTORY);
+				die = true;
 				throw new Exception("Could not fetch other player's inventory via Steam API!");
+			}
 
 			// fetch our inventory from the Steam API.
 			MyInventory = SteamInventory.fetchInventory(myID, SteamUtil.apikey, false, null); // no cache
 			MyInventory.filterTradable();
-			if (MyInventory == null)
+			if (MyInventory == null)  {
+				tradeListener.onError(Error.NO_INVENTORY);
+				die = true;
 				throw new Exception("Could not fetch own inventory via Steam API!");
+			}
 
 			inventories = new SteamInventory[] { MyInventory, OtherInventory };
 			initiated = true;
@@ -105,8 +115,15 @@ public class Trade extends Thread {
 		}
 		// <------- START POLLING, MAIN LOOP ------>
 		while (true) {
-			if (die)
+			if (die) {
+				MainActivity.instance.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						SteamService.singleton.tradeManager.notifyTradeHasEnded();
+					}
+				});
 				break;
+			}
 			Poll();
 			while (toRun.size() > 0)
 				toRun.remove(0).run();
@@ -235,12 +252,6 @@ public class Trade extends Thread {
 			if (abort) {
 				//error
 				die = true;
-				MainActivity.instance.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						SteamService.singleton.tradeManager.notifyTradeHasEnded();
-					}
-				});
 			}
 
 			// Update Local Variables

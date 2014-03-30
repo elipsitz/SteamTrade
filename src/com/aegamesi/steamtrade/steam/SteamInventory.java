@@ -70,6 +70,8 @@ public class SteamInventory {
 		public SteamInventoryAttribute[] attributes = null;
 
 		public Schema.SchemaItem def() {
+			if (SteamService.singleton == null || SteamService.singleton.schema == null)
+				return null;
 			return SteamService.singleton.schema.items.get(defindex);
 		}
 
@@ -98,10 +100,10 @@ public class SteamInventory {
 			v.findViewById(R.id.inventory_item_gifted).setVisibility(getAttribute(186) == null ? View.GONE : View.VISIBLE); // gifted 186
 			v.findViewById(R.id.inventory_item_notcraftable).setVisibility(!flag_cannot_craft ? View.GONE : View.VISIBLE);
 			v.findViewById(R.id.inventory_item_nottradable).setVisibility(!flag_cannot_trade ? View.GONE : View.VISIBLE);
-			
+
 			// craft number
 			TextView itemNum = (TextView) v.findViewById(R.id.inventory_item_num);
-			if(getAttribute(229) == null) {
+			if (getAttribute(229) == null) {
 				itemNum.setVisibility(View.GONE);
 			} else {
 				itemNum.setVisibility(View.VISIBLE);
