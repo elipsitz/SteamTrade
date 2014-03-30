@@ -8,5 +8,8 @@
     <string name="friend_add_prompt">Please enter the SteamID64 or email address of the friend you wish to add:</string>
     <string name="friend_add_fail">Failed to add friend: %1$s</string>
     <string name="friend_add_success">Added friend.</string>
-
+    <string name="friend_remove">Remove Friend</string>
+	<string name="friend_remove_message">Are you sure to want to remove \'%1$s\' from your friends list?</string>
+	<string name="friend_removed">Removed \'%1$s\'.</string>
+	<string name="friend_search">Search friends list</string>
 </resources>

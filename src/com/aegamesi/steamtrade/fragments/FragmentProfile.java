@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamService;
@@ -32,6 +35,7 @@ public class FragmentProfile extends FragmentBase {
 	public Button chatButton;
 	public Button tradeButton;
 	public Button backpackButton;
+	public Button removeFriendButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,12 +58,33 @@ public class FragmentProfile extends FragmentBase {
 		chatButton = (Button) view.findViewById(R.id.profile_button_chat);
 		tradeButton = (Button) view.findViewById(R.id.profile_button_trade);
 		backpackButton = (Button) view.findViewById(R.id.profile_button_backpack);
+		removeFriendButton = (Button) view.findViewById(R.id.profile_button_remove_friend);
 
 		nameView.setSelected(true);
 		statusView.setSelected(true);
-		if(SteamService.singleton.schema == null)
+		if (SteamService.singleton.schema == null)
 			tradeButton.setEnabled(false);
 
+		removeFriendButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(activity());
+				builder.setMessage(String.format(getString(R.string.friend_remove_message), activity().steamFriends.getFriendPersonaName(id)));
+				builder.setTitle(R.string.friend_remove);
+				builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						activity().steamFriends.removeFriend(FragmentProfile.this.id);
+						Toast.makeText(activity(), String.format(getString(R.string.friend_removed), activity().steamFriends.getFriendPersonaName(FragmentProfile.this.id)), Toast.LENGTH_LONG).show();
+						activity().browseToFragment(new FragmentFriends(), false);
+					}
+				});
+				builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+					}
+				});
+				builder.create().show();
+			}
+		});
 		chatButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {

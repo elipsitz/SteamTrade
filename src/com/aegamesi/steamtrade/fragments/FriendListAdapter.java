@@ -28,6 +28,10 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 	public List<FriendListCategory> categories = new ArrayList<FriendListCategory>();
 	private SteamFriends steamFriends;
 
+	public String filterString = "";
+	private List<SteamID> recentChats = null;
+	private List<SteamID> list = null;
+
 	public FriendListAdapter(FragmentFriends fragment) {
 		this.fragment = fragment;
 		steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
@@ -64,6 +68,12 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 	}
 
 	public void updateList(List<SteamID> recentChats, List<SteamID> list) {
+		this.recentChats = recentChats;
+		this.list = list;
+		redoList();
+	}
+
+	private void redoList() {
 		items.clear();
 		categories.clear();
 
@@ -89,7 +99,10 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 			for (SteamID recent : recentChats)
 				categoryChildren.add(new FriendListItem(recent));
 
+		boolean doFilter = filterString != null && filterString.trim().length() != 0;
 		for (FriendListItem item : tempitems) {
+			if (doFilter && !item.name.toLowerCase(Locale.ENGLISH).contains(filterString))
+				continue;
 			if (lastCategory != item.category) {
 				if (categoryChildren != null && categoryChildren.size() > 0) {
 					categories.add(lastCategory);
@@ -223,5 +236,10 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 		public String toString() {
 			return text;
 		}
+	}
+
+	public void filter(String string) {
+		filterString = string.toLowerCase(Locale.ENGLISH);
+		redoList();
 	}
 }
