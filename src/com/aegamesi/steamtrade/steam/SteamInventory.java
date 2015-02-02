@@ -1,20 +1,5 @@
 package com.aegamesi.steamtrade.steam;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.text.Html;
@@ -37,10 +22,26 @@ import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
 import com.loopj.android.image.SmartImageView;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
+
 public class SteamInventory {
 	public int status;
 	public int num_backpack_slots;
-	public List<SteamInventoryItem> items;
+	public List<SteamInventoryItem> items = null;
 
 	public static class SteamInventoryAttribute {
 		public int defindex;
@@ -208,8 +209,7 @@ public class SteamInventory {
 					int len = 0;
 					while ((len = in.read(buffer)) != -1)
 						out.write(buffer, 0, len);
-					if (out != null)
-						out.close();
+					out.close();
 					in.close();
 					in = new BufferedInputStream(new FileInputStream(cachedInv));
 				}
@@ -257,7 +257,7 @@ public class SteamInventory {
 			return inventory;
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return new SteamInventory();
 		}
 	}
 

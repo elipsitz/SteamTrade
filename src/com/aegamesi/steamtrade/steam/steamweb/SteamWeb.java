@@ -1,5 +1,10 @@
 package com.aegamesi.steamtrade.steam.steamweb;
 
+import android.util.Base64;
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,10 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
-import android.util.Base64;
-import android.util.Log;
-
-import com.google.gson.Gson;
 
 public class SteamWeb {
 

@@ -1,5 +1,17 @@
 package com.aegamesi.steamtrade.steam;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.media.RingtoneManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+
+import com.aegamesi.steamtrade.MainActivity;
+import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.SteamTrade;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,17 +32,6 @@ import java.util.regex.Pattern;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EChatEntryType;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.media.RingtoneManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-
-import com.aegamesi.steamtrade.MainActivity;
-import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.SteamTrade;
 
 public class SteamChatHandler {
 	public ArrayList<ChatReceiver> receivers;
@@ -109,7 +110,7 @@ public class SteamChatHandler {
 		// builder.setAutoCancel(true);
 		// lights, sound, vibrate
 		builder.setLights(0xFFAEDEDC, 750, 750);
-		builder.setVibrate(new long[] { 100, 300, 150, 300 });
+		builder.setVibrate(new long[]{100, 300, 150, 300});
 		//builder.setStyle(new NotificationCompat.InboxStyle());
 		builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 

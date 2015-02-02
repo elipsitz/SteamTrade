@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Item Image</string>
+
+    <string name="inv_error_private">This backpack is private.</string>
+    <string name="backpack">Backpack</string>
+
+    <string name="search_inventory">Search inventory</string>
+    <string name="toggle_view_mode">Toggle View Mode<color></color></string>
+    <string name="inv_not_craftable">Not Craftable</string>
+    <string name="inv_gifted">Gifted</string>
+
+    <color name="color_craft_num_white">#A3A099</color>
+    <color name="color_craft_num_blacktext">#282827</color>
+</resources>

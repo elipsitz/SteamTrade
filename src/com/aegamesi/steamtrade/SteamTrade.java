@@ -1,15 +1,17 @@
 package com.aegamesi.steamtrade;
 
-import java.io.File;
-import java.util.Random;
+import android.app.Application;
+
+import com.aegamesi.steamtrade.steam.SteamUtil;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
-import android.app.Application;
-
-import com.aegamesi.steamtrade.steam.SteamUtil;
+import java.io.File;
+import java.util.Random;
 
 @ReportsCrashes(
 		formKey = "",
@@ -28,11 +30,19 @@ public class SteamTrade extends Application {
 	public void onCreate() {
 		super.onCreate();
 		ACRA.init(this);
+		getTracker().enableAdvertisingIdCollection(true);
 		filesDir = getFilesDir();
 
 		Random r = new Random();
 		r.setSeed(System.currentTimeMillis());
 		String[] keys = getResources().getStringArray(R.array.steam_apikey);
 		SteamUtil.apikey = keys[r.nextInt(keys.length)];
+	}
+
+	private Tracker tracker;
+
+	public Tracker getTracker() {
+		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+		return analytics.newTracker(R.xml.tracker);
 	}
 }

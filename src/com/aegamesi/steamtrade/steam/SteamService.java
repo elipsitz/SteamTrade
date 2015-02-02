@@ -1,5 +1,19 @@
 package com.aegamesi.steamtrade.steam;
 
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.util.Base64;
+import android.util.Log;
+
+import com.aegamesi.steamtrade.LoginActivity;
+import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.TradeManager;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,19 +45,6 @@ import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
 import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
 import uk.co.thomasc.steamkit.util.logging.DebugLog;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.util.Base64;
-import android.util.Log;
-
-import com.aegamesi.steamtrade.LoginActivity;
-import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.TradeManager;
 
 public class SteamService extends Service {
 	// This is the backbone of the app. Stores SteamClient connection, message, chat, and trade handlers, schemas...

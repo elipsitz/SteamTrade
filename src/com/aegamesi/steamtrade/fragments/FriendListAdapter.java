@@ -1,5 +1,16 @@
 package com.aegamesi.steamtrade.fragments;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.steam.SteamService;
+import com.aegamesi.steamtrade.steam.SteamUtil;
+import com.loopj.android.image.SmartImageView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,16 +22,6 @@ import java.util.Map;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.steam.SteamService;
-import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.loopj.android.image.SmartImageView;
 
 public class FriendListAdapter extends BaseExpandableListAdapter {
 	public FragmentFriends fragment;
@@ -218,6 +219,7 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 
 	public enum FriendListCategory {
 		FRIENDREQUEST("Friend Requests"), RECENTCHAT("Recent Chats"), INGAME("In-Game"), ONLINE("Online"), OFFLINE("Offline");
+
 		public static FriendListCategory get(int quantized) {
 			if (quantized == 0)
 				return ONLINE;

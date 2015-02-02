@@ -1,5 +1,27 @@
 package com.aegamesi.steamtrade;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.aegamesi.steamtrade.fragments.FragmentEula;
+import com.aegamesi.steamtrade.steam.SteamMessageHandler;
+import com.aegamesi.steamtrade.steam.SteamService;
+
 import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
@@ -12,30 +34,8 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.aegamesi.steamtrade.fragments.FragmentEula;
-import com.aegamesi.steamtrade.steam.SteamMessageHandler;
-import com.aegamesi.steamtrade.steam.SteamService;
-import com.google.analytics.tracking.android.EasyTracker;
-
-public class LoginActivity extends SherlockFragmentActivity {
+public class LoginActivity extends ActionBarActivity {
 	private UserLoginTask mAuthTask = null;
 
 	// Values for email and password at the time of the login attempt.
@@ -97,20 +97,6 @@ public class LoginActivity extends SherlockFragmentActivity {
 				attemptLogin();
 			}
 		});
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-
-		EasyTracker.getInstance(this).activityStart(this); // Google Analytics
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-		EasyTracker.getInstance(this).activityStop(this); // Google Analytics
 	}
 
 	@Override

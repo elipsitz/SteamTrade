@@ -1,9 +1,5 @@
 package com.aegamesi.steamtrade.fragments;
 
-import java.util.Locale;
-
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -19,6 +15,11 @@ import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.loopj.android.image.SmartImageView;
+
+import java.util.Locale;
+
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentProfile extends FragmentBase {
 	public FriendListAdapter adapter;

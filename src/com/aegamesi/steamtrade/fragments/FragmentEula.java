@@ -9,14 +9,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.aegamesi.steamtrade.R;
 
-public class FragmentEula extends SherlockDialogFragment {
+public class FragmentEula extends DialogFragment {
 	private String EULA_PREFIX = "eula___aab__";
 
 	private PackageInfo getPackageInfo(Context context) {

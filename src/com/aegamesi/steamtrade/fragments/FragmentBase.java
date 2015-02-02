@@ -1,11 +1,11 @@
 package com.aegamesi.steamtrade.fragments;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.aegamesi.steamtrade.MainActivity;
-import com.google.analytics.tracking.android.Fields;
-import com.google.analytics.tracking.android.MapBuilder;
+import android.support.v4.app.Fragment;
 
-public class FragmentBase extends SherlockFragment {
+import com.aegamesi.steamtrade.MainActivity;
+import com.google.android.gms.analytics.HitBuilders;
+
+public class FragmentBase extends Fragment {
 	public String fragmentName = "FragmentBase";
 
 	@Override
@@ -16,12 +16,17 @@ public class FragmentBase extends SherlockFragment {
 	}
 
 	public void setAnalyticsScreen(String name) {
-		activity().tracker().set(Fields.SCREEN_NAME, name);
-		activity().tracker().send(MapBuilder.createAppView().build());
+		activity().tracker().setScreenName(name);
+		activity().tracker().send(new HitBuilders.AppViewBuilder().build());
 	}
 
 	public void sendAnalyticsEvent(String category, String action, String label, Long value) {
-		activity().tracker().send(MapBuilder.createEvent(category, action, label, value).build());
+		activity().tracker().send(new HitBuilders.EventBuilder()
+				.setCategory(category)
+				.setAction(action)
+				.setLabel(label)
+				.setValue(value)
+				.build());
 
 	}
 

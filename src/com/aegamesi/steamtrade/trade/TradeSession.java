@@ -1,13 +1,5 @@
 package com.aegamesi.steamtrade.trade;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
-
 import com.aegamesi.steamtrade.steam.steamweb.SteamWeb;
 import com.aegamesi.steamtrade.trade.TradeStatus.TradeUserObj;
 import com.google.gson.Gson;
@@ -17,6 +9,14 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class TradeSession {
 	public static String steamCommunityDomain = "steamcommunity.com";

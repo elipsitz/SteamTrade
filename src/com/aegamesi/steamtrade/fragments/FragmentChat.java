@@ -1,10 +1,5 @@
 package com.aegamesi.steamtrade.fragments;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -27,6 +22,12 @@ import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatReceiver;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.loopj.android.image.SmartImageView;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentChat extends FragmentBase implements ChatReceiver {
 	public SteamID id;

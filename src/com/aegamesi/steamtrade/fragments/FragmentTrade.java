@@ -1,13 +1,8 @@
 package com.aegamesi.steamtrade.fragments;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,8 +19,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.FragmentChat.ChatAdapter;
 import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
@@ -34,6 +27,13 @@ import com.aegamesi.steamtrade.steam.SteamInventory.SteamInventoryItem;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.trade.Trade;
 import com.aegamesi.steamtrade.trade.Trade.Error;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 
 public class FragmentTrade extends FragmentBase implements OnClickListener, OnItemClickListener {
 	public View[] views;
@@ -64,7 +64,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 		setRetainInstance(true);
 
 		views = new View[3];
-		notifications = new int[] { 0, 0, 0 };
+		notifications = new int[]{0, 0, 0};
 
 		fragmentName = "FragmentTrade";
 	}
@@ -79,19 +79,19 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, OnIt
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
 			@Override
-			public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 				views[tab.getPosition()].setVisibility(View.VISIBLE);
 				notifications[tab.getPosition()] = 0;
 				updateTab(tab.getPosition());
 			}
 
 			@Override
-			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+			public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
 				views[tab.getPosition()].setVisibility(View.GONE);
 			}
 
 			@Override
-			public void onTabReselected(Tab tab, FragmentTransaction ft) {
+			public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 				// ignore
 			}
 		};

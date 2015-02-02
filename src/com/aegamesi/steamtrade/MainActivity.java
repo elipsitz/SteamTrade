@@ -1,5 +1,42 @@
 package com.aegamesi.steamtrade;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.aegamesi.steamtrade.fragments.FragmentAbout;
+import com.aegamesi.steamtrade.fragments.FragmentChat;
+import com.aegamesi.steamtrade.fragments.FragmentCrafting;
+import com.aegamesi.steamtrade.fragments.FragmentFriends;
+import com.aegamesi.steamtrade.fragments.FragmentInventory;
+import com.aegamesi.steamtrade.fragments.FragmentMe;
+import com.aegamesi.steamtrade.fragments.FragmentProfile;
+import com.aegamesi.steamtrade.steam.SteamMessageHandler;
+import com.aegamesi.steamtrade.steam.SteamService;
+import com.aegamesi.steamtrade.steam.SteamUtil;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import org.acra.ACRA;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
@@ -16,40 +53,8 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.aegamesi.steamtrade.fragments.FragmentChat;
-import com.aegamesi.steamtrade.fragments.FragmentCrafting;
-import com.aegamesi.steamtrade.fragments.FragmentFriends;
-import com.aegamesi.steamtrade.fragments.FragmentHome;
-import com.aegamesi.steamtrade.fragments.FragmentInventory;
-import com.aegamesi.steamtrade.fragments.FragmentMe;
-import com.aegamesi.steamtrade.fragments.FragmentProfile;
-import com.aegamesi.steamtrade.steam.SteamMessageHandler;
-import com.aegamesi.steamtrade.steam.SteamService;
-import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-
-public class MainActivity extends SherlockFragmentActivity implements SteamMessageHandler, ListView.OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements SteamMessageHandler, ListView.OnItemClickListener {
 	public static MainActivity instance = null;
 
 	public SteamFriends steamFriends;
@@ -94,12 +99,15 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 		steamGC = SteamService.singleton.steamClient.getHandler(SteamGameCoordinator.class);
 
 		if (savedInstanceState == null)
-			browseToFragment(new FragmentHome(), false);
+			browseToFragment(new FragmentMe(), false);
 		SteamService.singleton.tradeManager.setupTradeStatus();
 		SteamService.singleton.tradeManager.updateTradeStatus();
 
 		if (getIntent().getBooleanExtra("isLoggingIn", false)) {
-			tracker().send(MapBuilder.createEvent("steam", "login", "", null).build());
+			tracker().send(new HitBuilders.EventBuilder()
+					.setCategory("Steam")
+					.setAction("Login")
+					.build());
 		}
 	}
 
@@ -136,14 +144,6 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 
 		if (SteamService.singleton.steamClient.getSteamId() != null)
 			ACRA.getErrorReporter().putCustomData("steamid64", SteamService.singleton.steamClient.getSteamId().render());
-		EasyTracker.getInstance(this).activityStart(this); // Google Analytics
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-		EasyTracker.getInstance(this).activityStop(this); // Google Analytics
 	}
 
 	@Override
@@ -253,11 +253,11 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			toggleDrawer();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case android.R.id.home:
+				toggleDrawer();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -287,30 +287,62 @@ public class MainActivity extends SherlockFragmentActivity implements SteamMessa
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		switch (position) {
-		case 0: // home
-			browseToFragment(new FragmentHome(), false);
-			break;
-		case 1: // me
-			browseToFragment(new FragmentMe(), false);
-			break;
-		case 2: // friends
-			browseToFragment(new FragmentFriends(), false);
-			break;
-		case 3: // inventory
-			browseToFragment(new FragmentInventory(), false);
-			break;
-		case 4: // crafting
-			browseToFragment(new FragmentCrafting(), false);
-			//Toast.makeText(this, R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
-			break;
-		case 5: // sign out
-			SteamUtil.disconnectWithDialog(this, getString(R.string.signingout));
-			return; // ******
+			case 0: // me
+				browseToFragment(new FragmentMe(), false);
+				break;
+			case 1: // friends
+				browseToFragment(new FragmentFriends(), false);
+				break;
+			case 2: // inventory
+				browseToFragment(new FragmentInventory(), false);
+				break;
+			case 3: // crafting
+				browseToFragment(new FragmentCrafting(), false);
+				//Toast.makeText(this, R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
+				break;
+			case 4: // about
+				browseToFragment(new FragmentAbout(), false);
+				break;
+			case 5: // sign out
+				SteamUtil.disconnectWithDialog(this, getString(R.string.signingout));
+				return; // ******
 		}
 		getSupportActionBar().setTitle(((ArrayAdapter<?>) drawerList.getAdapter()).getItem(position).toString());
 	}
 
-	public EasyTracker tracker() {
-		return EasyTracker.getInstance(this);
+	public Tracker tracker() {
+		return ((SteamTrade) getApplication()).getTracker();
+	}
+
+	public static class AdFragment extends Fragment {
+		public AdView mAdView = null;
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+								 Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.ad_fragment, container, false);
+		}
+
+		@Override
+		public void onActivityCreated(Bundle bundle) {
+			super.onActivityCreated(bundle);
+			mAdView = (AdView) getView().findViewById(R.id.adView);
+			AdRequest adRequest = new AdRequest.Builder().build();
+			mAdView.loadAd(adRequest);
+		}
+
+		@Override
+		public void onResume() {
+			super.onResume();
+			if (mAdView != null)
+				mAdView.resume();
+		}
+
+		@Override
+		public void onPause() {
+			super.onPause();
+			if (mAdView != null)
+				mAdView.pause();
+		}
 	}
 }

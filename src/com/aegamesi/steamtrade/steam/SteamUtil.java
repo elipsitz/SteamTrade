@@ -1,13 +1,14 @@
 package com.aegamesi.steamtrade.steam;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 
 public class SteamUtil {
 	public static String apikey = ""; // kept in secret.xml
@@ -26,7 +27,7 @@ public class SteamUtil {
 		return null;
 	}
 
-	final protected static char[] hexArray = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	final protected static char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 	public static String bytesToHex(byte[] bytes) {
 		if (bytes == null)

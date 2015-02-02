@@ -1,16 +1,16 @@
 package com.aegamesi.steamtrade.trade;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 import com.aegamesi.steamtrade.steam.Schema.SchemaQuality;
 import com.aegamesi.steamtrade.steam.SteamInventory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 public class ForeignInventory {
 	private ArrayList<ForeignItem> rgInventory = new ArrayList<ForeignItem>();

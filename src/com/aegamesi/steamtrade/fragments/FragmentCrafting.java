@@ -1,19 +1,9 @@
 package com.aegamesi.steamtrade.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
-import uk.co.thomasc.steamkit.base.gc.tf2.ECraftingRecipe;
-import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed;
-import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed;
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
-import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.callbacks.CraftResponseCallback;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -31,13 +21,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamInventory;
 import com.aegamesi.steamtrade.steam.SteamInventory.SteamInventoryItem;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
+import uk.co.thomasc.steamkit.base.gc.tf2.ECraftingRecipe;
+import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed;
+import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
+import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.callbacks.CraftResponseCallback;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentCrafting extends FragmentBase implements OnClickListener, OnItemClickListener {
 	public View[] views;
@@ -79,18 +79,18 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		tabListener = new ActionBar.TabListener() {
 			@Override
-			public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 				views[tab.getPosition()].setVisibility(View.VISIBLE);
 				updateTab(tab.getPosition());
 			}
 
 			@Override
-			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+			public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
 				views[tab.getPosition()].setVisibility(View.GONE);
 			}
 
 			@Override
-			public void onTabReselected(Tab tab, FragmentTransaction ft) {
+			public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 				// ignore
 			}
 		};
@@ -143,7 +143,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		loading_view = view.findViewById(R.id.inventory_loading);
 		views[0] = view.findViewById(R.id.craft_tab_inventory);
 		views[1] = view.findViewById(R.id.craft_tab_main);
-		
+
 		error_view.setVisibility(View.GONE);
 		success_view.setVisibility(View.GONE);
 
@@ -205,7 +205,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		} else {
 			for (int i = 0; i < selectedItems.size(); i++)
 				inventory.items.remove(inventory.getItem(selectedItems.get(i)));
-			
+
 			craftingResults = new ArrayList<Long>();
 			craftingResults.addAll(obj.getItems());
 			new FetchInventoryTask().execute(SteamService.singleton.steamClient.getSteamId());
@@ -236,14 +236,14 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 			craftingResults = null;
 			activity().steamGC.craft(440, ECraftingRecipe.BestFit, craftItems);
 		}
-		if(v == tabResultContinueCrafting) {
+		if (v == tabResultContinueCrafting) {
 			error_view.setVisibility(View.GONE);
 			success_view.setVisibility(View.GONE);
-			
+
 			tabMainListAdapter.notifyDataSetChanged();
 			tabInventoryListAdapter.notifyDataSetChanged();
 			tabInventoryListAdapter.filter(tabInventoryListAdapter.filter);
-			
+
 			ActionBar actionBar = activity().getSupportActionBar();
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 			for (int n = 0; n < 2; n++) {
@@ -425,7 +425,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 					// loading the craft result
 					Toast.makeText(activity(), "Loaded Crafted Items", Toast.LENGTH_LONG).show();
 					ArrayList<SteamInventoryItem> list = new ArrayList<SteamInventoryItem>();
-					for(long id : craftingResults)
+					for (long id : craftingResults)
 						list.add(inventory.getItem(id));
 					onCompleted(list);
 				}

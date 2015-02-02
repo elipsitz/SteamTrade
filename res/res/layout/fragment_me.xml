@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.loopj.android.image.SmartImageView
+            android:id="@+id/profile_avatar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="5dip"
+            android:contentDescription="@string/steam_avatar"
+            android:padding="2dip"
+            android:src="@drawable/default_avatar"/>
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_margin="5dip"
+            android:layout_weight="0.20"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:text="Name"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <Spinner
+                android:id="@+id/profile_status_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/me_set_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/change_display_name"/>
+
+    <Button
+        android:id="@+id/me_set_game"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/set_currently_playing_game"/>
+
+</LinearLayout>

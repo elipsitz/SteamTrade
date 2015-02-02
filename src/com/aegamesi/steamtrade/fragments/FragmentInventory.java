@@ -1,10 +1,5 @@
 package com.aegamesi.steamtrade.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,6 +8,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,15 +22,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamInventory;
 import com.aegamesi.steamtrade.steam.SteamInventory.SteamInventoryItem;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.loopj.android.image.SmartImageView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentInventory extends FragmentBase implements OnItemClickListener {
 	public SteamID id;
@@ -105,14 +106,14 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_inventory_toggle_view:
-			isGrid = !isGrid;
-			item.setIcon(isGrid ? R.drawable.ic_collections_view_as_list : R.drawable.ic_collections_view_as_grid);
-			inventoryGrid.setVisibility(isGrid ? View.VISIBLE : View.GONE);
-			inventoryList.setVisibility(!isGrid ? View.VISIBLE : View.GONE);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.menu_inventory_toggle_view:
+				isGrid = !isGrid;
+				item.setIcon(isGrid ? R.drawable.ic_collections_view_as_list : R.drawable.ic_collections_view_as_grid);
+				inventoryGrid.setVisibility(isGrid ? View.VISIBLE : View.GONE);
+				inventoryList.setVisibility(!isGrid ? View.VISIBLE : View.GONE);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -148,6 +149,7 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 					inventoryList.setAdapter(adapter);
 					adapter.filter("");
 				} else {
+					int error = (inventory == null) ? R.string.inv_error_private : R.string.error_steamapi;
 					inventory = null;
 					error_view.setVisibility(View.VISIBLE);
 					TextView error_text = (TextView) error_view.findViewById(R.id.inventory_error_text);

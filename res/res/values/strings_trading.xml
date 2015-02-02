@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">Sent a trade request to %1$s</string>
+    <string name="trade_got_request">%1$s has invited you to trade!</string>
+    <string name="trade_currently_trading">Trading with %1$s.</string>
+    <string name="trade_result_accepted">%1$s accepted your trade request!</string>
+    <string name="trade_result_alreadytrading">%1$s is trading with someone else.</string>
+    <string name="trade_result_timeout">%1$s did not respond in time.</string>
+    <string name="trade_result_declined">%1$s declined to trade.</string>
+    <string name="trade_result_unknown">%1$s was unable to trade for an unknown reason: %2$s</string>
+
+    <color name="color_trade_white">#A3A099</color>
+    <color name="color_trade_blacktext">#282827</color>
+    <color name="color_trade_result_background">#1D1D1D</color>
+
+    <string name="trading_with">Trading with %1$s</string>
+
+    <string-array name="trade_tabs">
+        <item>Inventory</item>
+        <item>Offerings</item>
+        <item>Chat</item>
+    </string-array>
+
+    <string name="trade_ready">Ready</string>
+    <string name="trade_your_offerings">Your Offerings</string>
+    <string name="trade_their_offerings">Their Offerings</string>
+    <string name="trade_accept">Accept Trade</string>
+    <string name="trade_tap_to_view">Tap to view</string>
+    <string name="trade_error">Error Trading</string>
+    <string name="trade_completed">Trade Completed</string>
+    <string name="trade_new_items">%1$d new items acquired</string>
+    <string name="trade_cancel">Cancel</string>
+
+</resources>

@@ -1,11 +1,5 @@
 package com.aegamesi.steamtrade.trade;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.util.Log;
 
 import com.aegamesi.steamtrade.MainActivity;
@@ -17,6 +11,13 @@ import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.aegamesi.steamtrade.steam.steamweb.SteamWeb;
 import com.aegamesi.steamtrade.trade.TradeStatus.TradeEvent;
 import com.aegamesi.steamtrade.trade.TradeStatus.TradeSessionAsset;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class Trade extends Thread {
 	public enum Error {
@@ -100,13 +101,13 @@ public class Trade extends Thread {
 			// fetch our inventory from the Steam API.
 			MyInventory = SteamInventory.fetchInventory(myID, SteamUtil.apikey, false, null); // no cache
 			MyInventory.filterTradable();
-			if (MyInventory == null)  {
+			if (MyInventory == null) {
 				tradeListener.onError(Error.NO_INVENTORY);
 				die = true;
 				throw new Exception("Could not fetch own inventory via Steam API!");
 			}
 
-			inventories = new SteamInventory[] { MyInventory, OtherInventory };
+			inventories = new SteamInventory[]{MyInventory, OtherInventory};
 			initiated = true;
 			tradeListener.onAfterInit();
 		} catch (final Exception e) {
@@ -124,7 +125,13 @@ public class Trade extends Thread {
 				});
 				break;
 			}
-			Poll();
+			try {
+				Poll();
+			} catch (Exception e) {
+				e.printStackTrace();
+				die = true;
+				tradeListener.onError(Error.EXCEPTION);
+			}
 			while (toRun.size() > 0)
 				toRun.remove(0).run();
 			try {
@@ -169,6 +176,12 @@ public class Trade extends Thread {
 				}
 			}
 
+			if (SteamService.singleton.schema == null || SteamService.singleton.schema.items == null) {
+				// schema not loaded, schema items not loaded... abort
+				abort = true;
+				tradeListener.onError(Error.NO_SCHEMA);
+			}
+
 			if (lastEvent < status.events.size()) {
 				for (; lastEvent < status.events.size(); lastEvent++) {
 					final TradeEvent evt = status.events.get(lastEvent);
@@ -176,55 +189,55 @@ public class Trade extends Thread {
 					isUs = !evt.steamid.equals(String.valueOf(otherID.convertToLong()));
 
 					switch (evt.action) {
-					case 0: // add item
-						if (!isUs) {
-							//if (OtherInventory == null)
-							//	loadPrivateBP(evt);
-							SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
-							SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
-							tradeListener.onUserAddItem(schemaItem, item);
-						}
-						meReady = false;
-						otherReady = false;
-						break;
-					case 1: // remove item
-						if (!isUs) {
-							//if (OtherInventory == null)
-							//	loadPrivateBP(evt);
-							SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
-							SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
-							tradeListener.onUserRemoveItem(schemaItem, item);
-						}
-						meReady = false;
-						otherReady = false;
-						break;
-					case 2: // toggle ready
-						if (!isUs) {
-							otherReady = true;
-							tradeListener.onUserSetReadyState(true);
-						} else {
-							meReady = true;
-						}
-						break;
-					case 3: // toggle not ready
-						if (!isUs) {
-							otherReady = false;
-							tradeListener.onUserSetReadyState(false);
-						} else {
+						case 0: // add item
+							if (!isUs) {
+								//if (OtherInventory == null)
+								//	loadPrivateBP(evt);
+								SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
+								SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
+								tradeListener.onUserAddItem(schemaItem, item);
+							}
 							meReady = false;
-						}
-						break;
-					case 4: // user accept?
-						if (!isUs)
-							tradeListener.onUserAccept();
-						break;
-					case 7: // chat
-						if (!isUs)
-							tradeListener.onMessage(evt.text);
-						break;
-					default:
-						Log.e("Trade", "Unknown Event ID: " + evt.action);
-						break;
+							otherReady = false;
+							break;
+						case 1: // remove item
+							if (!isUs) {
+								//if (OtherInventory == null)
+								//	loadPrivateBP(evt);
+								SteamInventoryItem item = OtherInventory.getItem(evt.assetid);
+								SchemaItem schemaItem = SteamService.singleton.schema.items.get(item.defindex);
+								tradeListener.onUserRemoveItem(schemaItem, item);
+							}
+							meReady = false;
+							otherReady = false;
+							break;
+						case 2: // toggle ready
+							if (!isUs) {
+								otherReady = true;
+								tradeListener.onUserSetReadyState(true);
+							} else {
+								meReady = true;
+							}
+							break;
+						case 3: // toggle not ready
+							if (!isUs) {
+								otherReady = false;
+								tradeListener.onUserSetReadyState(false);
+							} else {
+								meReady = false;
+							}
+							break;
+						case 4: // user accept?
+							if (!isUs)
+								tradeListener.onUserAccept();
+							break;
+						case 7: // chat
+							if (!isUs)
+								tradeListener.onMessage(evt.text);
+							break;
+						default:
+							Log.e("Trade", "Unknown Event ID: " + evt.action);
+							break;
 					}
 				}
 

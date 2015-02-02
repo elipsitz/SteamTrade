@@ -1,8 +1,5 @@
 package com.aegamesi.steamtrade.trade;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.util.Log;
 import android.view.View;
 
@@ -13,6 +10,9 @@ import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
 import com.aegamesi.steamtrade.steam.SteamInventory.SteamInventoryItem;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.trade.Trade.Error;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class UserTradeListener extends TradeListener {
 	public FragmentTrade fragment() {

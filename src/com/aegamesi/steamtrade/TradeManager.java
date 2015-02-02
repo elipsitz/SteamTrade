@@ -1,10 +1,5 @@
 package com.aegamesi.steamtrade;
 
-import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
-import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.SessionStartCallback;
-import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeProposedCallback;
-import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeResultCallback;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +13,13 @@ import com.aegamesi.steamtrade.fragments.FragmentTrade;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.trade.Trade;
 import com.aegamesi.steamtrade.trade.UserTradeListener;
-import com.google.analytics.tracking.android.MapBuilder;
+import com.google.android.gms.analytics.HitBuilders;
+
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
+import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.SessionStartCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeProposedCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeResultCallback;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class TradeManager implements OnClickListener {
 	public Trade currentTrade = null;
@@ -53,7 +54,7 @@ public class TradeManager implements OnClickListener {
 	public void callbackSessionStart(SessionStartCallback obj) {
 		Log.i("Trade", "Starting trade with " + obj.getOtherClient().convertToLong());
 		SteamService.singleton.chat.appendToLog(obj.getOtherClient().convertToLong() + "", "<-- Trade Started -->");
-		MainActivity.instance.tracker().send(MapBuilder.createEvent("steam", "trade_start", "", null).build());
+		activity().tracker().send(new HitBuilders.EventBuilder().setCategory("Steam").setAction("Trade_Start").build());
 
 		SteamID myID = SteamService.singleton.steamClient.getSteamId();
 		String sessionID = SteamService.singleton.sessionID;
@@ -84,30 +85,30 @@ public class TradeManager implements OnClickListener {
 		}
 		String name = SteamService.singleton.steamClient.getHandler(SteamFriends.class).getFriendPersonaName(obj.getOtherClient());
 		switch (obj.getResponse()) {
-		case Accepted:
-			Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_accepted), name), Toast.LENGTH_LONG).show();
-			break;
-		case TargetAlreadyTrading:
-			Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_alreadytrading), name), Toast.LENGTH_LONG).show();
-			pendingTradeRequest = null;
-			break;
-		case Timeout:
-			Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_timeout), name), Toast.LENGTH_LONG).show();
-			pendingTradeRequest = null;
-			break;
-		case Declined:
-			Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_declined), name), Toast.LENGTH_LONG).show();
-			pendingTradeRequest = null;
-			break;
-		case Cancel:
-			Toast.makeText(activity(), "Cancelled", Toast.LENGTH_LONG).show();
-			pendingTradeRequest = null;
-			break;
-		default:
-			// otherwise unable to trade.
-			Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_unknown), name, obj.getResponse()), Toast.LENGTH_LONG).show();
-			pendingTradeRequest = null;
-			break;
+			case Accepted:
+				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_accepted), name), Toast.LENGTH_LONG).show();
+				break;
+			case TargetAlreadyTrading:
+				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_alreadytrading), name), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case Timeout:
+				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_timeout), name), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case Declined:
+				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_declined), name), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case Cancel:
+				Toast.makeText(activity(), "Cancelled", Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			default:
+				// otherwise unable to trade.
+				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_unknown), name, obj.getResponse()), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
 		}
 		updateTradeStatus();
 	}

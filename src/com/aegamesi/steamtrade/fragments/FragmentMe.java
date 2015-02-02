@@ -1,8 +1,5 @@
 package com.aegamesi.steamtrade.fragments;
 
-import java.util.Locale;
-
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -25,6 +22,10 @@ import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.loopj.android.image.SmartImageView;
 
+import java.util.Locale;
+
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+
 public class FragmentMe extends FragmentBase implements OnClickListener, OnItemSelectedListener {
 	public SmartImageView avatarView;
 	public TextView nameView;
@@ -32,7 +33,7 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	public Button changeNameButton;
 	public Button changeGameButton;
 
-	public int[] states = new int[] { 1, 3, 2, 4, 5, 6 }; // online, away, busy, snooze, lookingtotrade, lookingtoplay
+	public int[] states = new int[]{1, 3, 2, 4, 5, 6}; // online, away, busy, snooze, lookingtotrade, lookingtoplay
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
