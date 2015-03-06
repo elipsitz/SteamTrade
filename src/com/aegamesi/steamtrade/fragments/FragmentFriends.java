@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.FriendListAdapter.FriendListCategory;
@@ -75,7 +78,10 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 					public void onClick(DialogInterface dialog, int whichButton) {
 					}
 				});
-				alert.show();
+				AlertDialog dialog = alert.show();
+				TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
+				if (messageView != null)
+					messageView.setGravity(Gravity.CENTER);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -93,7 +99,7 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 		updateFriends();
 
 		for (int i = 0; i < adapter.getGroupCount(); i++) {
-			if (((FriendListCategory) adapter.getGroup(i)) == FriendListCategory.OFFLINE)
+			if ((adapter.getGroup(i) == FriendListCategory.OFFLINE) || (adapter.getGroup(i) == FriendListCategory.BLOCKED))
 				list.collapseGroup(i);
 			else
 				list.expandGroup(i);
@@ -143,11 +149,25 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 
 	@Override
 	public void onClick(View v) {
-		Fragment fragment = new FragmentChat();
-		Bundle bundle = new Bundle();
-		bundle.putLong("steamId", ((SteamID) v.getTag()).convertToLong());
-		fragment.setArguments(bundle);
-		activity().browseToFragment(fragment, true);
+		if (v.getId() == R.id.friend_chat_button) {
+			Fragment fragment = new FragmentChat();
+			Bundle bundle = new Bundle();
+			bundle.putLong("steamId", ((SteamID) v.getTag()).convertToLong());
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
+		}
+		if (v.getId() == R.id.friend_request_accept) {
+			SteamID id = (SteamID) v.getTag();
+			activity().steamFriends.addFriend(id);
+			// accepted friend request
+			Toast.makeText(activity(), R.string.friend_request_accept, Toast.LENGTH_SHORT).show();
+		}
+		if (v.getId() == R.id.friend_request_reject) {
+			SteamID id = (SteamID) v.getTag();
+			activity().steamFriends.ignoreFriend(id, false);
+			// ignored friend request
+			Toast.makeText(activity(), R.string.friend_request_ignore, Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override

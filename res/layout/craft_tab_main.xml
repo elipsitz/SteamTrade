@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dip"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray"/>
 
     <TextView
         style="?android:attr/listSeparatorTextViewStyle"
@@ -15,37 +15,36 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/craft_ingredients"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <ListView
         android:id="@+id/craft_main_list_ingredients"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
     </ListView>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dip"
         android:layout_marginTop="0dip"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray"/>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dip"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/craft_main_clear"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="@string/craft_clear" />
+            android:text="@string/craft_clear"/>
 
         <Button
             android:id="@+id/craft_main_craft"
@@ -53,18 +52,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:enabled="false"
-            android:text="@string/craft_craft" />
+            android:text="@string/craft_craft"/>
 
         <ProgressBar
             android:id="@+id/craft_main_status_progress"
-            style="@style/Widget.Sherlock.Light.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:indeterminate="true"
             android:scaleX="0.75"
             android:scaleY="0.75"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </LinearLayout>
 
 </LinearLayout>

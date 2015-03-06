@@ -5,10 +5,18 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class SteamUtil {
 	public static String apikey = ""; // kept in secret.xml
@@ -42,6 +50,17 @@ public class SteamUtil {
 		return new String(hexChars);
 	}
 
+	public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
+		Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+		String query = url.getQuery();
+		String[] pairs = query.split("&");
+		for (String pair : pairs) {
+			int idx = pair.indexOf("=");
+			query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+		}
+		return query_pairs;
+	}
+
 	public static void disconnectWithDialog(final Context context, final String message) {
 		class SteamDisconnectTask extends AsyncTask<Void, Void, Void> {
 			private ProgressDialog dialog;
@@ -73,11 +92,24 @@ public class SteamUtil {
 		new SteamDisconnectTask().execute();
 	}
 
-	public static int getQuantizedPersonaState(EPersonaState state, String game) {
-		if (game != null && game.length() != 0)
-			return 1;
-		if (state == EPersonaState.Offline || state == null)
+	public static long convertSteamIdToCommunityId(String steamId) {
+		if (!steamId.matches("^STEAM_[0-1]:[0-1]:[0-9]+$"))
 			return -1;
-		return 0;
+		String[] tmpId = steamId.substring(6).split(":");
+		return Long.valueOf(tmpId[1]) + Long.valueOf(tmpId[2]) * 2 + 76561197960265728L;
+	}
+
+	public static String generateCommunityURL(SteamID id) {
+		String url = "http://steamcommunity.com/profiles/"; //76561198000739785
+		url += SteamUtil.convertSteamIdToCommunityId(id.render());
+		return url;
+	}
+
+	public static String decodeJSString(String str) {
+		try {
+			return new JSONObject("{str:" + str + "}").getString("str");
+		} catch (JSONException e) {
+			return "error";
+		}
 	}
 }

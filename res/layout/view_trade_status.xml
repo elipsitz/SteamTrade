@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/color_trade_white"
-    android:paddingBottom="3dip"
-    android:paddingLeft="10dip"
-    android:paddingRight="0dip"
-    android:paddingTop="3dip" >
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/color_trade_white"
+              android:paddingBottom="3dip"
+              android:paddingLeft="10dip"
+              android:paddingRight="0dip"
+              android:paddingTop="3dip">
 
     <TextView
         android:id="@+id/trade_status_text"
@@ -16,11 +16,10 @@
         android:layout_weight="1"
         android:text="@string/trade_sent_request"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/color_trade_blacktext" />
+        android:textColor="@color/color_trade_blacktext"/>
 
     <ProgressBar
         android:id="@+id/trade_status_progress"
-        style="@style/Widget.Sherlock.Light.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="-10dip"
@@ -29,7 +28,7 @@
         android:layout_weight="0"
         android:indeterminate="true"
         android:scaleX="0.75"
-        android:scaleY="0.75" />
+        android:scaleY="0.75"/>
 
     <ImageButton
         android:id="@+id/trade_status_yes"
@@ -38,7 +37,7 @@
         android:layout_weight="0"
         android:contentDescription="@string/accept"
         android:src="@drawable/ic_light_accept"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <ImageButton
         android:id="@+id/trade_status_no"
@@ -47,6 +46,6 @@
         android:layout_weight="0"
         android:contentDescription="@string/cancel"
         android:src="@drawable/ic_light_cancel"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -10,17 +10,19 @@
     <string name="friends">Friends</string>
 
     <string-array name="app_sections">
-        <item>Home</item>
         <item>Me</item>
         <item>Friends</item>
         <item>Inventory</item>
-        <item>Crafting</item>
+        <item>Trade Offers</item>
+        <item> </item>
+        <item>Settings</item>
+        <item>About Ice</item>
         <item>Sign Out</item>
     </string-array>
 
     <string name="send_button">Send</string>
     <string name="chat_hint">Tap to chat</string>
-    <string name="app_crashed_toast">&quot;Uh oh! I've crashed, but a report has been sent to the developer to help fix the issue!&quot;</string>
+    <string name="app_crashed_toast">Ice Client has crashed, but a report has been sent to the developer to help fix the issue!</string>
     <string name="playing">Playing</string>
     <string name="cancel">Cancel</string>
     <string name="x_new_messages">%1$d new messages</string>
@@ -30,7 +32,7 @@
     <string name="change_display_name">Change Display Name</string>
     <string name="change_display_name_prompt">Please enter your new display name:</string>
     <string name="set_currently_playing_game">Set Currently Playing Game</string>
-    
+
     <string-array name="allowed_states">
         <item>Online</item>
         <item>Away</item>
@@ -41,10 +43,11 @@
     </string-array>
 
     <string name="change">Change</string>
+    <string name="baa">moo</string>
     <string name="dismiss">Dismiss</string>
     <string name="feature_not_implemented">Feature not implemented</string>
     <string name="schema_loaded">Loaded Schema</string>
     <string name="schema_load_failed">Error Loading Schema. Some features may not work.</string>
+    <string name="error_steamapi">Error accessing SteamAPI.</string>
     <string name="ok">OK</string>
-
 </resources>

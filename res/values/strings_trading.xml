@@ -9,6 +9,15 @@
     <string name="trade_result_timeout">%1$s did not respond in time.</string>
     <string name="trade_result_declined">%1$s declined to trade.</string>
     <string name="trade_result_unknown">%1$s was unable to trade for an unknown reason: %2$s</string>
+    <string name="trade_result_cancelled">Trade request cancelled.</string>
+    <string name="trade_result_targetcannotrade">%1$s is unable to trade. More information will be shown if they request to trade.</string>
+    <string name="trade_result_steamguard">SteamGuard must be enabled to trade.</string>
+    <string name="trade_result_steamguard_duration">SteamGuard must have been enabled for 15 days to trade.</string>
+    <string name="trade_result_steamguard_newdevice">Due to Valve restrictions, you cannot trade for 7 days on a new device.</string>
+    <string name="trade_result_password_reset">You have recently reset your password and cannot trade.</string>
+    <string name="trade_result_require_email">You must verify your email address to trade.</string>
+    <string name="trade_result_tradeban_target">%1$s has been tradebanned, and cannot trade.</string>
+    <string name="trade_result_tradeban_initiator">You have been tradebanned, and cannot trade.</string>
 
     <color name="color_trade_white">#A3A099</color>
     <color name="color_trade_blacktext">#282827</color>
@@ -31,5 +40,43 @@
     <string name="trade_completed">Trade Completed</string>
     <string name="trade_new_items">%1$d new items acquired</string>
     <string name="trade_cancel">Cancel</string>
+    <string name="trade_confirm_email">You and/or your partner may need to confirm this trade via email.</string>
+
+    <!-- offers -->
+    <string name="trade_offer">Trade Offer</string>
+    <string name="offer_trade">Offer Trade</string>
+    <string-array name="offer_tabs">
+        <item>Inventories</item>
+        <item>Offerings</item>
+        <item>Review</item>
+    </string-array>
+    <string name="offer_inventory_us">Your Inventory</string>
+    <string name="offer_inventory_them">Partner\'s Inventory</string>
+    <string name="offer_message">Message</string>
+    <string name="offer_accept">Accept Offer</string>
+    <string name="offer_decline">Decline Offer</string>
+    <string name="offer_counter">Make a Counteroffer</string>
+    <string name="offer_cancel">Cancel Offer</string>
+    <string name="offer_send">Send Offer</string>
+    <string name="offer_contents">Offered %1$d items for %2$d of your items.</string>
+    <string name="offer_no_message">[No message]</string>
+    <string name="offer_count">You have %1$d incoming offers.</string>
+    <string name="offer_error_loading">Error loading trade offers.</string>
+    <string name="offer_with">Offer with %1$s</string>
+    <string name="offer_from">Offer from %1$s</string>
+    <string name="offer_cancelled">Offer cancelled.</string>
+    <string name="offer_declined">Offer declined.</string>
+    <string name="offer_submitted">Offer submitted.</string>
+    <string name="offer_accepted">Offer accepted.</string>
+    <string name="offer_message_quote">Message:\n\"%1$s\"</string>
+    <string name="offer_declining">Declining offer…</string>
+    <string name="offer_accepting">Accepting offer…</string>
+    <string name="offer_submitting">Submitting offer…</string>
+    <string name="offer_loading">Loading offer…</string>
+    <string name="offer_send_message">Send a message with your offer</string>
+    <string name="offer_fromurl">Create offer from URL</string>
+    <string name="offer_create">Create Trade Offer</string>
+    <string name="offer_create_prompt">Please enter a sharable trade offer URL to create a trade offer.\n\nAlternatively, tap on a friend in your friends list and select \"Offer Trade\".</string>
+    <string name="offer_invalid_url">Invalid trade offer URL.</string>
 
 </resources>

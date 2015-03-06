@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright 2013 The Android Open Source Project
 
@@ -14,7 +15,7 @@
   limitations under the License.
 -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -25,10 +26,23 @@
     android:textSize="25sp"
     android:paddingTop="10dip"
     android:paddingBottom="10dip"
-    android:textColor="#fff" />
+    android:textColor="#fff" />-->
 
-<!--
-  android:background="?android:attr/activatedBackgroundIndicator"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
--->
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:id="@android:id/text1"
+          android:layout_width="match_parent"
+          android:layout_height="48dip"
+          android:gravity="center_vertical"
+          android:paddingLeft="12dp"
+          android:paddingRight="12dp"
+          android:paddingTop="8dp"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:text="Medium Text"
+    />
+
+    <!--
+      android:background="?android:attr/activatedBackgroundIndicator"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+    -->

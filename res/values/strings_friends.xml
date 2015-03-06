@@ -9,7 +9,11 @@
     <string name="friend_add_fail">Failed to add friend: %1$s</string>
     <string name="friend_add_success">Added friend.</string>
     <string name="friend_remove">Remove Friend</string>
-	<string name="friend_remove_message">Are you sure to want to remove \'%1$s\' from your friends list?</string>
-	<string name="friend_removed">Removed \'%1$s\'.</string>
-	<string name="friend_search">Search friends list</string>
+    <string name="friend_remove_message">Are you sure to want to remove \'%1$s\' from your friends list?</string>
+    <string name="friend_removed">Removed \'%1$s\'.</string>
+    <string name="friend_search">Search friends list</string>
+    <string name="friend_request_accept">Accepted Friend Request</string>
+    <string name="friend_request_ignore">Ignored Friend Request</string>
+    <string name="friend_view_steam">View on Steam</string>
+    <string name="friend_view_steamrep">View on SteamRep</string>
 </resources>

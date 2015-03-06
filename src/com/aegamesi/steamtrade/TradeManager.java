@@ -1,5 +1,6 @@
 package com.aegamesi.steamtrade;
 
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
@@ -11,8 +12,8 @@ import android.widget.Toast;
 
 import com.aegamesi.steamtrade.fragments.FragmentTrade;
 import com.aegamesi.steamtrade.steam.SteamService;
-import com.aegamesi.steamtrade.trade.Trade;
-import com.aegamesi.steamtrade.trade.UserTradeListener;
+import com.aegamesi.steamtrade.trade2.Trade;
+import com.aegamesi.steamtrade.trade2.UserTradeListener;
 import com.google.android.gms.analytics.HitBuilders;
 
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
@@ -23,7 +24,7 @@ import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class TradeManager implements OnClickListener {
 	public Trade currentTrade = null;
-	public UserTradeListener listener = null;
+	public UserTradeListener tradeListener = null;
 
 	public View tradeStatus = null;
 	public ImageButton yesButton;
@@ -59,8 +60,16 @@ public class TradeManager implements OnClickListener {
 		SteamID myID = SteamService.singleton.steamClient.getSteamId();
 		String sessionID = SteamService.singleton.sessionID;
 		String token = SteamService.singleton.token;
-		currentTrade = new Trade(myID, obj.getOtherClient(), sessionID, token, listener = new UserTradeListener());
-		currentTrade.start();
+
+		// XXX HORRIBLE
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
+		currentTrade = new Trade();
+		currentTrade.ourSteamId = myID.convertToLong();
+		currentTrade.otherSteamId = obj.getOtherClient().convertToLong();
+		currentTrade.sessionid = sessionID;
+		currentTrade.token = token;
+		currentTrade.beginTrade();
 
 		pendingTradeRequest = null;
 		updateTradeStatus();
@@ -92,7 +101,7 @@ public class TradeManager implements OnClickListener {
 				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_alreadytrading), name), Toast.LENGTH_LONG).show();
 				pendingTradeRequest = null;
 				break;
-			case Timeout:
+			case NoResponse:
 				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_timeout), name), Toast.LENGTH_LONG).show();
 				pendingTradeRequest = null;
 				break;
@@ -101,7 +110,39 @@ public class TradeManager implements OnClickListener {
 				pendingTradeRequest = null;
 				break;
 			case Cancel:
-				Toast.makeText(activity(), "Cancelled", Toast.LENGTH_LONG).show();
+				Toast.makeText(activity(), activity().getString(R.string.trade_result_cancelled), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case TargetAccountCannotTrade:
+				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_targetcannotrade), name), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case InitiatorSteamGuardDuration:
+				Toast.makeText(activity(), activity().getString(R.string.trade_result_steamguard_duration), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case InitiatorNewDeviceCooldown:
+				Toast.makeText(activity(), activity().getString(R.string.trade_result_steamguard_newdevice), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case InitiatorNeedsSteamGuard:
+				Toast.makeText(activity(), activity().getString(R.string.trade_result_steamguard), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case InitiatorPasswordResetProbation:
+				Toast.makeText(activity(), activity().getString(R.string.trade_result_password_reset), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case InitiatorNeedsVerifiedEmail:
+				Toast.makeText(activity(), activity().getString(R.string.trade_result_require_email), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case TradeBannedInitiator:
+				Toast.makeText(activity(), activity().getString(R.string.trade_result_tradeban_initiator), Toast.LENGTH_LONG).show();
+				pendingTradeRequest = null;
+				break;
+			case TradeBannedTarget:
+				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_tradeban_target), name), Toast.LENGTH_LONG).show();
 				pendingTradeRequest = null;
 				break;
 			default:
@@ -115,17 +156,7 @@ public class TradeManager implements OnClickListener {
 
 	public void cancelTrade() {
 		if (currentTrade != null) {
-			if (!currentTrade.die) {
-				currentTrade.toRun.add(new Runnable() {
-					@Override
-					public void run() {
-						if (currentTrade == null)
-							return;
-						currentTrade.cancelTrade();
-						currentTrade = null;
-					}
-				});
-			}
+			currentTrade.cancelTrade();
 		}
 	}
 
@@ -172,14 +203,12 @@ public class TradeManager implements OnClickListener {
 				statusText.setText(String.format(activity().getString(R.string.trade_got_request), name)); // also add YES/NO button
 				yesButton.setVisibility(View.VISIBLE);
 				noButton.setVisibility(View.VISIBLE);
-				if (SteamService.singleton.schema == null)
-					yesButton.setEnabled(false);
 			}
 		}
 		if (currentTrade != null) {
-			String name = activity().steamFriends.getFriendPersonaName(currentTrade.otherID);
+			String name = activity().steamFriends.getFriendPersonaName(new SteamID(currentTrade.otherSteamId));
 			String text = String.format(activity().getString(R.string.trade_currently_trading), name);
-			if (currentTrade.initiated)
+			if (currentTrade != null && currentTrade.listener != null && currentTrade.listener.loaded)
 				text += "\n" + activity().getString(R.string.trade_tap_to_view);
 			else
 				progress.setVisibility(View.VISIBLE);
@@ -189,9 +218,11 @@ public class TradeManager implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		if (v == tradeStatus && v.getVisibility() == View.VISIBLE && currentTrade != null && currentTrade.initiated) {
-			Fragment fragment = new FragmentTrade();
-			activity().browseToFragment(fragment, false);
+		if (v == tradeStatus && v.getVisibility() == View.VISIBLE) {
+			if (currentTrade != null && currentTrade.listener != null && currentTrade.listener.loaded) {
+				Fragment fragment = new FragmentTrade();
+				activity().browseToFragment(fragment, false);
+			}
 		}
 		if (v == yesButton) {
 			if (pendingTradeRequest != null) {

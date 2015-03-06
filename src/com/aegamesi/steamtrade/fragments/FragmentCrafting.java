@@ -1,46 +1,21 @@
 package com.aegamesi.steamtrade.fragments;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.steam.SteamInventory;
-import com.aegamesi.steamtrade.steam.SteamInventory.SteamInventoryItem;
-import com.aegamesi.steamtrade.steam.SteamService;
-import com.aegamesi.steamtrade.steam.SteamUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
-import uk.co.thomasc.steamkit.base.gc.tf2.ECraftingRecipe;
-import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed;
-import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed;
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
-import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.callbacks.CraftResponseCallback;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentCrafting extends FragmentBase implements OnClickListener, OnItemClickListener {
-	public View[] views;
+	@Override
+	public void onClick(View view) {
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+	}
+	/*	public View[] views;
 	public SteamInventory inventory = null;
 	public List<Long> selectedItems = new ArrayList<Long>();
 	public ActionBar.TabListener tabListener;
@@ -112,6 +87,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		}).start();
 	}
 
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -127,6 +103,15 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		ActionBar actionBar = activity().getSupportActionBar();
 		actionBar.removeAllTabs();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final ClientMsgProtobuf<CMsgClientGamesPlayed.Builder> playGame = new ClientMsgProtobuf<CMsgClientGamesPlayed.Builder>(CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
+				playGame.getBody().addGamesPlayed(GamePlayed.newBuilder().setGameId(0).build());
+				SteamService.singleton.steamClient.send(playGame);
+			}
+		}).start();
 	}
 
 	public void updateTab(int num) {
@@ -283,7 +268,7 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			if (v == null)
-				v = activity().getLayoutInflater().inflate(R.layout.trade_tab_inventory_item, null);
+				v = activity().getLayoutInflater().inflate(R.layout.inventory_trade_item, null);
 			SteamInventoryItem item = (SteamInventoryItem) getItem(position);
 
 			CheckBox itemCheckbox = (CheckBox) v.findViewById(R.id.trade_item_checkbox);
@@ -431,5 +416,5 @@ public class FragmentCrafting extends FragmentBase implements OnClickListener, O
 				}
 			}
 		}
-	}
+	}*/
 }

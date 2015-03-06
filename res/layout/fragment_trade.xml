@@ -1,26 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trade_button_inventory"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trade_button_offerings"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trade_button_chat"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <FrameLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:id="@+id/d">
 
     <include
         android:id="@+id/trade_tab_chat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/trade_tab_chat"
-        android:visibility="gone" />
+        android:visibility="visible"/>
 
     <include
         android:id="@+id/trade_tab_inventory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/trade_tab_inventory"
-        android:visibility="gone" />
+        android:visibility="visible"/>
 
     <include
         android:id="@+id/trade_tab_offerings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/trade_tab_offerings"
-        android:visibility="gone" />
-</FrameLayout>
+        android:visibility="visible"/>
+
+    </FrameLayout>
+
+</LinearLayout>

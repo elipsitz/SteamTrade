@@ -1,10 +1,12 @@
 package com.aegamesi.steamtrade.steam;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -109,8 +111,14 @@ public class SteamChatHandler {
 		builder.setContentTitle(title).setContentText(body);
 		// builder.setAutoCancel(true);
 		// lights, sound, vibrate
-		builder.setLights(0xFFAEDEDC, 750, 750);
-		builder.setVibrate(new long[]{100, 300, 150, 300});
+		builder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+		builder.setLights(0xFFAEDEDC, 1250, 1000);
+
+		// check if the preferences say okay
+		if (PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).getBoolean("pref_vibrate", true))
+			builder.setVibrate(new long[]{0, 400, 100, 300});
+		else
+			builder.setVibrate(new long[]{0});
 		//builder.setStyle(new NotificationCompat.InboxStyle());
 		builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 

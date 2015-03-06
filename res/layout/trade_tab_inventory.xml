@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/trade_tab_inventory_select"
+        android:layout_gravity="center_horizontal"/>
 
     <EditText
         android:id="@+id/inventory_search"
@@ -10,15 +16,30 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/search_inventory"
-        android:inputType="textNoSuggestions|textVisiblePassword" >
+        android:inputType="textNoSuggestions|textVisiblePassword">
 
-        <requestFocus />
+        <requestFocus/>
     </EditText>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/trade_tab_inventory_loading"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/trade_tab_inventory_loading_circle"
+            android:layout_gravity="center_horizontal"
+            android:indeterminate="true"
+            android:visibility="visible"/>
+    </FrameLayout>
 
     <ListView
         android:id="@+id/trade_tab_inventory_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
     </ListView>
 
 </LinearLayout>

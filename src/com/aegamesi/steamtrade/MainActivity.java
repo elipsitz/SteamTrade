@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,13 +23,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.aegamesi.lib.AndroidUtil;
 import com.aegamesi.steamtrade.fragments.FragmentAbout;
 import com.aegamesi.steamtrade.fragments.FragmentChat;
 import com.aegamesi.steamtrade.fragments.FragmentCrafting;
 import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.fragments.FragmentInventory;
 import com.aegamesi.steamtrade.fragments.FragmentMe;
+import com.aegamesi.steamtrade.fragments.FragmentOffersList;
 import com.aegamesi.steamtrade.fragments.FragmentProfile;
+import com.aegamesi.steamtrade.fragments.FragmentSettings;
 import com.aegamesi.steamtrade.steam.SteamMessageHandler;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
@@ -38,6 +42,8 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import org.acra.ACRA;
+
+import java.util.Date;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
@@ -56,6 +62,7 @@ import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class MainActivity extends ActionBarActivity implements SteamMessageHandler, ListView.OnItemClickListener {
 	public static MainActivity instance = null;
+	public boolean doNotReconnect = false;
 
 	public SteamFriends steamFriends;
 	public SteamTrading steamTrade;
@@ -153,7 +160,9 @@ public class MainActivity extends ActionBarActivity implements SteamMessageHandl
 			@Override
 			public void call(DisconnectedCallback obj) {
 				// go back to the login screen
+				boolean pref_reconnect = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).getBoolean("pref_reconnect", true);
 				Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+				intent.putExtra("attemptReconnect", pref_reconnect && !doNotReconnect); // only reconnect if not manually signing out
 				MainActivity.this.startActivity(intent);
 				Toast.makeText(MainActivity.this, R.string.error_disconnected, Toast.LENGTH_LONG).show();
 				finish();
@@ -215,7 +224,7 @@ public class MainActivity extends ActionBarActivity implements SteamMessageHandl
 			@Override
 			public void call(CraftResponseCallback obj) {
 				FragmentCrafting craftFragment = getFragmentByClass(FragmentCrafting.class);
-				craftFragment.craftResponse(obj);
+				//craftFragment.craftResponse(obj); // TODO reenable
 				//tabMainCraft.setEnabled(false);
 			}
 		});
@@ -296,18 +305,25 @@ public class MainActivity extends ActionBarActivity implements SteamMessageHandl
 			case 2: // inventory
 				browseToFragment(new FragmentInventory(), false);
 				break;
-			case 3: // crafting
-				browseToFragment(new FragmentCrafting(), false);
+			case 3: // trade offers
+				browseToFragment(new FragmentOffersList(), false);
+				//browseToFragment(new FragmentCrafting(), false);
 				//Toast.makeText(this, R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
 				break;
-			case 4: // about
+			case 4: // spacer
+				return; // *not* break
+			case 5: // preferences
+				browseToFragment(new FragmentSettings(), false);
+				break;
+			case 6: // about
 				browseToFragment(new FragmentAbout(), false);
 				break;
-			case 5: // sign out
+			case 7: // sign out
+				doNotReconnect = true;
 				SteamUtil.disconnectWithDialog(this, getString(R.string.signingout));
 				return; // ******
 		}
-		getSupportActionBar().setTitle(((ArrayAdapter<?>) drawerList.getAdapter()).getItem(position).toString());
+		getSupportActionBar().setTitle((drawerList.getAdapter()).getItem(position).toString());
 	}
 
 	public Tracker tracker() {
@@ -327,8 +343,16 @@ public class MainActivity extends ActionBarActivity implements SteamMessageHandl
 		public void onActivityCreated(Bundle bundle) {
 			super.onActivityCreated(bundle);
 			mAdView = (AdView) getView().findViewById(R.id.adView);
-			AdRequest adRequest = new AdRequest.Builder().build();
-			mAdView.loadAd(adRequest);
+
+			Date installTime = AndroidUtil.getInstallTime(getActivity().getPackageManager(), "com.aegamesi.steamtrade");
+			long time = (new Date()).getTime() - installTime.getTime();
+			if (time < 1000 * 60 * 60 * 24) {
+				// 1 day of no ads
+				mAdView.setVisibility(View.GONE);
+			} else {
+				AdRequest adRequest = new AdRequest.Builder().build();
+				mAdView.loadAd(adRequest);
+			}
 		}
 
 		@Override

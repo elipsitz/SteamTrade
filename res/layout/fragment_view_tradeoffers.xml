@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/offers_status"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dip"
+        android:layout_marginBottom="10dip"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <View
+        android:background="@color/accent_material_dark"
+        android:layout_width="match_parent"
+        android:layout_height="1.5dip">
+    </View>
+
+    <LinearLayout
+        android:id="@+id/offers_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|center_vertical"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/offers_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:divider="@color/accent_material_dark"
+        android:dividerHeight="1.5dip"
+        android:headerDividersEnabled="false"
+        android:footerDividersEnabled="false">
+    </ListView>
+
+</LinearLayout>

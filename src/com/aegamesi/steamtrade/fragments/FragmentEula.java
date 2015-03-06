@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.aegamesi.steamtrade.R;
 
 public class FragmentEula extends DialogFragment {
-	private String EULA_PREFIX = "eula___aab__";
+	private String EULA_PREFIX = "eula___ae-ice__";
 
 	private PackageInfo getPackageInfo(Context context) {
 		PackageInfo pi = null;

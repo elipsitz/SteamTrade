@@ -1,18 +1,18 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".LoginActivity" >
+       xmlns:tools="http://schemas.android.com/tools"
+       tools:context=".LoginActivity">
 
     <!-- Login form -->
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             style="@style/LoginFormContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/logo"
@@ -20,7 +20,7 @@
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:contentDescription="@string/description_logo"
-                android:src="@drawable/logo" />
+                android:src="@drawable/logo"/>
 
             <EditText
                 android:id="@+id/username"
@@ -30,7 +30,7 @@
                 android:hint="@string/prompt_username"
                 android:inputType="textEmailAddress|textNoSuggestions"
                 android:maxLines="1"
-                android:singleLine="true" >
+                android:singleLine="true">
             </EditText>
 
             <EditText
@@ -44,7 +44,7 @@
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"/>
 
             <EditText
                 android:id="@+id/steamguard"
@@ -56,14 +56,14 @@
                 android:imeOptions="actionUnspecified"
                 android:inputType="textCapCharacters|textNoSuggestions"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"/>
 
             <CheckBox
                 android:id="@+id/remember"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="@string/prompt_remember" />
+                android:text="@string/prompt_remember"/>
         </LinearLayout>
     </ScrollView>
 
@@ -71,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/login_warning"
@@ -81,7 +81,8 @@
             android:paddingBottom="3dip"
             android:paddingLeft="10dip"
             android:paddingRight="0dip"
-            android:paddingTop="3dip" android:visibility="gone">
+            android:paddingTop="3dip"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/login_warning_text"
@@ -92,7 +93,7 @@
                 android:gravity="center"
                 android:text="@string/feature_not_implemented"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/color_trade_blacktext" />
+                android:textColor="@color/color_trade_blacktext"/>
         </LinearLayout>
 
         <Button
@@ -101,7 +102,8 @@
             android:layout_height="wrap_content"
             android:paddingLeft="32dp"
             android:paddingRight="32dp"
-            android:text="@string/action_sign_in" />
+            android:text="@string/action_sign_in"
+            />
     </LinearLayout>
 
 </merge>

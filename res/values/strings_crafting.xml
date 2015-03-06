@@ -6,17 +6,17 @@
         <item>Inventory</item>
         <item>Ingredients</item>
     </string-array>
-    
+
     <string name="craft_error">Error Crafting</string>
     <string name="craft_completed">Crafting Completed</string>
     <string name="craft_new_items">%1$d new items crafted</string>
     <string name="craft_cancel">Cancel</string>
-	<string name="craft_result_nontradable">Resulting items will not be tradable.</string>
-	<string name="craft_ingredients">Ingredients</string>
-	<string name="craft_clear">Clear</string>
-	<string name="craft_craft">Craft</string>
-	<string name="craft_cleared">Cleared ingredients list.</string>
-	<string name="craft_crafting">Crafting…</string>
-	<string name="craft_unsuccessful">Crafting Unsuccessful</string>
-	<string name="craft_continue_crafting">Continue Crafting</string>
+    <string name="craft_result_nontradable">Resulting items will not be tradable.</string>
+    <string name="craft_ingredients">Ingredients</string>
+    <string name="craft_clear">Clear</string>
+    <string name="craft_craft">Craft</string>
+    <string name="craft_cleared">Cleared ingredients list.</string>
+    <string name="craft_crafting">Crafting…</string>
+    <string name="craft_unsuccessful">Crafting Unsuccessful</string>
+    <string name="craft_continue_crafting">Continue Crafting</string>
 </resources>

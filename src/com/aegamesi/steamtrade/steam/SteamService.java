@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -53,7 +54,6 @@ public class SteamService extends Service {
 
 	public SteamClient steamClient = null;
 	public Bundle extras = null;
-	public Schema schema = null;
 
 	public TradeManager tradeManager = null;
 	public SteamChatHandler chat = null;
@@ -61,7 +61,9 @@ public class SteamService extends Service {
 
 	public String sessionID = null;
 	public String token = null;
+	public String tokenSecure = null;
 	public String webapiKey = null;
+	public String sentryHash = null;
 
 	private Handler handler;
 	Timer myTimer;
@@ -116,9 +118,6 @@ public class SteamService extends Service {
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		builder.setContentIntent(contentIntent);
 		startForeground(49716, builder.build());
-
-		if (schema == null)
-			new SteamSchemaDownloader(this).execute(SteamUtil.apikey);
 	}
 
 	public void abandonLogon() {
@@ -180,20 +179,27 @@ public class SteamService extends Service {
 						details.authCode(extras.getString("steamguard"));
 
 					// sentry files
-					File file = new File(getFilesDir(), "sentry");
-					if (!file.exists())
-						file.mkdir();
-					file = new File(file, extras.getString("username") + ".sentry");
-					if (file.exists()) {
-						try {
-							RandomAccessFile raf = new RandomAccessFile(file, "r");
-							byte[] data = new byte[(int) raf.length()];
-							raf.readFully(data);
-							raf.close();
-							details.sentryFileHash = SteamUtil.calculateSHA1(data);
-							details.authCode = "";
-						} catch (IOException e) {
-							e.printStackTrace();
+					String prefSentry = PreferenceManager.getDefaultSharedPreferences(SteamService.this).getString("pref_machineauth", "");
+					if (prefSentry != null && prefSentry.trim().length() > 0) {
+						sentryHash = prefSentry.trim();
+					} else {
+						File file = new File(getFilesDir(), "sentry");
+						if (!file.exists())
+							file.mkdir();
+						file = new File(file, extras.getString("username") + ".sentry");
+						if (file.exists()) {
+							try {
+								RandomAccessFile raf = new RandomAccessFile(file, "r");
+								byte[] data = new byte[(int) raf.length()];
+								raf.readFully(data);
+								raf.close();
+								details.sentryFileHash = SteamUtil.calculateSHA1(data);
+								details.authCode = "";
+
+								sentryHash = SteamUtil.bytesToHex(details.sentryFileHash);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					steamClient.getHandler(SteamUser.class).logOn(details, com.aegamesi.steamtrade.Installation.id());
@@ -240,6 +246,8 @@ public class SteamService extends Service {
 					auth.oneTimePassword = authCallback.getOneTimePassword();
 					auth.sentryFileHash = SteamUtil.calculateSHA1(authCallback.getData());
 
+					sentryHash = SteamUtil.bytesToHex(auth.sentryFileHash);
+
 					steamClient.getHandler(SteamUser.class).sendMachineAuthResponse(auth);
 				}
 			}
@@ -258,7 +266,7 @@ public class SteamService extends Service {
 
 	public boolean authenticate(LoginKeyCallback callback) {
 		sessionID = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT);
-		final WebAPI userAuth = new WebAPI("ISteamUserAuth", SteamUtil.apikey);
+		final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);//SteamUtil.apikey); // this shouldn't require an api key
 		// generate an AES session key
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
 		// rsa encrypt it with the public key for the universe we're on
@@ -278,10 +286,11 @@ public class SteamService extends Service {
 				while (true) {
 					try {
 						Log.i("Steam", "Sending auth request...");
-						KeyValue authResult = userAuth.authenticateUser(String.valueOf(steamClient.getSteamId().convertToLong()), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST");
+						KeyValue authResult = userAuth.authenticateUser(String.valueOf(steamClient.getSteamId().convertToLong()), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST", "true");
 						token = authResult.get("token").asString();
+						tokenSecure = authResult.get("tokensecure").asString();
 
-						Log.i("Steam", "Successfully authenticated: " + token);
+						Log.i("Steam", "Successfully authenticated: " + token + " secure: " + tokenSecure);
 						break;
 					} catch (final Exception e) {
 						if (--tries == 0) {

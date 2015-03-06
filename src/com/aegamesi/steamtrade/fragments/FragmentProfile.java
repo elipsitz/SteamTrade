@@ -2,6 +2,8 @@ package com.aegamesi.steamtrade.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,7 +23,7 @@ import java.util.Locale;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
-public class FragmentProfile extends FragmentBase {
+public class FragmentProfile extends FragmentBase implements View.OnClickListener {
 	public FriendListAdapter adapter;
 
 	public SteamID id;
@@ -35,8 +37,11 @@ public class FragmentProfile extends FragmentBase {
 	public TextView statusView;
 	public Button chatButton;
 	public Button tradeButton;
-	public Button backpackButton;
+	public Button tradeOfferButton;
+	public Button inventoryButton;
 	public Button removeFriendButton;
+	public Button viewSteamButton;
+	public Button viewSteamRepButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,67 +63,88 @@ public class FragmentProfile extends FragmentBase {
 		statusView = (TextView) view.findViewById(R.id.profile_status);
 		chatButton = (Button) view.findViewById(R.id.profile_button_chat);
 		tradeButton = (Button) view.findViewById(R.id.profile_button_trade);
-		backpackButton = (Button) view.findViewById(R.id.profile_button_backpack);
+		tradeOfferButton = (Button) view.findViewById(R.id.profile_button_tradeoffer);
+		inventoryButton = (Button) view.findViewById(R.id.profile_button_inventory);
 		removeFriendButton = (Button) view.findViewById(R.id.profile_button_remove_friend);
+		viewSteamButton = (Button) view.findViewById(R.id.profile_button_viewsteam);
+		viewSteamRepButton = (Button) view.findViewById(R.id.profile_button_viewsteamrep);
+
+		chatButton.setOnClickListener(this);
+		tradeButton.setOnClickListener(this);
+		tradeOfferButton.setOnClickListener(this);
+		inventoryButton.setOnClickListener(this);
+		removeFriendButton.setOnClickListener(this);
+		viewSteamButton.setOnClickListener(this);
+		viewSteamRepButton.setOnClickListener(this);
 
 		nameView.setSelected(true);
 		statusView.setSelected(true);
-		if (SteamService.singleton.schema == null)
-			tradeButton.setEnabled(false);
-
-		removeFriendButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(activity());
-				builder.setMessage(String.format(getString(R.string.friend_remove_message), activity().steamFriends.getFriendPersonaName(id)));
-				builder.setTitle(R.string.friend_remove);
-				builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						activity().steamFriends.removeFriend(FragmentProfile.this.id);
-						Toast.makeText(activity(), String.format(getString(R.string.friend_removed), activity().steamFriends.getFriendPersonaName(FragmentProfile.this.id)), Toast.LENGTH_LONG).show();
-						activity().browseToFragment(new FragmentFriends(), false);
-					}
-				});
-				builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-					}
-				});
-				builder.create().show();
-			}
-		});
-		chatButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				Fragment fragment = new FragmentChat();
-				Bundle bundle = new Bundle();
-				bundle.putLong("steamId", id.convertToLong());
-				bundle.putBoolean("fromProfile", true);
-				fragment.setArguments(bundle);
-				activity().browseToFragment(fragment, true);
-			}
-		});
-		tradeButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				SteamService.singleton.tradeManager.trade(id);
-			}
-		});
-		backpackButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Fragment fragment = new FragmentInventory();
-				Bundle bundle = new Bundle();
-				bundle.putLong("steamId", id.convertToLong());
-				fragment.setArguments(bundle);
-				activity().browseToFragment(fragment, true);
-			}
-		});
 
 		updateView();
 		return view;
 	}
 
+	@Override
+	public void onClick(View view) {
+		if (view == removeFriendButton) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(activity());
+			builder.setMessage(String.format(getString(R.string.friend_remove_message), activity().steamFriends.getFriendPersonaName(id)));
+			builder.setTitle(R.string.friend_remove);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					activity().steamFriends.removeFriend(FragmentProfile.this.id);
+					Toast.makeText(activity(), String.format(getString(R.string.friend_removed), activity().steamFriends.getFriendPersonaName(FragmentProfile.this.id)), Toast.LENGTH_LONG).show();
+					activity().browseToFragment(new FragmentFriends(), false);
+				}
+			});
+			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+				}
+			});
+			builder.create().show();
+		}
+		if (view == chatButton) {
+			Fragment fragment = new FragmentChat();
+			Bundle bundle = new Bundle();
+			bundle.putLong("steamId", id.convertToLong());
+			bundle.putBoolean("fromProfile", true);
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
+		}
+		if (view == tradeButton) {
+			SteamService.singleton.tradeManager.trade(id);
+		}
+		if (view == tradeOfferButton) {
+			Fragment fragment = new FragmentOffer();
+			Bundle bundle = new Bundle();
+			bundle.putBoolean("from_existing", false);
+			bundle.putLong("user_id", id.getAccountID()); // getAccountID *NOT* convertToLong
+			bundle.putString("token", null);
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
+		}
+		if (view == inventoryButton) {
+			Fragment fragment = new FragmentInventory();
+			Bundle bundle = new Bundle();
+			bundle.putLong("steamId", id.convertToLong());
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
+		}
+		if (view == viewSteamButton) {
+			Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(SteamUtil.generateCommunityURL(id)));
+			startActivity(browse);
+		}
+		if (view == viewSteamRepButton) {
+			String steamRepUrl = "http://steamrep.com/profiles/" + id.convertToLong() + "/";
+			Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(steamRepUrl));
+			startActivity(browse);
+		}
+	}
+
 	public void updateView() {
+		if(activity() == null || activity().steamFriends == null)
+			return;
+
 		state = activity().steamFriends.getFriendPersonaState(id);
 		name = activity().steamFriends.getFriendPersonaName(id);
 		game = activity().steamFriends.getFriendGamePlayedName(id);

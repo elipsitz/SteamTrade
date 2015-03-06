@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
 
     <com.loopj.android.image.SmartImageView
         android:id="@+id/friend_avatar_left"
@@ -12,7 +12,7 @@
         android:layout_margin="2dip"
         android:contentDescription="@string/friend_avatar"
         android:padding="2dip"
-        android:src="@drawable/default_avatar" />
+        android:src="@drawable/default_avatar"/>
 
     <TextView
         android:id="@+id/chat_message"
@@ -24,7 +24,8 @@
         android:paddingLeft="5dip"
         android:paddingRight="5dip"
         android:text="Chat Message"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:autoLink="web"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <com.loopj.android.image.SmartImageView
         android:id="@+id/friend_avatar_right"
@@ -34,6 +35,6 @@
         android:layout_margin="2dip"
         android:contentDescription="@string/friend_avatar"
         android:padding="2dip"
-        android:src="@drawable/default_avatar" />
+        android:src="@drawable/default_avatar"/>
 
 </LinearLayout>

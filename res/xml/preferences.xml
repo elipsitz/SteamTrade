@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="pref_vibrate"
+        android:title="@string/pref_vibrate"
+        android:summary="@string/pref_vibrate_summ"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="pref_reconnect"
+        android:title="@string/pref_reconnect"
+        android:summary="@string/pref_reconnect_summ"
+        android:defaultValue="true" />
+
+    <PreferenceScreen
+            android:title="@string/pref_advanced"
+        android:summary="@string/pref_advanced_summ">
+
+        <EditTextPreference
+            android:key="pref_machineauth"
+            android:title="@string/pref_machineauth"
+            android:defaultValue=""
+            android:dialogTitle="@string/pref_machineauth_prompt" />
+    </PreferenceScreen>
+</PreferenceScreen>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dip"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray"/>
 
     <TextView
         style="?android:attr/listSeparatorTextViewStyle"
@@ -15,26 +15,26 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/trade_your_offerings"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <ListView
         android:id="@+id/trade_offer_mylist"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
     </ListView>
 
     <CheckBox
         android:id="@+id/trade_offer_myready"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/trade_ready" />
+        android:text="@string/trade_ready"/>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dip"
         android:layout_marginTop="0dip"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray"/>
 
     <TextView
         style="?android:attr/listSeparatorTextViewStyle"
@@ -43,13 +43,13 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/trade_their_offerings"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <ListView
         android:id="@+id/trade_offer_otherlist"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
     </ListView>
 
     <CheckBox
@@ -57,24 +57,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="Ready" />
+        android:text="Ready"/>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dip"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/trade_offer_cancel"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="@string/trade_cancel" />
+            android:text="@string/trade_cancel"/>
 
         <Button
             android:id="@+id/trade_offer_accept"
@@ -82,17 +81,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:enabled="false"
-            android:text="@string/trade_accept" />
+            android:text="@string/trade_accept"/>
 
         <ProgressBar
             android:id="@+id/trade_status_progress"
-            style="@style/Widget.Sherlock.Light.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:indeterminate="true"
             android:scaleX="0.75"
-            android:scaleY="0.75" android:visibility="gone"/>
+            android:scaleY="0.75"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </LinearLayout>

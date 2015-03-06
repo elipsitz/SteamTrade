@@ -13,19 +13,20 @@ import com.loopj.android.image.SmartImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EFriendRelationship;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FriendListAdapter extends BaseExpandableListAdapter {
 	public FragmentFriends fragment;
-	public Map<FriendListCategory, List<FriendListItem>> items = new HashMap<FriendListCategory, List<FriendListItem>>();
+	public Map<FriendListCategory, List<FriendListItem>> friendsList = new LinkedHashMap<FriendListCategory, List<FriendListItem>>();
 	public List<FriendListCategory> categories = new ArrayList<FriendListCategory>();
 	private SteamFriends steamFriends;
 
@@ -36,11 +37,19 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 	public FriendListAdapter(FragmentFriends fragment) {
 		this.fragment = fragment;
 		steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
+
+		// sort the categories in order
+		categories.add(FriendListCategory.FRIENDREQUEST);
+		categories.add(FriendListCategory.RECENTCHAT);
+		categories.add(FriendListCategory.INGAME);
+		categories.add(FriendListCategory.ONLINE);
+		categories.add(FriendListCategory.OFFLINE);
+		categories.add(FriendListCategory.BLOCKED);
 	}
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return items.get(categories.get(groupPosition)).get(childPosition);
+		return friendsList.get(categories.get(groupPosition)).get(childPosition);
 	}
 
 	@Override
@@ -50,7 +59,7 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		return items.get(categories.get(groupPosition)).size();
+		return friendsList.get(categories.get(groupPosition)).size();
 	}
 
 	@Override
@@ -75,49 +84,39 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 	}
 
 	private void redoList() {
-		items.clear();
-		categories.clear();
+		friendsList.clear();
 
-		ArrayList<FriendListItem> tempitems = new ArrayList<FriendListItem>();
-		synchronized (list) {
-			for (SteamID id : list)
-				if (!recentChats.contains(id))
-					tempitems.add(new FriendListItem(id));
+		// first off, recent chats
+		if (recentChats.size() > 0) {
+			List<FriendListItem> recentChatList = new ArrayList<FriendListItem>();
+			for (SteamID id : recentChats)
+				if (steamFriends.getFriendRelationship(id) != EFriendRelationship.None)
+					recentChatList.add(new FriendListItem(id));
+			friendsList.put(FriendListCategory.RECENTCHAT, recentChatList);
 		}
-		Collections.sort(tempitems, new Comparator<FriendListItem>() {
-			@Override
-			public int compare(FriendListItem lhs, FriendListItem rhs) {
-				if (lhs.category == rhs.category)
-					return lhs.name.toLowerCase(Locale.US).compareTo(rhs.name.toLowerCase(Locale.US));
-				return lhs.category.compareTo(rhs.category);
-			}
-		});
-
-		// do recent chats
-		FriendListCategory lastCategory = FriendListCategory.RECENTCHAT;
-		ArrayList<FriendListItem> categoryChildren = new ArrayList<FriendListItem>();
-		if (recentChats.size() > 0)
-			for (SteamID recent : recentChats)
-				categoryChildren.add(new FriendListItem(recent));
 
 		boolean doFilter = filterString != null && filterString.trim().length() != 0;
-		for (FriendListItem item : tempitems) {
-			if (doFilter && !item.name.toLowerCase(Locale.ENGLISH).contains(filterString))
+		for (SteamID id : list) {
+			FriendListItem item = new FriendListItem(id);
+			if (item.category == null || recentChats.contains(id))
 				continue;
-			if (lastCategory != item.category) {
-				if (categoryChildren != null && categoryChildren.size() > 0) {
-					categories.add(lastCategory);
-					items.put(lastCategory, categoryChildren);
-				}
-				categoryChildren = new ArrayList<FriendListItem>();
-			}
-			lastCategory = item.category;
-			categoryChildren.add(item);
+			if (doFilter && !item.name.toLowerCase(Locale.getDefault()).contains(filterString))
+				continue;
+
+			if (!friendsList.containsKey(item.category))
+				friendsList.put(item.category, new ArrayList<FriendListItem>());
+			friendsList.get(item.category).add(item);
 		}
-		// now do the last category
-		if (categoryChildren != null && categoryChildren.size() > 0) {
-			categories.add(lastCategory);
-			items.put(lastCategory, categoryChildren);
+		// now sort
+		{
+			Iterator<FriendListCategory> i = categories.iterator();
+			while (i.hasNext()) {
+				FriendListCategory category = i.next();
+				if (friendsList.containsKey(category))
+					Collections.sort(friendsList.get(category));
+				else
+					friendsList.put(category, new ArrayList<FriendListItem>());
+			}
 		}
 
 		this.notifyDataSetChanged();
@@ -135,12 +134,30 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 			TextView name = (TextView) v.findViewById(R.id.friend_name);
 			TextView status = (TextView) v.findViewById(R.id.friend_status);
 			ImageButton chatButton = (ImageButton) v.findViewById(R.id.friend_chat_button);
+			ImageButton acceptButton = (ImageButton) v.findViewById(R.id.friend_request_accept);
+			ImageButton rejectButton = (ImageButton) v.findViewById(R.id.friend_request_reject);
 
 			name.setText(p.name);
 			if (p.game != null && p.game.length() > 0)
 				status.setText("Playing " + p.game);
+			else if (p.category == FriendListCategory.BLOCKED)
+				status.setText("Blocked");
+
+			else if (p.category == FriendListCategory.FRIENDREQUEST)
+				status.setText("Friend Request");
 			else
 				status.setText(p.state.toString());
+
+			// friend request buttons
+			if (p.category == FriendListCategory.FRIENDREQUEST) {
+				acceptButton.setVisibility(View.VISIBLE);
+				rejectButton.setVisibility(View.VISIBLE);
+				chatButton.setVisibility(View.GONE);
+			} else {
+				chatButton.setVisibility(View.VISIBLE);
+				acceptButton.setVisibility(View.GONE);
+				rejectButton.setVisibility(View.GONE);
+			}
 
 			if (p.game != null && p.game.length() > 0) {
 				// 8BC53F (AED04E ?) game
@@ -167,6 +184,12 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 			chatButton.setTag(p.steamid);
 			chatButton.setOnClickListener(fragment);
 			chatButton.setFocusable(false);
+			acceptButton.setTag(p.steamid);
+			acceptButton.setOnClickListener(fragment);
+			acceptButton.setFocusable(false);
+			rejectButton.setTag(p.steamid);
+			rejectButton.setOnClickListener(fragment);
+			rejectButton.setFocusable(false);
 
 			avatar.setImageResource(R.drawable.default_avatar);
 			if (p.avatar_url != null)
@@ -194,9 +217,10 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 		return true;
 	}
 
-	public class FriendListItem {
+	public class FriendListItem implements Comparable<FriendListItem> {
 		public FriendListCategory category;
 		public EPersonaState state = null;
+		public EFriendRelationship relationship = null;
 		public SteamID steamid = null;
 		public String name = null;
 		public String game = null;
@@ -204,29 +228,44 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 
 		public FriendListItem(SteamID steamid) {
 			this.steamid = steamid;
+			this.relationship = steamFriends.getFriendRelationship(steamid);
 			this.state = steamFriends.getFriendPersonaState(steamid);
 			this.name = steamFriends.getFriendPersonaName(steamid);
 			this.game = steamFriends.getFriendGamePlayedName(steamid);
-			category = FriendListCategory.get(SteamUtil.getQuantizedPersonaState(state, game));
+			category = findCategory();
 
 			if (steamid != null && steamFriends.getFriendAvatar(steamid) != null) {
 				String imgHash = SteamUtil.bytesToHex(steamFriends.getFriendAvatar(steamid)).toLowerCase(Locale.US);
-				if (imgHash != null && !imgHash.equals("0000000000000000000000000000000000000000") && imgHash.length() == 40)
+				if (!imgHash.equals("0000000000000000000000000000000000000000") && imgHash.length() == 40)
 					avatar_url = "http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg";
 			}
+		}
+
+		private FriendListCategory findCategory() {
+			if (relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend)
+				return FriendListCategory.BLOCKED;
+			if (relationship == EFriendRelationship.RequestRecipient)
+				return FriendListCategory.FRIENDREQUEST;
+			if (relationship == EFriendRelationship.Friend) {
+				if (state == EPersonaState.Offline) {
+					return FriendListCategory.OFFLINE;
+				} else {
+					if (game != null && game.length() > 0)
+						return FriendListCategory.INGAME;
+					return FriendListCategory.ONLINE;
+				}
+			}
+			return null;
+		}
+
+		@Override
+		public int compareTo(FriendListItem friendListItem) {
+			return this.name.toLowerCase(Locale.getDefault()).compareTo(friendListItem.name.toLowerCase(Locale.getDefault()));
 		}
 	}
 
 	public enum FriendListCategory {
-		FRIENDREQUEST("Friend Requests"), RECENTCHAT("Recent Chats"), INGAME("In-Game"), ONLINE("Online"), OFFLINE("Offline");
-
-		public static FriendListCategory get(int quantized) {
-			if (quantized == 0)
-				return ONLINE;
-			if (quantized == 1)
-				return INGAME;
-			return OFFLINE;
-		}
+		FRIENDREQUEST("Friend Requests"), RECENTCHAT("Recent Chats"), INGAME("In-Game"), ONLINE("Online"), OFFLINE("Offline"), BLOCKED("Blocked");
 
 		private FriendListCategory(final String text) {
 			this.text = text;

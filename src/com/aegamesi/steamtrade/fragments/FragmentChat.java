@@ -173,7 +173,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 
 		String imgHash = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(id)).toLowerCase(Locale.US);
 		avatar.setImageResource(R.drawable.default_avatar);
-		if (imgHash != null && !imgHash.equals("0000000000000000000000000000000000000000") && imgHash.length() == 40)
+		if (!imgHash.equals("0000000000000000000000000000000000000000") && imgHash.length() == 40)
 			avatar.setImageUrl("http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg");
 	}
 

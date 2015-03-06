@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <fragment
+        android:id="@+id/adFragment"
+        android:name="com.aegamesi.steamtrade.MainActivity$AdFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/ad_fragment"/>
 
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1" >
+        android:layout_weight="1">
     </FrameLayout>
 
     <include
@@ -16,6 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         layout="@layout/view_trade_status"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </LinearLayout>

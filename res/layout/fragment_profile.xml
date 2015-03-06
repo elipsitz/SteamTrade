@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <com.loopj.android.image.SmartImageView
             android:id="@+id/profile_avatar"
@@ -16,14 +16,14 @@
             android:layout_margin="5dip"
             android:contentDescription="@string/steam_avatar"
             android:padding="2dip"
-            android:src="@drawable/default_avatar" />
+            android:src="@drawable/default_avatar"/>
 
         <LinearLayout
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_margin="5dip"
             android:layout_weight="0.20"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/profile_name"
@@ -32,7 +32,7 @@
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:text="Name"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <TextView
                 android:id="@+id/profile_status"
@@ -41,51 +41,63 @@
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:text="Status"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
         </LinearLayout>
     </LinearLayout>
 
+    <Button
+        android:id="@+id/profile_button_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/chat"/>
+
+    <Button
+        android:id="@+id/profile_button_viewsteam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/friend_view_steam"
+        android:layout_gravity="center_horizontal"/>
+
+    <Button
+        android:id="@+id/profile_button_viewsteamrep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/friend_view_steamrep"
+        android:layout_gravity="center_horizontal"/>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/profile_button_chat"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/chat" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dip">
 
         <Button
             android:id="@+id/profile_button_trade"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/trade" />
+            android:text="@string/trade"/>
 
         <Button
-            android:id="@+id/profile_button_backpack"
+            android:id="@+id/profile_button_tradeoffer"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/backpack" />
+            android:text="@string/offer_trade"/>
+
     </LinearLayout>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/profile_button_inventory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:text="@string/inventory"
+        android:layout_gravity="center_horizontal"/>
 
-        <Button
-            android:id="@+id/profile_button_remove_friend"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/friend_remove" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/profile_button_remove_friend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/friend_remove"
+        android:layout_marginTop="32dip"/>
 
 </LinearLayout>

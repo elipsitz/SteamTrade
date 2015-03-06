@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -49,12 +50,12 @@ public class LoginActivity extends ActionBarActivity {
 	private EditText textSteamguard;
 
 	public static EResult result = null;
+	public boolean attemptReconnect = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-
 		getSupportActionBar().hide();
 
 		// show the eula
@@ -68,6 +69,10 @@ public class LoginActivity extends ActionBarActivity {
 			LoginActivity.this.startActivity(intent);
 			finish();
 			return;
+		}
+
+		if (getIntent().getExtras() != null) {
+			attemptReconnect = getIntent().getExtras().getBoolean("attemptReconnect");
 		}
 
 		// prepare login form
@@ -121,6 +126,12 @@ public class LoginActivity extends ActionBarActivity {
 		if (!SteamService.running || SteamService.singleton == null) {
 			Intent intent = new Intent(getApplicationContext(), SteamService.class);
 			startService(intent);
+		}
+
+		// attempt to reconnect if disconnected
+		if (attemptReconnect) {
+			Log.d("Login", "Attempting to reconnect");
+			attemptLogin();
 		}
 	}
 
