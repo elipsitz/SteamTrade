@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/item_image_container"
+              android:layout_width="72dip"
+              android:layout_height="72dip"
+              android:background="@color/color_trade_white"
+              android:padding="2dip">
+
+    <com.aegamesi.steamtrade.SquareSmartImageView
+        android:id="@+id/itemlist_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_dark"
+        android:contentDescription="@string/inv_item_image"
+        android:scaleType="centerInside"
+        android:src="@drawable/default_avatar"/>
+
+    <CheckBox
+        android:id="@+id/itemlist_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:textSize="0sp"
+        android:layout_gravity="left|top"/>
+
+</FrameLayout>

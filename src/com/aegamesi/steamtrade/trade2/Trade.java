@@ -106,6 +106,8 @@ public class Trade {
 		@Override
 		public void run() {
 			while (true) {
+				if (session == null)
+					break;
 				session.run();
 				while (runnables.size() > 0)
 					runnables.remove(0).run();

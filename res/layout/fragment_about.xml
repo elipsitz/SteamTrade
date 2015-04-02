@@ -50,7 +50,7 @@
         android:id="@+id/ice_text_about"
         android:layout_gravity="center_horizontal"
         android:textIsSelectable="true"
-        android:gravity="center"/>
+        android:layout_margin="10dip"/>
 
 </LinearLayout>
 </ScrollView>

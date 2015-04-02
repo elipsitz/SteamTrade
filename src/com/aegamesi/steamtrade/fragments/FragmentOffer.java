@@ -1,44 +1,42 @@
 package com.aegamesi.steamtrade.fragments;
 
 import android.app.ProgressDialog;
-import android.graphics.Color;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.fragments.support.ItemListAdapter;
 import com.aegamesi.steamtrade.trade2.TradeOffer;
-import com.aegamesi.steamtrade.trade2.TradeUtil;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nosoop.steamtrade.inventory.TradeInternalInventories;
 import com.nosoop.steamtrade.inventory.TradeInternalInventory;
-import com.nosoop.steamtrade.inventory.TradeInternalItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
-public class FragmentOffer extends FragmentBase implements OnClickListener, OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class FragmentOffer extends FragmentBase implements OnClickListener, AdapterView.OnItemSelectedListener {
 	public Button[] tab_buttons;
 	public View[] tab_views;
 	public static int[] tab_notifications = new int[]{0, 0, 0};
@@ -52,15 +50,15 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 	public RadioButton tabInventoryRadioThem;
 	public Spinner tabInventorySelect;
 	public ArrayAdapter<AppContextPair> tabInventorySelectAdapter;
-	public ListView tabInventoryList;
+	public GridView tabInventoryList;
 	public View tabInventoryLoading;
 	public EditText tabInventorySearch;
-	public TabInventoryListAdapter tabInventoryListAdapter;
+	public ItemListAdapter tabInventoryListAdapter;
 	//
-	public ListView tabOfferMeOffer;
-	public ListView tabOfferOtherOffer;
-	public TabOfferingsListAdapter tabOfferMeOfferAdapter;
-	public TabOfferingsListAdapter tabOfferOtherOfferAdapter;
+	public GridView tabOfferMeOffer;
+	public GridView tabOfferOtherOffer;
+	public ItemListAdapter tabOfferMeOfferAdapter;
+	public ItemListAdapter tabOfferOtherOfferAdapter;
 	//
 	public TextView tabReviewHeading;
 	public TextView tabReviewMessage;
@@ -76,11 +74,34 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+		setHasOptionsMenu(true);
 
 		tab_views = new View[3];
 		tab_buttons = new Button[3];
 
 		fragmentName = "FragmentOffer";
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.item_list, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_inventory_toggle_view:
+				int new_list_mode = tabInventoryListAdapter.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID;
+				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_collections_view_as_list : R.drawable.ic_collections_view_as_grid);
+
+				tabInventoryListAdapter.setListMode(new_list_mode);
+				tabOfferMeOfferAdapter.setListMode(new_list_mode);
+				tabOfferOtherOfferAdapter.setListMode(new_list_mode);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private class LoadOfferTask extends AsyncTask<Void, Void, TradeOffer> {
@@ -200,16 +221,31 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 		tabInventoryRadioThem = (RadioButton) tab_views[0].findViewById(R.id.offer_tab_inventory_them);
 		tabInventoryRadioUs.setOnClickListener(this);
 		tabInventoryRadioThem.setOnClickListener(this);
-		tabInventorySelect = (Spinner) tab_views[0].findViewById(R.id.trade_tab_inventory_select);
+		tabInventorySelect = (Spinner) tab_views[0].findViewById(R.id.inventory_select);
 		tabInventorySelect.setOnItemSelectedListener(this);
 		tabInventorySelectAdapter = new ArrayAdapter<AppContextPair>(activity(), android.R.layout.simple_spinner_item);
 		tabInventorySelectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tabInventorySelect.setAdapter(tabInventorySelectAdapter);
-		tabInventoryList = (ListView) tab_views[0].findViewById(R.id.trade_tab_inventory_list);
-		tabInventoryList.setAdapter(tabInventoryListAdapter = new TabInventoryListAdapter());
-		tabInventoryList.setOnItemClickListener(this);
-		tabInventoryListAdapter.filter("");
-		tabInventoryLoading = tab_views[0].findViewById(R.id.trade_tab_inventory_loading);
+		tabInventoryList = (GridView) tab_views[0].findViewById(R.id.inventory_grid);
+		tabInventoryListAdapter = new ItemListAdapter(activity(), tabInventoryList, true, new ItemListAdapter.IItemListProvider() {
+			@Override
+			public void onItemChecked(TradeInternalAsset item, boolean checked) {
+				boolean isUs = tabInventoryRadioUs.isChecked();
+				if (checked)
+					(isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().add(item);
+				else
+					(isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().remove(item);
+				updateUIOffers();
+			}
+
+			@Override
+			public boolean shouldItemBeChecked(TradeInternalAsset item) {
+				boolean isUs = tabInventoryRadioUs.isChecked();
+				return (isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().contains(item);
+			}
+		});
+		tabInventoryList.setAdapter(tabInventoryListAdapter);
+		tabInventoryLoading = tab_views[0].findViewById(R.id.inventory_loading);
 		tabInventorySearch = (EditText) tab_views[0].findViewById(R.id.inventory_search);
 		tabInventorySearch.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -226,12 +262,14 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 			}
 		});
 		// TAB 1: Offers
-		tabOfferMeOffer = (ListView) tab_views[1].findViewById(R.id.trade_offer_mylist);
-		tabOfferMeOffer.setAdapter(tabOfferMeOfferAdapter = new TabOfferingsListAdapter(true));
-		tabOfferMeOffer.setOnItemClickListener(this);
-		tabOfferOtherOffer = (ListView) tab_views[1].findViewById(R.id.trade_offer_otherlist);
-		tabOfferOtherOffer.setAdapter(tabOfferOtherOfferAdapter = new TabOfferingsListAdapter(false));
-		tabOfferOtherOffer.setOnItemClickListener(this);
+		tabOfferMeOffer = (GridView) tab_views[1].findViewById(R.id.trade_offer_mylist);
+		tabOfferMeOfferAdapter = new ItemListAdapter(activity(), tabOfferMeOffer, false, null);
+		tabOfferMeOffer.setAdapter(tabOfferMeOfferAdapter);
+
+		tabOfferOtherOffer = (GridView) tab_views[1].findViewById(R.id.trade_offer_otherlist);
+		tabOfferOtherOfferAdapter = new ItemListAdapter(activity(), tabOfferOtherOffer, false, null);
+		tabOfferOtherOffer.setAdapter(tabOfferOtherOfferAdapter);
+
 		// TAB 2: Review
 		tabReviewHeading = ((TextView) tab_views[2].findViewById(R.id.offer_tab_review_heading));
 		if (offer != null)
@@ -257,6 +295,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 	}
 
 	public void updateUIInventory() {
+		if (offer == null || activity() == null)
+			return;
 		// first do inventory select
 		activity().runOnUiThread(new Runnable() {
 			@Override
@@ -266,34 +306,56 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 				boolean isUs = tabInventoryRadioUs.isChecked();
 				List<AppContextPair> appContextPairs = isUs ? offer.appContextData : offer.partnerAppContextData;
 				Log.d("Offer", "Inventories #: " + appContextPairs.size());
+				boolean first_load = tabInventorySelectAdapter.getCount() == 0 && appContextPairs.size() > 0;
 				tabInventorySelectAdapter.clear();
 				for (AppContextPair pair : appContextPairs)
 					tabInventorySelectAdapter.add(pair);
 				tabInventorySelectAdapter.notifyDataSetChanged();
 
-				if (tabInventoryListAdapter.getInventory() == null) {
+				if (first_load) {
+					// select last selected inventory
+					SharedPreferences prefs = activity().getPreferences(Context.MODE_PRIVATE);
+					int pref_appid = prefs.getInt("inv_last_appid", -1);
+					long pref_context = prefs.getLong("inv_last_context", -1);
+					int pref_index = -1;
+					for (int i = 0; i < appContextPairs.size(); i++)
+						if (appContextPairs.get(i).getAppid() == pref_appid && appContextPairs.get(i).getContextid() == pref_context)
+							pref_index = i;
+					if (pref_index != -1)
+						tabInventorySelect.setSelection(pref_index);
+					// end
+				}
+
+				TradeInternalInventory currentInv = null;
+				if (offer != null) {
+					AppContextPair pair = (AppContextPair) tabInventorySelect.getSelectedItem();
+					TradeInternalInventories inventories = (isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getInventories();
+					if (inventories.hasInventory(pair))
+						currentInv = inventories.getInventory(pair);
+				}
+				if (currentInv == null) {
 					tabInventoryLoading.setVisibility(View.VISIBLE);
 					tabInventoryList.setVisibility(View.GONE);
 				} else {
 					tabInventoryLoading.setVisibility(View.GONE);
 					tabInventoryList.setVisibility(View.VISIBLE);
-					tabInventoryListAdapter.filter("");
+					tabInventoryListAdapter.setItemList(currentInv.getItemList());
 				}
 			}
 		});
 	}
 
 	public void updateUIOffers() {
-		if (offer == null)
+		if (offer == null || activity() == null)
 			return;
 
-		tabOfferMeOfferAdapter.notifyDataSetChanged();
-		tabOfferOtherOfferAdapter.notifyDataSetChanged();
+		tabOfferMeOfferAdapter.setItemList(new ArrayList<TradeInternalAsset>(offer.TRADE_USER_SELF.getOffer()));
+		tabOfferOtherOfferAdapter.setItemList(new ArrayList<TradeInternalAsset>(offer.TRADE_USER_PARTNER.getOffer()));
 		updateUITabButton(1);
 	}
 
 	public void updateUIReview() {
-		if (offer == null)
+		if (offer == null || activity() == null)
 			return;
 
 		tabReviewHeading.setText(String.format(getString(R.string.offer_with), offer.partnerName));
@@ -415,14 +477,16 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		TradeInternalAsset asset = (TradeInternalAsset) parent.getAdapter().getItem(position);
-		TradeUtil.showItemInfo(getActivity(), asset, null);
-	}
-
-	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		if (parent == tabInventorySelect) {
+			AppContextPair pair = (AppContextPair) tabInventorySelect.getSelectedItem();
+			if (pair != null) {
+				SharedPreferences.Editor prefs = activity().getPreferences(Context.MODE_PRIVATE).edit();
+				prefs.putInt("inv_last_appid", pair.getAppid());
+				prefs.putLong("inv_last_context", pair.getContextid());
+				prefs.apply();
+			}
+
 			updateUIInventory();
 			new Thread(new Runnable() {
 				@Override
@@ -475,144 +539,6 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, OnIt
 					after = runnables[1];
 			}
 			return null;
-		}
-	}
-
-	// TAB INVENTORY: LIST ADAPTER
-	private class TabInventoryListAdapter extends BaseAdapter {
-		List<TradeInternalItem> filteredList = new ArrayList<TradeInternalItem>();
-
-		@Override
-		public int getCount() {
-			return filteredList.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return filteredList.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			if (v == null)
-				v = activity().getLayoutInflater().inflate(R.layout.inventory_trade_item, null);
-			final TradeInternalItem item = (TradeInternalItem) getItem(position);
-			final boolean isUs = tabInventoryRadioUs.isChecked();
-
-			final CheckBox itemCheckbox = (CheckBox) v.findViewById(R.id.trade_item_checkbox);
-			itemCheckbox.setChecked((isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().contains(item));
-			itemCheckbox.setEnabled(offer.counterOffer || offer.newOffer);
-			itemCheckbox.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					final boolean checked = ((CheckBox) view).isChecked();
-					if (checked)
-						(isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().add(item);
-					else
-						(isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().remove(item);
-					updateUIOffers();
-				}
-			});
-
-			// return 'https://steamcommunity-a.akamaihd.net/economy/image/' + v_trim(imageName) + strSize;
-			TextView itemName = ((TextView) v.findViewById(R.id.inventory_item_name));
-			itemName.setText(item.getDisplayName());
-			if (item.getNameColor() != 0)
-				itemName.setTextColor(item.getNameColor());
-			else
-				itemName.setTextColor(Color.rgb(198, 198, 198));
-
-			return v;
-		}
-
-		public void filter(String by) {
-			filteredList.clear();
-			if (getInventory() == null)
-				return;
-			if (by.trim().length() == 0) {
-				filteredList.addAll(getInventory().getItemList());
-			} else {
-				List<TradeInternalItem> items = getInventory().getItemList();
-				for (TradeInternalItem item : items)
-					if (item.getDisplayName().toLowerCase(Locale.ENGLISH).contains(by.toLowerCase(Locale.ENGLISH)))
-						filteredList.add(item);
-			}
-			notifyDataSetChanged();
-		}
-
-		public TradeInternalInventory getInventory() {
-			if (offer == null)
-				return null;
-			AppContextPair pair = (AppContextPair) tabInventorySelect.getSelectedItem();
-			boolean isUs = tabInventoryRadioUs.isChecked();
-			TradeInternalInventories inventories = (isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getInventories();
-			if (inventories.hasInventory(pair))
-				return inventories.getInventory(pair);
-
-			return null;
-		}
-	}
-
-	// TAB OFFERINGS: LIST ADAPTER
-	public class TabOfferingsListAdapter extends BaseAdapter {
-		private List<TradeInternalAsset> cachedList;
-		public boolean self = false;
-
-		public TabOfferingsListAdapter(boolean self) {
-			this.self = self;
-		}
-
-		@Override
-		public int getCount() {
-			return cachedList == null ? 0 : cachedList.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return (position >= getCount()) ? null : cachedList.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			if (v == null)
-				v = activity().getLayoutInflater().inflate(R.layout.inventory_item_item, null);
-			TradeInternalAsset item = (TradeInternalAsset) getItem(position);
-
-			if (item != null) {
-				TextView itemName = ((TextView) v.findViewById(R.id.inventory_item_name));
-				itemName.setText(item.getDisplayName());
-				if (item.getNameColor() != 0)
-					itemName.setTextColor(item.getNameColor());
-				else
-					itemName.setTextColor(Color.rgb(198, 198, 198));
-			}
-			return v;
-		}
-
-		@Override
-		public void notifyDataSetChanged() {
-			if (offer != null)
-				cachedList = new ArrayList<TradeInternalAsset>(getOffer());
-			super.notifyDataSetChanged();
-		}
-
-		private Set<TradeInternalAsset> getOffer() {
-			if (self)
-				return offer.TRADE_USER_SELF.getOffer();
-			else
-				return offer.TRADE_USER_PARTNER.getOffer();
 		}
 	}
 }

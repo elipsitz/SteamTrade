@@ -1,12 +1,12 @@
 package com.aegamesi.steamtrade.trade2;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -74,13 +74,13 @@ public class TradeUtil {
 		((TextView) view.findViewById(R.id.item_description)).setText(item_description);
 	}
 
-	public static void showItemInfo(Activity activity, TradeInternalAsset asset, List<AppContextPair> appContextPairs) {
-		View view = activity.getLayoutInflater().inflate(R.layout.view_item_info, null);
+	public static void showItemInfo(Context context, TradeInternalAsset asset, List<AppContextPair> appContextPairs) {
+		View view = LayoutInflater.from(context).inflate(R.layout.view_item_info, null);
 		populateItemInfo(view, asset, appContextPairs);
 
-		ScrollView scrollView = new ScrollView(activity);
+		ScrollView scrollView = new ScrollView(context);
 		scrollView.addView(view);
-		showDismissableModal(activity, scrollView);
+		showDismissableModal(context, scrollView);
 	}
 
 	public static void showDismissableModal(Context context, View view) {

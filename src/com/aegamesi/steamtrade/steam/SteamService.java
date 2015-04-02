@@ -58,6 +58,7 @@ public class SteamService extends Service {
 	public TradeManager tradeManager = null;
 	public SteamChatHandler chat = null;
 	public SteamMessageHandler messageHandler = null;
+	public SteamLogcatDebugListener debugListener = null;
 
 	public String sessionID = null;
 	public String token = null;
@@ -74,14 +75,12 @@ public class SteamService extends Service {
 	public void onCreate() {
 		super.onCreate();
 
-		DebugLog.addListener(new SteamLogcatDebugListener());
-		singleton = this;
+		DebugLog.addListener(debugListener = new SteamLogcatDebugListener());
 		handler = new Handler();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		running = true;
 		steamClient = new SteamClient();
 		chat = new SteamChatHandler(this);
 		tradeManager = new TradeManager();
@@ -92,6 +91,9 @@ public class SteamService extends Service {
 			timerRunning = true;
 		}
 
+		running = true;
+		singleton = this;
+
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -101,9 +103,21 @@ public class SteamService extends Service {
 		running = false;
 		singleton = null;
 
+		if (debugListener != null)
+			DebugLog.removeListener(debugListener);
 		if (myTimer != null)
 			myTimer.cancel();
 		timerRunning = false;
+	}
+
+	public static String generateSteamWebCookies() {
+		String cookies = "";
+		cookies += "sessionid=" + singleton.sessionID.trim() + ";";
+		cookies += "steamLogin=" + singleton.token + ";";
+		cookies += "steamLoginSecure=" + singleton.tokenSecure + ";";
+		cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
+		cookies += "steamMachineAuth" + singleton.steamClient.getSteamId().convertToLong() + "=" + singleton.sentryHash + ";";
+		return cookies;
 	}
 
 	public void attemptLogon(Bundle bundle) {
@@ -257,8 +271,10 @@ public class SteamService extends Service {
 			public void call(FriendMsgCallback callback) {
 				final EChatEntryType type = callback.getEntryType();
 
-				if (type == EChatEntryType.ChatMsg && !callback.getSender().equals(steamClient.getSteamId())) {
-					chat.receiveMessage(callback.getSender(), callback.getMessage());
+				if (!callback.getSender().equals(steamClient.getSteamId())) {
+					if (type == EChatEntryType.ChatMsg) {
+						chat.receiveMessage(callback.getSender(), callback.getMessage());
+					}
 				}
 			}
 		});

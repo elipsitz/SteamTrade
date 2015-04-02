@@ -85,6 +85,8 @@ public class TradeManager implements OnClickListener {
 		tradeRequestID = obj.getTradeID();
 		tradeRequestSentByUs = false;
 		updateTradeStatus();
+
+		Toast.makeText(activity(), String.format(activity().getString(R.string.trade_got_request), obj.getOtherName()), Toast.LENGTH_LONG);
 	}
 
 	public void callbackTradeResult(TradeResultCallback obj) {

@@ -22,8 +22,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.fragments.FriendListAdapter.FriendListCategory;
-import com.aegamesi.steamtrade.fragments.FriendListAdapter.FriendListItem;
+import com.aegamesi.steamtrade.fragments.support.FriendListAdapter;
+import com.aegamesi.steamtrade.fragments.support.FriendListAdapter.FriendListCategory;
+import com.aegamesi.steamtrade.fragments.support.FriendListAdapter.FriendListItem;
 import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
 import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatReceiver;
 import com.aegamesi.steamtrade.steam.SteamService;

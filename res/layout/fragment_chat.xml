@@ -21,8 +21,21 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:transcriptMode="normal">
+        android:transcriptMode="normal"
+        android:divider="@null"
+        android:dividerHeight="10dip">
     </ListView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/friend_is_typing"
+        android:id="@+id/chat_typing"
+        android:layout_gravity="center_horizontal"
+        android:textStyle="italic"
+        android:gravity="center"
+        android:visibility="invisible"/>
 
     <LinearLayout
         android:layout_width="match_parent"

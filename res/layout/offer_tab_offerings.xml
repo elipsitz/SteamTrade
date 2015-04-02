@@ -17,12 +17,17 @@
         android:text="@string/trade_your_offerings"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <ListView
+    <GridView
         android:id="@+id/trade_offer_mylist"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </ListView>
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:horizontalSpacing="5dp"
+        android:numColumns="5"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp">
+    </GridView>
 
     <View
         android:layout_width="fill_parent"
@@ -39,12 +44,17 @@
         android:text="@string/trade_their_offerings"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <ListView
+    <GridView
         android:id="@+id/trade_offer_otherlist"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </ListView>
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:horizontalSpacing="5dp"
+        android:numColumns="5"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp">
+    </GridView>
 
     <View
         android:layout_width="fill_parent"

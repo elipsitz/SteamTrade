@@ -1,6 +1,7 @@
 package com.aegamesi.steamtrade.fragments;
 
-import android.graphics.Color;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,46 +13,36 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.fragments.support.ItemListAdapter;
 import com.aegamesi.steamtrade.steam.SteamService;
-import com.aegamesi.steamtrade.trade2.TradeUtil;
-import com.loopj.android.image.SmartImageView;
-import com.nosoop.steamtrade.SteamWeb;
+import com.aegamesi.steamtrade.steam.SteamWeb;
 import com.nosoop.steamtrade.inventory.AppContextPair;
-import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nosoop.steamtrade.inventory.TradeInternalInventories;
-import com.nosoop.steamtrade.inventory.TradeInternalInventory;
-import com.nosoop.steamtrade.inventory.TradeInternalItem;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
-public class FragmentInventory extends FragmentBase implements OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class FragmentInventory extends FragmentBase implements AdapterView.OnItemSelectedListener {
 	public SteamID id;
 	public TradeInternalInventories inventories;
 	public List<AppContextPair> appContextPairs;
-	public boolean isGrid = true;
 
 	public Spinner inventorySelect;
 	public ArrayAdapter<AppContextPair> inventorySelectAdapter;
 	public GridView inventoryGrid;
-	public ListView inventoryList;
 	public View loading_view;
-	public InventoryAdapter adapter;
+	public ItemListAdapter adapter;
 	public View error_view;
 	public EditText inventorySearch;
 
@@ -76,7 +67,6 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 		else
 			id = new SteamID(myID);
 
-		adapter = new InventoryAdapter();
 		fragmentName = "FragmentInventory";
 	}
 
@@ -97,13 +87,10 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 		//end
 		loading_view = view.findViewById(R.id.inventory_loading);
 		inventoryGrid = (GridView) view.findViewById(R.id.inventory_grid);
-		inventoryList = (ListView) view.findViewById(R.id.inventory_list);
 		error_view = view.findViewById(R.id.inventory_error_view);
 		// adapter setup
+		adapter = new ItemListAdapter(activity(), inventoryGrid, false, null);
 		inventoryGrid.setAdapter(adapter);
-		inventoryList.setAdapter(adapter);
-		inventoryGrid.setOnItemClickListener(this);
-		inventoryList.setOnItemClickListener(this);
 		// inventory search
 		inventorySearch = (EditText) view.findViewById(R.id.inventory_search);
 		inventorySearch.addTextChangedListener(new TextWatcher() {
@@ -120,6 +107,19 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 				adapter.filter(s.toString());
 			}
 		});
+
+		// select last selected inventory
+		SharedPreferences prefs = activity().getPreferences(Context.MODE_PRIVATE);
+		int pref_appid = prefs.getInt("inv_last_appid", -1);
+		long pref_context = prefs.getLong("inv_last_context", -1);
+		int pref_index = -1;
+		for (int i = 0; i < appContextPairs.size(); i++)
+			if (appContextPairs.get(i).getAppid() == pref_appid && appContextPairs.get(i).getContextid() == pref_context)
+				pref_index = i;
+		if (pref_index != -1)
+			inventorySelect.setSelection(pref_index);
+		// end
+
 		return view;
 	}
 
@@ -127,17 +127,15 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.fragment_inventory, menu);
+		inflater.inflate(R.menu.item_list, menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_inventory_toggle_view:
-				isGrid = !isGrid;
-				item.setIcon(isGrid ? R.drawable.ic_collections_view_as_list : R.drawable.ic_collections_view_as_grid);
-				inventoryGrid.setVisibility(isGrid ? View.VISIBLE : View.GONE);
-				inventoryList.setVisibility(!isGrid ? View.VISIBLE : View.GONE);
+				adapter.setListMode(adapter.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID);
+				item.setIcon((adapter.getListMode() == ItemListAdapter.MODE_GRID) ? R.drawable.ic_collections_view_as_list : R.drawable.ic_collections_view_as_grid);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -169,7 +167,7 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 			url = String.format("http://steamcommunity.com/profiles/%d/inventory/json/%d/%d/",
 					id.convertToLong(), appContext.getAppid(), appContext.getContextid());
 
-			response = SteamWeb.fetch(url, "GET", null, SteamService.singleton.sessionID, SteamService.singleton.token, null);
+			response = SteamWeb.fetch(url, "GET", null, null);
 
 			try {
 				return new JSONObject(response);
@@ -194,7 +192,7 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 			// get rid of UI stuff,
 			if (activity() != null) {
 				loading_view.setVisibility(View.GONE);
-				adapter.filter("");
+				adapter.setItemList(inventories.getInventory(appContext).getItemList());
 			}
 		}
 	}
@@ -202,91 +200,18 @@ public class FragmentInventory extends FragmentBase implements OnItemClickListen
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 		if (parent == inventorySelect) {
-			new FetchInventoryTask().execute((AppContextPair) inventorySelect.getSelectedItem());
+			AppContextPair pair = (AppContextPair) inventorySelect.getSelectedItem();
+			new FetchInventoryTask().execute(pair);
+
+			SharedPreferences.Editor prefs = activity().getPreferences(Context.MODE_PRIVATE).edit();
+			prefs.putInt("inv_last_appid", pair.getAppid());
+			prefs.putLong("inv_last_context", pair.getContextid());
+			prefs.apply();
 		}
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> adapterView) {
 
-	}
-
-	public class InventoryAdapter extends BaseAdapter {
-		List<TradeInternalAsset> filteredList = new ArrayList<TradeInternalAsset>();
-
-		@Override
-		public int getCount() {
-			return filteredList.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return filteredList.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			TradeInternalItem item = (TradeInternalItem) getItem(position);
-			if (isGrid) {
-				if (v == null || !v.getTag().equals(isGrid))
-					v = activity().getLayoutInflater().inflate(R.layout.inventory_grid_item, null);
-
-				String image_url = "https://steamcommunity-a.akamaihd.net/economy/image/" + item.getIconURL() + "/144x144";
-				SmartImageView img = (SmartImageView) v.findViewById(R.id.item_image);
-				img.setImageDrawable(getResources().getDrawable(R.drawable.default_avatar)); // so it doesn't show the old item while loading
-				img.setImageUrl(image_url);
-				if (item.getBackgroundColor() != 0)
-					img.setBackgroundColor(item.getBackgroundColor());
-				if (item.getNameColor() != 0)
-					v.setBackgroundColor(item.getNameColor());
-			} else {
-				if (v == null || !v.getTag().equals(isGrid))
-					v = activity().getLayoutInflater().inflate(R.layout.inventory_item_item, null);
-
-				TextView itemName = ((TextView) v.findViewById(R.id.inventory_item_name));
-				itemName.setText(item.getDisplayName());
-				if (item.getNameColor() != 0)
-					itemName.setTextColor(item.getNameColor());
-				else
-					itemName.setTextColor(Color.rgb(198, 198, 198));
-			}
-			v.setTag(isGrid);
-			return v;
-		}
-
-		public void filter(String by) {
-			filteredList.clear();
-			if (getInventory() == null)
-				return;
-			if (by.trim().length() == 0) {
-				filteredList.addAll(getInventory().getItemList());
-			} else {
-				List<TradeInternalItem> items = getInventory().getItemList();
-				for (TradeInternalItem item : items)
-					if (item.getDisplayName().toLowerCase(Locale.ENGLISH).contains(by.toLowerCase(Locale.ENGLISH)))
-						filteredList.add(item);
-			}
-			notifyDataSetChanged();
-		}
-
-		public TradeInternalInventory getInventory() {
-			AppContextPair pair = (AppContextPair) inventorySelect.getSelectedItem();
-			if (inventories.hasInventory(pair))
-				return inventories.getInventory(pair);
-
-			return null;
-		}
-	}
-
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		TradeInternalItem item = (TradeInternalItem) parent.getAdapter().getItem(position);
-		TradeUtil.showItemInfo(activity(), item, appContextPairs);
 	}
 }

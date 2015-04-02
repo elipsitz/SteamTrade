@@ -65,8 +65,13 @@ public class LoginActivity extends ActionBarActivity {
 
 		// go to main activity if already logged in
 		if (SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getConnectedUniverse() != null && SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid) {
-			Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-			LoginActivity.this.startActivity(intent);
+			Intent intent = new Intent(this, MainActivity.class);
+			if(getIntent() != null) {
+				// forward our intent (there may be a better way to do this)
+				intent.setAction(getIntent().getAction());
+				intent.setData(getIntent().getData());
+			}
+			startActivity(intent);
 			finish();
 			return;
 		}
@@ -120,12 +125,7 @@ public class LoginActivity extends ActionBarActivity {
 			findViewById(R.id.login_warning).setVisibility(View.VISIBLE);
 			((TextView) findViewById(R.id.login_warning_text)).setText(show_warning);
 		} else {
-			findViewById(R.id.login_warning).setVisibility(View.GONE);
-		}
-
-		if (!SteamService.running || SteamService.singleton == null) {
-			Intent intent = new Intent(getApplicationContext(), SteamService.class);
-			startService(intent);
+			findViewById(R.id.login_warning).setVisibility(View.INVISIBLE);
 		}
 
 		// attempt to reconnect if disconnected
@@ -179,7 +179,7 @@ public class LoginActivity extends ActionBarActivity {
 				SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
 				editor.putString("username", username);
 				editor.putString("password", password);
-				editor.commit();
+				editor.apply();
 			}
 
 			mAuthTask = new UserLoginTask();
@@ -192,7 +192,32 @@ public class LoginActivity extends ActionBarActivity {
 		private ProgressDialog dialog;
 
 		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			dialog = new ProgressDialog(LoginActivity.this);
+			dialog.setCancelable(false);
+			dialog.show();
+
+			// start the steam service (stop if it's already started)
+			Intent intent = new Intent(getApplicationContext(), SteamService.class);
+			stopService(intent);
+			SteamService.singleton = null;
+			startService(intent);
+		}
+
+		@Override
 		protected EResult doInBackground(Void... params) {
+			// busy-wait for the service to start...
+			publishProgress(getString(R.string.initializing));
+			while (SteamService.singleton == null) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					return EResult.Fail;
+				}
+			}
+
 			SteamService.singleton.messageHandler = this;
 			Bundle bundle = new Bundle();
 			bundle.putString("username", username);
@@ -229,14 +254,6 @@ public class LoginActivity extends ActionBarActivity {
 		}
 
 		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			dialog = new ProgressDialog(LoginActivity.this);
-			dialog.setCancelable(false);
-			dialog.show();
-		}
-
-		@Override
 		protected void onPostExecute(final EResult status) {
 			mAuthTask = null;
 			if (dialog != null)
@@ -253,7 +270,7 @@ public class LoginActivity extends ActionBarActivity {
 				textSteamguard.setVisibility(View.VISIBLE);
 				textSteamguard.setError(getString(R.string.error_steamguard_required));
 				textSteamguard.requestFocus();
-				Toast.makeText(LoginActivity.this, "SteamGuard", Toast.LENGTH_LONG).show();
+				Toast.makeText(LoginActivity.this, "SteamGuard: " + status.name(), Toast.LENGTH_LONG).show();
 			} else if (status == EResult.InvalidLoginAuthCode) {
 				textSteamguard.setVisibility(View.VISIBLE);
 				textSteamguard.setError(getString(R.string.error_incorrect_steamguard));

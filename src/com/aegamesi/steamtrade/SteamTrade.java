@@ -28,6 +28,8 @@ public class SteamTrade extends Application {
 
 	@Override
 	public void onCreate() {
+		FixNoClassDefFoundError81083(); // code workaround for GPG bug #81083 -- remove later
+
 		super.onCreate();
 		ACRA.init(this);
 		getTracker().enableAdvertisingIdCollection(true);
@@ -45,4 +47,12 @@ public class SteamTrade extends Application {
 		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
 		return analytics.newTracker(R.xml.tracker);
 	}
+
+	private void FixNoClassDefFoundError81083() {
+		try {
+			Class.forName("android.os.AsyncTask");
+		} catch (Throwable ignore) {
+		}
+	}
+
 }

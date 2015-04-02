@@ -1,5 +1,6 @@
 package com.nosoop.steamtrade;
 
+import com.aegamesi.steamtrade.steam.SteamWeb;
 import com.nosoop.steamtrade.TradeListener.TradeStatusCodes;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.AssetBuilder;
@@ -748,7 +749,7 @@ public class TradeSession implements Runnable {
 		 * @return The server's String response to the request.
 		 */
 		String fetch(String url, String method, Map<String, String> data) {
-			return SteamWeb.fetch(url, method, data, DECODED_SESSION_ID, STEAM_LOGIN, TRADE_URL);
+			return SteamWeb.fetch(url, method, data, TRADE_URL);
 		}
 	}
 

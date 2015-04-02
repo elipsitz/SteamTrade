@@ -45,9 +45,11 @@ import org.acra.ACRA;
 
 import java.util.Date;
 
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EChatEntryType;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendAddedCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.SteamGameCoordinator;
 import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.callbacks.CraftResponseCallback;
@@ -75,7 +77,7 @@ public class MainActivity extends ActionBarActivity implements SteamMessageHandl
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		boolean abort = SteamService.singleton == null || SteamService.singleton.steamClient == null;
+		boolean abort = SteamService.singleton == null || SteamService.singleton.steamClient == null || SteamService.singleton.steamClient.getSteamId() == null;
 		super.onCreate(abort ? null : savedInstanceState);
 		setContentView(R.layout.activity_main);
 		instance = this;
@@ -115,6 +117,24 @@ public class MainActivity extends ActionBarActivity implements SteamMessageHandl
 					.setCategory("Steam")
 					.setAction("Login")
 					.build());
+		}
+
+		// handle our URL stuff
+		if(getIntent() != null && getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_VIEW)) {
+			if(getIntent().getData().getPath().startsWith("/tradeoffer/new")) {
+				Fragment fragment = new FragmentOffersList();
+				Bundle bundle = new Bundle();
+				bundle.putString("new_offer_url", getIntent().getDataString());
+				fragment.setArguments(bundle);
+				browseToFragment(fragment, false);
+			}
+			if(getIntent().getData().getPath().startsWith("/id/") || getIntent().getData().getPath().startsWith("/profiles/")) {
+				Fragment fragment = new FragmentProfile();
+				Bundle bundle = new Bundle();
+				bundle.putString("url", getIntent().getDataString());
+				fragment.setArguments(bundle);
+				browseToFragment(fragment, false);
+			}
 		}
 	}
 
@@ -226,6 +246,18 @@ public class MainActivity extends ActionBarActivity implements SteamMessageHandl
 				FragmentCrafting craftFragment = getFragmentByClass(FragmentCrafting.class);
 				//craftFragment.craftResponse(obj); // TODO reenable
 				//tabMainCraft.setEnabled(false);
+			}
+		});
+		msg.handle(FriendMsgCallback.class, new ActionT<FriendMsgCallback>() {
+			@Override
+			public void call(FriendMsgCallback callback) {
+				final EChatEntryType type = callback.getEntryType();
+
+				if (type == EChatEntryType.Typing) {
+					FragmentChat chatFragment = getFragmentByClass(FragmentChat.class);
+					if (chatFragment != null)
+						chatFragment.onUserTyping(callback.getSender());
+				}
 			}
 		});
 		// GC messages

@@ -59,19 +59,11 @@
         android:id="@+id/inventory_grid"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:columnWidth="80dp"
         android:gravity="center"
         android:horizontalSpacing="5dp"
-        android:numColumns="auto_fit"
+        android:numColumns="5"
         android:stretchMode="columnWidth"
         android:verticalSpacing="5dp">
     </GridView>
-
-    <ListView
-        android:id="@+id/inventory_list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:visibility="gone">
-    </ListView>
 
 </LinearLayout>

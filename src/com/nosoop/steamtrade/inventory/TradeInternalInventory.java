@@ -6,6 +6,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -136,12 +138,23 @@ public class TradeInternalInventory {
 	}
 
 	/**
-	 * Gets the user's available trading inventory.
+	 * Gets the user's available trading inventory, sorted with respect to inventory position.
 	 *
 	 * @return A List containing all the available TradeInternalItem instances.
 	 */
 	public List<TradeInternalItem> getItemList() {
-		return new ArrayList<>(inventoryItems.values());
+		List<TradeInternalItem> list = new ArrayList<TradeInternalItem>(inventoryItems.values());
+
+		// now sort with respect to position
+		// TODO offer this somewhere in the UI with more flexibility
+		Collections.sort(list, new Comparator<TradeInternalItem>() {
+			@Override
+			public int compare(TradeInternalItem a, TradeInternalItem b) {
+				return (a.pos < b.pos) ? -1 : (a.pos > b.pos ? 1 : 0);
+			}
+		});
+
+		return list;
 	}
 
 	/**
@@ -150,7 +163,7 @@ public class TradeInternalInventory {
 	 * @return A List containing all available TradeInternalCurrency instances.
 	 */
 	public List<TradeInternalCurrency> getCurrencyList() {
-		return new ArrayList<>(currencyItems.values());
+		return new ArrayList<TradeInternalCurrency>(currencyItems.values());
 	}
 
 	/**

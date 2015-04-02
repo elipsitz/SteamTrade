@@ -4,42 +4,10 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <Spinner
-        android:layout_width="match_parent"
+    <include
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/trade_tab_inventory_select"
+        layout="@layout/fragment_inventory"
         android:layout_gravity="center_horizontal"/>
-
-    <EditText
-        android:id="@+id/inventory_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/search_inventory"
-        android:inputType="textNoSuggestions|textVisiblePassword">
-
-        <requestFocus/>
-    </EditText>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/trade_tab_inventory_loading"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/trade_tab_inventory_loading_circle"
-            android:layout_gravity="center_horizontal"
-            android:indeterminate="true"
-            android:visibility="visible"/>
-    </FrameLayout>
-
-    <ListView
-        android:id="@+id/trade_tab_inventory_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </ListView>
 
 </LinearLayout>

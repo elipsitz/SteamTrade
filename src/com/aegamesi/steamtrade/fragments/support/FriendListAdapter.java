@@ -1,4 +1,4 @@
-package com.aegamesi.steamtrade.fragments;
+package com.aegamesi.steamtrade.fragments.support;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.loopj.android.image.SmartImageView;

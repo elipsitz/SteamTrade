@@ -1,4 +1,4 @@
-package com.nosoop.steamtrade;
+package com.aegamesi.steamtrade.steam;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,22 +26,15 @@ public class SteamWeb {
 	/**
 	 * Requests a String representation of an online file (for Steam).
 	 *
-	 * @param url        Location to fetch.
-	 * @param method     "GET" or "POST"
-	 * @param data       The data to be added to the data stream or request
-	 *                   params.
-	 * @param sessionId  sessionId token
-	 * @param steamLogin steamlogin token
+	 * @param url    Location to fetch.
+	 * @param method "GET" or "POST"
+	 * @param data   The data to be added to the data stream or request
+	 *               params.
 	 * @return The server's String response to the request.
 	 */
-	public static String fetch(String url, String method, Map<String, String> data,
-							   String sessionId, String steamLogin, String referrer) {
-		String cookies = "";
-		if (sessionId != null && steamLogin != null) {
-			cookies = "sessionid=" + sessionId + "; "
-					+ "steamLogin=" + steamLogin + ";";
-		}
+	public static String fetch(String url, String method, Map<String, String> data, String referrer) {
 
+		String cookies = SteamService.generateSteamWebCookies();
 		return SteamWeb.request(url, method, data, cookies, referrer == null ? "http://steamcommunity.com/trade/1" : referrer);
 	}
 

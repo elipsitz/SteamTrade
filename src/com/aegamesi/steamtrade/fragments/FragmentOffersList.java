@@ -43,6 +43,9 @@ public class FragmentOffersList extends FragmentBase implements AdapterView.OnIt
 		setHasOptionsMenu(true);
 
 		fragmentName = "FragmentOffersList";
+
+		if(getArguments().containsKey("new_offer_url"))
+			createOfferFromUrl(getArguments().getString("new_offer_url"));
 	}
 
 	@Override

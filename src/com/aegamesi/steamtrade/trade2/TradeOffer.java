@@ -4,8 +4,8 @@ import android.util.Log;
 
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
+import com.aegamesi.steamtrade.steam.SteamWeb;
 import com.nosoop.steamtrade.ContextScraper;
-import com.nosoop.steamtrade.SteamWeb;
 import com.nosoop.steamtrade.TradeSession;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.AssetBuilder;
@@ -73,19 +73,9 @@ public class TradeOffer {
 		return offer;
 	}
 
-	public static String generateCookies() {
-		String cookies = "";
-		cookies += "sessionid=" + SteamService.singleton.sessionID.trim() + ";";
-		cookies += "steamLogin=" + SteamService.singleton.token + ";";
-		cookies += "steamLoginSecure=" + SteamService.singleton.tokenSecure + ";";
-		cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
-		cookies += "steamMachineAuth" + SteamService.singleton.steamClient.getSteamId().convertToLong() + "=" + SteamService.singleton.sentryHash + ";";
-		return cookies;
-	}
-
 	private void loadInformation(String url) {
 		// lots of scraping here
-		String html = SteamWeb.request(url, "GET", null, TradeOffer.generateCookies(), "http://steamcommunity.com/my/tradeoffers");
+		String html = SteamWeb.fetch(url, "GET", null, "http://steamcommunity.com/my/tradeoffers");
 		Pattern pattern = Pattern.compile("^\\s*var\\s+(g_.+?)\\s+=\\s+(.+?);\\r?$", Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(html);
 		Map<String, String> javascriptGlobals = new HashMap<String, String>();
@@ -149,7 +139,7 @@ public class TradeOffer {
 			return;
 
 		url = inventoryLoadUrl + appContext.getAppid() + "/" + appContext.getContextid() + "/?trading=1";
-		response = SteamWeb.request(url, "GET", null, generateCookies(), "https://steamcommunity.com/tradeoffer/" + tradeID);
+		response = SteamWeb.fetch(url, "GET", null, "https://steamcommunity.com/tradeoffer/" + tradeID);
 
 		try {
 			JSONObject responseObject = new JSONObject(response);
@@ -170,7 +160,7 @@ public class TradeOffer {
 		data.put("partner", Long.toString(partnerID.convertToLong()));
 		data.put("appid", Long.toString(appContext.getAppid()));
 		data.put("contextid", Long.toString(appContext.getContextid()));
-		response = SteamWeb.request(partnerInventoryLoadUrl, "GET", data, generateCookies(), "https://steamcommunity.com/tradeoffer/" + tradeID);
+		response = SteamWeb.fetch(partnerInventoryLoadUrl, "GET", data, "https://steamcommunity.com/tradeoffer/" + tradeID);
 
 		try {
 			JSONObject responseObject = new JSONObject(response);
@@ -180,7 +170,7 @@ public class TradeOffer {
 		}
 	}
 
-	public boolean send(String message) {
+	public JSONObject send(String message) {
 		try {
 			trade_version++;
 
@@ -235,45 +225,44 @@ public class TradeOffer {
 			else
 				data.put("trade_offer_create_params", "{\"trade_offer_access_token\": \"" + accessToken + "\"}");
 
-			String response = SteamWeb.request("https://steamcommunity.com/tradeoffer/new/send", "POST", data, generateCookies(), "https://steamcommunity.com/tradeoffer/" + tradeID);
+			String response = SteamWeb.fetch("https://steamcommunity.com/tradeoffer/new/send", "POST", data, "https://steamcommunity.com/tradeoffer/" + tradeID);
 			Log.d("TradeOffer", response);
-			// TODO: parse/return the result
-			return (response != null && response.length() > 0);
+			return (response != null && response.length() > 0) ? new JSONObject(response) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 
-	public boolean acceptOffer() {
+	public JSONObject acceptOffer() {
 		try {
 			String url = "https://steamcommunity.com/tradeoffer/" + tradeID + "/accept";
 			Map<String, String> data = new HashMap<String, String>();
 			data.put("sessionid", SteamService.singleton.sessionID.trim());
 			data.put("serverid", "1");
 			data.put("tradeofferid", tradeID + "");
-			String response = SteamWeb.request(url, "POST", data, generateCookies(), "https://steamcommunity.com/tradeoffer/" + tradeID);
+			String response = SteamWeb.fetch(url, "POST", data, "https://steamcommunity.com/tradeoffer/" + tradeID);
 			Log.d("TradeOffer", response);
-			return (response != null && response.length() > 0);
+			return (response != null && response.length() > 0) ? new JSONObject(response) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 
-	public boolean declineOffer() {
+	public JSONObject declineOffer() {
 		try {
 			String url = "https://steamcommunity.com/tradeoffer/" + tradeID + "/decline";
 			Map<String, String> data = new HashMap<String, String>();
 			data.put("sessionid", sessionID);
 			data.put("serverid", "1");
 			data.put("tradeofferid", tradeID + "");
-			String response = SteamWeb.request(url, "POST", data, generateCookies(), "https://steamcommunity.com/tradeoffer/" + tradeID);
+			String response = SteamWeb.fetch(url, "POST", data, "https://steamcommunity.com/tradeoffer/" + tradeID);
 			Log.d("TradeOffer", response);
-			return (response != null && response.length() > 0);
+			return (response != null && response.length() > 0) ? new JSONObject(response) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 }

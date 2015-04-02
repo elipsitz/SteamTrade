@@ -1,6 +1,6 @@
 package com.aegamesi.steamtrade.trade2;
 
-import com.nosoop.steamtrade.SteamWeb;
+import com.aegamesi.steamtrade.steam.SteamWeb;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,7 +19,7 @@ public class TradeOfferInfo {
 	public int numItemsUs = 0;
 
 	public static List<TradeOfferInfo> getTradeOffers() {
-		String response = SteamWeb.request("http://steamcommunity.com/my/tradeoffers", "GET", null, TradeOffer.generateCookies(), "http://steamcommunity.com/");
+		String response = SteamWeb.fetch("http://steamcommunity.com/my/tradeoffers", "GET", null, "http://steamcommunity.com/");
 		Document document = Jsoup.parse(response);
 
 		Elements tradeOfferElements = document.getElementsByClass("tradeoffer");

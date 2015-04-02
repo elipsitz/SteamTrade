@@ -16,4 +16,10 @@
     <string name="friend_request_ignore">Ignored Friend Request</string>
     <string name="friend_view_steam">View on Steam</string>
     <string name="friend_view_steamrep">View on SteamRep</string>
+    <string name="friend_is_typing">Other user is typing…</string>
+    <string name="profile_summary">Summary:</string>
+    <string name="profile_loading_summary">Loading summary…</string>
+
+    <color name="color_chat_left">#B3E5FC</color>
+    <color name="color_chat_right">#607D8B</color>
 </resources>

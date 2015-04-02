@@ -15,6 +15,7 @@
     <string name="cannot_auth_with_steamweb">Unable to authenticate with SteamWeb. Steam servers may be down.</string>
     <string name="not_connected_to_internet">You are not connected to the internet.</string>
     <string name="connected_via_mobiledata">You are connected to the internet via mobile data.\nIt may be more difficult to connect to Steam.</string>
+    <string name="initializing">Initializing…</string>
     <string name="signingout">Signing out…</string>
     <string name="logging_on">Logging on…</string>
     <string name="connecting">Connecting…</string>

@@ -92,6 +92,18 @@ public class SteamUtil {
 		new SteamDisconnectTask().execute();
 	}
 
+	public static void copyToClipboard(Context context, String str) {
+		int sdk = android.os.Build.VERSION.SDK_INT;
+		if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
+			android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+			clipboard.setText(str);
+		} else {
+			android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+			android.content.ClipData clip = android.content.ClipData.newPlainText("Chat Line", str);
+			clipboard.setPrimaryClip(clip);
+		}
+	}
+
 	public static long convertSteamIdToCommunityId(String steamId) {
 		if (!steamId.matches("^STEAM_[0-1]:[0-1]:[0-9]+$"))
 			return -1;

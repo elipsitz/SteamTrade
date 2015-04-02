@@ -37,6 +37,10 @@ public abstract class TradeInternalAsset {
 	 */
 	String type;
 	/**
+	 * The position of the item in the inventory. defaults to (-1)
+	 */
+	int pos;
+	/**
 	 * The class number of this object. Two similar items (e.g., a pair of Loose
 	 * Cannons) will have the same class number.
 	 */
@@ -98,6 +102,7 @@ public abstract class TradeInternalAsset {
 		this.amount = Integer.parseInt(
 				rgInventoryItem.optString("amount", "1"));
 		this.assetid = Long.parseLong(rgInventoryItem.getString("id"));
+		this.pos = rgInventoryItem.optInt("pos", -1);
 
 		this.descriptions = new ArrayList<>();
 
@@ -208,6 +213,15 @@ public abstract class TradeInternalAsset {
 	 */
 	public final int getAmount() {
 		return amount;
+	}
+	/**
+	 * Returns the position of this asset.
+	 *
+	 * @return The position of this asset, defined by the "pos"-named
+	 * name-value pair of the asset's "rgInventory" JSONObject member entry
+	 */
+	public final int getPosition() {
+		return pos;
 	}
 
 	/**

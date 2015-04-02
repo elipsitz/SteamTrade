@@ -1,22 +1,26 @@
 package com.aegamesi.steamtrade.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
-import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.fragments.support.ChatAdapter;
 import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
 import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatReceiver;
 import com.aegamesi.steamtrade.steam.SteamService;
@@ -24,6 +28,7 @@ import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.loopj.android.image.SmartImageView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
@@ -39,8 +44,11 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	public SmartImageView avatar;
 	public TextView name;
 	public TextView status;
+	public TextView chat_typing;
 	public View friendInfoView;
 
+	public Handler typingHandler;
+	public Runnable typingRunnable = null;
 	public boolean visible = false;
 	public boolean fromProfile = false;
 
@@ -61,6 +69,16 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 				activity().getFragmentByClass(FragmentFriends.class).adapter.notifyDataSetChanged();
 		}
 
+		// typing timer
+		typingHandler = new Handler();
+		typingRunnable = new Runnable() {
+			@Override
+			public void run() {
+				if (chat_typing != null)
+					chat_typing.setVisibility(View.INVISIBLE);
+			}
+		};
+
 		fragmentName = "FragmentChat";
 	}
 
@@ -74,6 +92,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		avatar = (SmartImageView) view.findViewById(R.id.friend_avatar_left);
 		name = (TextView) view.findViewById(R.id.friend_name);
 		status = (TextView) view.findViewById(R.id.friend_status);
+		chat_typing = (TextView) view.findViewById(R.id.chat_typing);
 		friendInfoView = view.findViewById(R.id.friend_info);
 		view.findViewById(R.id.friend_chat_button).setVisibility(View.GONE);
 
@@ -117,8 +136,19 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 				}
 			}
 		});
+		chatList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
+				// copy to clipboard
+				String message = ((ChatLine) view.getTag()).message;
+				SteamUtil.copyToClipboard(activity(), message);
+				Toast.makeText(activity(), R.string.copied_to_clipboard, Toast.LENGTH_LONG).show();
+				return true;
+			}
+		});
 
 		adapter = new ChatAdapter();
+		adapter.last_read = activity().getPreferences(Context.MODE_PRIVATE).getLong("chat_read_" + SteamService.singleton.steamClient.getSteamId().convertToLong() + "_" + id.convertToLong(), -1);
 		chatList.setAdapter(adapter);
 		ArrayList<ChatLine> backlog = SteamService.singleton.chat.getChatHistory(id, "c", null);
 		if (backlog != null)
@@ -141,6 +171,11 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	public void onPause() {
 		super.onPause();
 		visible = false;
+
+		// commit last read date
+		SharedPreferences.Editor prefs = activity().getPreferences(Context.MODE_PRIVATE).edit();
+		prefs.putLong("chat_read_" + SteamService.singleton.steamClient.getSteamId().convertToLong() + "_" + id.convertToLong(), ((new Date()).getTime()));
+		prefs.apply();
 	}
 
 	public void updateView() {
@@ -154,22 +189,20 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		else
 			status.setText(state.toString());
 
+		// do colors for profile view
+		// TODO refactor this into a separate method
+		int color = SteamUtil.colorOnline;
 		if (game != null && game.length() != 0) {
 			// 8BC53F (AED04E ?) game
-			name.setTextColor(SteamUtil.colorGame);
-			status.setTextColor(SteamUtil.colorGame);
-			avatar.setBackgroundColor(SteamUtil.colorGame);
+			color = SteamUtil.colorGame;
 		} else if (state == EPersonaState.Offline || state == null) {
 			// 898989 (CFD2D3 ?) offline
-			name.setTextColor(SteamUtil.colorOffline);
-			status.setTextColor(SteamUtil.colorOffline);
-			avatar.setBackgroundColor(SteamUtil.colorOffline);
-		} else {
-			// 86B5D9 (9CC6FF ?) online
-			name.setTextColor(SteamUtil.colorOnline);
-			status.setTextColor(SteamUtil.colorOnline);
-			avatar.setBackgroundColor(SteamUtil.colorOnline);
+			color = SteamUtil.colorOffline;
 		}
+		name.setTextColor(color);
+		status.setTextColor(color);
+		avatar.setBackgroundColor(color);
+		adapter.color_default = color;
 
 		String imgHash = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(id)).toLowerCase(Locale.US);
 		avatar.setImageResource(R.drawable.default_avatar);
@@ -177,58 +210,25 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 			avatar.setImageUrl("http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg");
 	}
 
+	public void onUserTyping(SteamID user) {
+		if (user.equals(id)) {
+			// set a timer for the thing
+			Log.d("SteamKit", "User is typing a message...");
+			if (chat_typing != null)
+				chat_typing.setVisibility(View.VISIBLE);
+			if (typingHandler != null) {
+				typingHandler.removeCallbacks(typingRunnable);
+				typingHandler.postDelayed(typingRunnable, 15 * 1000L);
+			}
+		}
+	}
+
+
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		SteamService.singleton.chat.receivers.remove(this);
-	}
-
-	public static class ChatAdapter extends BaseAdapter {
-		public ArrayList<ChatLine> chatLines = new ArrayList<ChatLine>();
-
-		public void addChatLine(ChatLine line) {
-			chatLines.add(line);
-			notifyDataSetChanged();
-		}
-
-		@Override
-		public int getCount() {
-			return chatLines.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return chatLines.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			if (v == null)
-				v = MainActivity.instance.getLayoutInflater().inflate(R.layout.chat_list_item, null);
-			ChatLine line = chatLines.get(position);
-
-			SmartImageView left_avatar = (SmartImageView) v.findViewById(R.id.friend_avatar_left);
-			SmartImageView right_avatar = (SmartImageView) v.findViewById(R.id.friend_avatar_right);
-			TextView message = (TextView) v.findViewById(R.id.chat_message);
-			left_avatar.setVisibility(line.steamId == null ? View.GONE : View.VISIBLE);
-			right_avatar.setVisibility(line.steamId == null ? View.VISIBLE : View.GONE);
-			message.setGravity(line.steamId == null ? Gravity.RIGHT : Gravity.LEFT);
-			SmartImageView avatarView = line.steamId == null ? right_avatar : left_avatar;
-
-			message.setText(line.message);
-			avatarView.setImageResource(R.drawable.default_avatar);
-			String avatar = SteamUtil.bytesToHex(MainActivity.instance.steamFriends.getFriendAvatar(line.steamId == null ? SteamService.singleton.steamClient.getSteamId() : line.steamId)).toLowerCase(Locale.US);
-			if (!avatar.equals("0000000000000000000000000000000000000000"))
-				avatarView.setImageUrl("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + ".jpg");
-
-			return v;
-		}
 	}
 
 	@Override
@@ -238,6 +238,8 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 				@Override
 				public void run() {
 					adapter.addChatLine(line);
+					if (line.steamId != null && chat_typing != null)
+						chat_typing.setVisibility(View.INVISIBLE);
 				}
 			});
 			if (isVisible() && visible)

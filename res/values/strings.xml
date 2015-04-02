@@ -42,6 +42,8 @@
         <item>Looking to Play</item>
     </string-array>
 
+    <string name="copied_to_clipboard">Copied to clipboard.</string>
+
     <string name="change">Change</string>
     <string name="baa">moo</string>
     <string name="dismiss">Dismiss</string>
@@ -50,4 +52,8 @@
     <string name="schema_load_failed">Error Loading Schema. Some features may not work.</string>
     <string name="error_steamapi">Error accessing SteamAPI.</string>
     <string name="ok">OK</string>
+    <string name="title_activity_intent_receiver">IntentReceiverActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
