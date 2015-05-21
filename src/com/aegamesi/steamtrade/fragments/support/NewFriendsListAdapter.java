@@ -197,10 +197,10 @@ public class NewFriendsListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 			holder.textStatus.setTextColor(color);
 			holder.imageAvatar.setBorderColor(color);
 
-		if (SteamService.singleton.chat.unreadMessages.containsKey(p.steamid))
-			holder.viewBg.setBackgroundColor(fragment.activity().getResources().getColor(R.color.color_friend_unread));
-		else
-			holder.viewBg.setBackgroundColor(0x00000000);
+			if (SteamService.singleton.chat.unreadMessages.containsKey(p.steamid))
+				holder.viewBg.setBackgroundColor(fragment.activity().getResources().getColor(R.color.color_friend_unread));
+			else
+				holder.viewBg.setBackgroundColor(0x00000000);
 
 			holder.buttonProfile.setTag(p.steamid);
 			holder.buttonProfile.setOnClickListener(fragment);

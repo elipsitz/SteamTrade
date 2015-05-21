@@ -42,13 +42,13 @@ public class FragmentSettings extends PreferenceFragment {
 			}
 		});
 
-		pref_notification_sound = (RingtonePreference)findPreference("pref_notification_sound");
+		pref_notification_sound = (RingtonePreference) findPreference("pref_notification_sound");
 	}
 
 
 	public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
 		// workaround for Ringtone Fragment not saving data
-		if(pref_notification_sound != null && pref_notification_sound.onActivityResult(requestCode, resultCode, data))
+		if (pref_notification_sound != null && pref_notification_sound.onActivityResult(requestCode, resultCode, data))
 			return true;
 
 		return false;

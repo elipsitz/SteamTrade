@@ -193,7 +193,9 @@ public class SteamService extends Service {
 							}
 						}
 					}
-					steamClient.getHandler(SteamUser.class).logOn(details, com.aegamesi.steamtrade.Installation.id());
+					SteamUser steamUser = steamClient.getHandler(SteamUser.class);
+					if (steamUser != null)
+						steamUser.logOn(details, com.aegamesi.steamtrade.Installation.id());
 				} else {
 					disconnect();
 				}

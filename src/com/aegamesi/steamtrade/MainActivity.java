@@ -17,10 +17,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -28,7 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aegamesi.lib.AndroidUtil;
 import com.aegamesi.steamtrade.fragments.FragmentAbout;
 import com.aegamesi.steamtrade.fragments.FragmentChat;
 import com.aegamesi.steamtrade.fragments.FragmentFriends;
@@ -42,17 +39,15 @@ import com.aegamesi.steamtrade.fragments.support.NavigationDrawerAdapter;
 import com.aegamesi.steamtrade.steam.SteamMessageHandler;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
+import com.amazon.device.ads.AdRegistration;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.acra.ACRA;
 
-import java.util.Date;
 import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EChatEntryType;
@@ -195,6 +190,12 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		// set up billing processor
 		billingProcessor = new BillingProcessor(this, getString(R.string.license_key), this);
 		billingProcessor.loadOwnedPurchasesFromGoogle();
+
+		// setup amazon ads
+		boolean debug_amazon_ads = false;
+		AdRegistration.enableLogging(debug_amazon_ads);
+		AdRegistration.enableTesting(debug_amazon_ads);
+		AdRegistration.setAppKey(getString(R.string.amazon_ad_key));
 	}
 
 	@Override
@@ -525,7 +526,7 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 	public void onPurchaseHistoryRestored() {
 		if (!billingProcessor.listOwnedProducts().contains(FragmentSettings.IAP_REMOVEADS)) {
 			// the user did not purchase remove ads-- just set the preference to false.
-			PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("pref_remove_ads", true).apply();
+			PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("pref_remove_ads", false).apply();
 		}
 	}
 
@@ -544,54 +545,10 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		handled |= billingProcessor.handleActivityResult(requestCode, resultCode, data);
 
 		FragmentSettings fragmentSettings = getFragmentByClass(FragmentSettings.class);
-		if(fragmentSettings != null)
+		if (fragmentSettings != null)
 			handled |= fragmentSettings.handleActivityResult(requestCode, resultCode, data);
 
-		if(!handled)
+		if (!handled)
 			super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	public static class AdFragment extends Fragment {
-		public AdView mAdView = null;
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-								 Bundle savedInstanceState) {
-			return inflater.inflate(R.layout.ad_fragment, container, false);
-		}
-
-		@Override
-		public void onActivityCreated(Bundle bundle) {
-			super.onActivityCreated(bundle);
-
-			if (getView() == null)
-				return;
-			mAdView = (AdView) getView().findViewById(R.id.adView);
-
-			boolean removed_ads = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("pref_remove_ads", false);
-			Date installTime = AndroidUtil.getInstallTime(getActivity().getPackageManager(), "com.aegamesi.steamtrade");
-			long time = (new Date()).getTime() - installTime.getTime();
-			if (time < 1000 * 60 * 60 * 24 || removed_ads) {
-				// 1 day of no ads
-				mAdView.setVisibility(View.GONE);
-			} else {
-				AdRequest adRequest = new AdRequest.Builder().build();
-				mAdView.loadAd(adRequest);
-			}
-		}
-
-		@Override
-		public void onResume() {
-			super.onResume();
-			if (mAdView != null)
-				mAdView.resume();
-		}
-
-		@Override
-		public void onPause() {
-			super.onPause();
-			if (mAdView != null)
-				mAdView.pause();
-		}
 	}
 }

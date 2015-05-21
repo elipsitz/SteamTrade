@@ -104,8 +104,8 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 		if (list_mode == MODE_GRID) {
 			String image_url = "https://steamcommunity-a.akamaihd.net/economy/image/" + item.getIconURL() + "/144x144";
 			ImageView img = (ImageView) v.findViewById(R.id.itemlist_image);
+			img.setImageDrawable(context.getResources().getDrawable(R.drawable.default_avatar)); // so it doesn't show the old item while loading
 			ImageLoader.getInstance().displayImage(image_url, img);
-			//img.setImageDrawable(context.getResources().getDrawable(R.drawable.default_avatar)); // so it doesn't show the old item while loading
 			if (item.getBackgroundColor() != 0)
 				img.setBackgroundColor(item.getBackgroundColor());
 			if (item.getNameColor() != 0)

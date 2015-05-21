@@ -233,10 +233,12 @@ public class TradeOfferInfo {
 
 				try {
 					TradeInternalAsset generatedAsset = null;
-					if (invInstance.has("assetid"))
-						generatedAsset = assetBuilder.generateItem(itemAC, invInstance, descriptions.get(itemCI));
-					else if (invInstance.has("currencyid"))
-						generatedAsset = assetBuilder.generateCurrency(itemAC, invInstance, descriptions.get(itemCI));
+					if (descriptions.containsKey(itemCI)) {
+						if (invInstance.has("assetid"))
+							generatedAsset = assetBuilder.generateItem(itemAC, invInstance, descriptions.get(itemCI));
+						else if (invInstance.has("currencyid"))
+							generatedAsset = assetBuilder.generateCurrency(itemAC, invInstance, descriptions.get(itemCI));
+					}
 
 					if (generatedAsset != null)
 						resultList.add(generatedAsset);
