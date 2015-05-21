@@ -319,7 +319,7 @@ public class TradeInternalInventory {
 	 *
 	 * @author nosoop < nosoop at users.noreply.github.com >
 	 */
-	protected static class ClassInstancePair {
+	public static class ClassInstancePair {
 		int classid;
 		long instanceid;
 
@@ -329,7 +329,7 @@ public class TradeInternalInventory {
 		 * @param classid
 		 * @param instanceid
 		 */
-		ClassInstancePair(int classid, long instanceid) {
+		public ClassInstancePair(int classid, long instanceid) {
 			this.classid = classid;
 			this.instanceid = instanceid;
 		}
@@ -351,10 +351,7 @@ public class TradeInternalInventory {
 			if (this.classid != other.classid) {
 				return false;
 			}
-			if (this.instanceid != other.instanceid) {
-				return false;
-			}
-			return true;
+			return this.instanceid == other.instanceid;
 		}
 	}
 

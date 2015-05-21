@@ -1,12 +1,14 @@
 package com.aegamesi.steamtrade.fragments;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,15 +18,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aegamesi.lib.SimpleSectionedRecyclerViewAdapter;
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.fragments.support.FriendListAdapter;
-import com.aegamesi.steamtrade.fragments.support.FriendListAdapter.FriendListCategory;
-import com.aegamesi.steamtrade.fragments.support.FriendListAdapter.FriendListItem;
+import com.aegamesi.steamtrade.fragments.support.NewFriendsListAdapter;
 import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
 import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatReceiver;
 import com.aegamesi.steamtrade.steam.SteamService;
@@ -32,13 +31,12 @@ import com.aegamesi.steamtrade.steam.SteamUtil;
 
 import java.util.List;
 
-import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EFriendRelationship;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
-public class FragmentFriends extends FragmentBase implements OnChildClickListener, OnClickListener, ChatReceiver {
-	public FriendListAdapter adapter;
-	public ExpandableListView list;
-	public EditText friendSearch;
+public class FragmentFriends extends FragmentBase implements OnClickListener, ChatReceiver, SearchView.OnQueryTextListener {
+	public NewFriendsListAdapter adapter;
+	public RecyclerView recyclerView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,12 +45,13 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 		setHasOptionsMenu(true);
 
 		SteamService.singleton.chat.receivers.add(this);
-		fragmentName = "FragmentFriends";
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.fragment_friends, menu);
+		SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+		searchView.setOnQueryTextListener(this);
 	}
 
 	@Override
@@ -91,43 +90,30 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_friends, container, false);
+		inflater = activity().getLayoutInflater();
+		View view = inflater.inflate(R.layout.fragment_friends_new, container, false);
 
-		adapter = new FriendListAdapter(this);
-		list = (ExpandableListView) view.findViewById(R.id.friends_list);
-		list.setOnChildClickListener(this);
-		list.setAdapter(adapter);
-		updateFriends();
+		// set up the recycler view
+		recyclerView = (RecyclerView) view.findViewById(R.id.friends_list);
+		recyclerView.setHasFixedSize(true);
+		recyclerView.setLayoutManager(new LinearLayoutManager(activity()));
 
-		for (int i = 0; i < adapter.getGroupCount(); i++) {
-			if ((adapter.getGroup(i) == FriendListCategory.OFFLINE) || (adapter.getGroup(i) == FriendListCategory.BLOCKED))
-				list.collapseGroup(i);
-			else
-				list.expandGroup(i);
-		}
+		SimpleSectionedRecyclerViewAdapter.Section[] sections = new SimpleSectionedRecyclerViewAdapter.Section[NewFriendsListAdapter.FriendListCategory.values().length];
+		for (int i = 0; i < sections.length; i++)
+			sections[i] = new SimpleSectionedRecyclerViewAdapter.Section(0, NewFriendsListAdapter.FriendListCategory.f(i).toString());
 
-		friendSearch = (EditText) view.findViewById(R.id.friends_search);
-		friendSearch.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
+		List<SteamID> recentChats = SteamService.singleton.chat.getRecentChats(SteamUtil.recentChatThreshold);
+		adapter = new NewFriendsListAdapter(this, recentChats);
+		recyclerView.setAdapter(adapter);
 
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				adapter.filter(s.toString());
-			}
-		});
 		return view;
 	}
 
-	public void updateFriends() {
-		List<SteamID> recentChats = SteamService.singleton.chat.getRecentChats(SteamUtil.recentChatThreshold);
-		List<SteamID> friends = SteamService.singleton.steamClient.getHandler(SteamFriends.class).getFriendList();
-		adapter.updateList(recentChats, friends);
+	public void onPersonaStateUpdate(SteamID id) {
+		if (adapter.hasUserID(id))
+			adapter.update(id);
+		else
+			adapter.add(id);
 	}
 
 	@Override
@@ -137,21 +123,9 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 	}
 
 	@Override
-	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-		FriendListItem item = (FriendListItem) adapter.getChild(groupPosition, childPosition);
-
-		Fragment fragment = new FragmentProfile();
-		Bundle bundle = new Bundle();
-		bundle.putLong("steamId", item.steamid.convertToLong());
-		fragment.setArguments(bundle);
-		activity().browseToFragment(fragment, true);
-		return true;
-	}
-
-	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.friend_chat_button) {
-			Fragment fragment = new FragmentChat();
+		if (v.getId() == R.id.friend_profile_button) {
+			Fragment fragment = new FragmentProfile();
 			Bundle bundle = new Bundle();
 			bundle.putLong("steamId", ((SteamID) v.getTag()).convertToLong());
 			fragment.setArguments(bundle);
@@ -169,6 +143,16 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 			// ignored friend request
 			Toast.makeText(activity(), R.string.friend_request_ignore, Toast.LENGTH_SHORT).show();
 		}
+		if (v.getId() == R.id.friends_list_item) {
+			SteamID id = (SteamID) v.getTag();
+			if (activity().steamFriends.getFriendRelationship(id) == EFriendRelationship.Friend) {
+				Fragment fragment = new FragmentChat();
+				Bundle bundle = new Bundle();
+				bundle.putLong("steamId", id.convertToLong());
+				fragment.setArguments(bundle);
+				activity().browseToFragment(fragment, true);
+			}
+		}
 	}
 
 	@Override
@@ -183,5 +167,17 @@ public class FragmentFriends extends FragmentBase implements OnChildClickListene
 			}
 		});
 		return false;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		adapter.filter(query);
+		return true;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		adapter.filter(newText);
+		return true;
 	}
 }

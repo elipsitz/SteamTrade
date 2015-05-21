@@ -32,7 +32,7 @@ public class TradeUserStatus {
 
 			for (int i = 0; i < assetsRef.length(); i++) {
 				JSONObject asset = assetsRef.optJSONObject(i);
-				assets.add(new TradeAssetsObj((JSONObject) asset));
+				assets.add(new TradeAssetsObj(asset));
 			}
 		}
 	}

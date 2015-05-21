@@ -89,9 +89,6 @@ public class AppContextPair {
 		if (this.appid != other.appid) {
 			return false;
 		}
-		if (this.contextid != other.contextid) {
-			return false;
-		}
-		return true;
+		return this.contextid == other.contextid;
 	}
 }

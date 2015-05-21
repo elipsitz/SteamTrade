@@ -9,12 +9,13 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.trade2.TradeUtil;
-import com.loopj.android.image.SmartImageView;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 
 		gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 		gridView.setOnItemClickListener(this);
-		setListMode(MODE_LIST);
+		setListMode(MODE_GRID);
 	}
 
 	public void setItemList(List<? extends TradeInternalAsset> list) {
@@ -102,9 +103,9 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 
 		if (list_mode == MODE_GRID) {
 			String image_url = "https://steamcommunity-a.akamaihd.net/economy/image/" + item.getIconURL() + "/144x144";
-			SmartImageView img = (SmartImageView) v.findViewById(R.id.itemlist_image);
-			img.setImageDrawable(context.getResources().getDrawable(R.drawable.default_avatar)); // so it doesn't show the old item while loading
-			img.setImageUrl(image_url);
+			ImageView img = (ImageView) v.findViewById(R.id.itemlist_image);
+			ImageLoader.getInstance().displayImage(image_url, img);
+			//img.setImageDrawable(context.getResources().getDrawable(R.drawable.default_avatar)); // so it doesn't show the old item while loading
 			if (item.getBackgroundColor() != 0)
 				img.setBackgroundColor(item.getBackgroundColor());
 			if (item.getNameColor() != 0)
@@ -137,12 +138,6 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 		notifyDataSetChanged();
 	}
 
-	public interface IItemListProvider {
-		public void onItemChecked(TradeInternalAsset item, boolean checked);
-
-		public boolean shouldItemBeChecked(TradeInternalAsset item);
-	}
-
 	@Override
 	public void onClick(View view) {
 		TradeInternalAsset item = (TradeInternalAsset) view.getTag();
@@ -155,5 +150,11 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		TradeInternalAsset item = (TradeInternalAsset) getItem(position);
 		TradeUtil.showItemInfo(context, item, null);
+	}
+
+	public interface IItemListProvider {
+		void onItemChecked(TradeInternalAsset item, boolean checked);
+
+		boolean shouldItemBeChecked(TradeInternalAsset item);
 	}
 }

@@ -36,10 +36,10 @@ import java.util.ArrayList;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class UserTradeListener extends TradeListener {
+	private final short MAX_ITEMS_IN_TRADE = 256;
 	public boolean loaded = false;
 	public boolean active = true;
-
-	private final short MAX_ITEMS_IN_TRADE = 256;
+	int actionCount = 0;
 	private TradeInternalItem ourTradeSlotsFilled[];
 
 	public UserTradeListener() {
@@ -75,6 +75,8 @@ public class UserTradeListener extends TradeListener {
 		});
 	}
 
+	// helper methods relating to item placement
+
 	private void updateFragmentUIChat(final String message) {
 		MainActivity.instance.runOnUiThread(new Runnable() {
 			@Override
@@ -85,8 +87,6 @@ public class UserTradeListener extends TradeListener {
 			}
 		});
 	}
-
-	// helper methods relating to item placement
 
 	/**
 	 * Finds the first open slot in a trade.
@@ -149,7 +149,7 @@ public class UserTradeListener extends TradeListener {
 	 *                  available as constants under TradeListener.TradeErrorCodes.
 	 */
 	@Override
-	public void onError(int errorCode, String msg) {
+	public void onError(final int errorCode, String msg) {
 		String errorMessage;
 		switch (errorCode) {
 			case TradeStatusCodes.STATUS_ERRORMESSAGE:
@@ -168,7 +168,7 @@ public class UserTradeListener extends TradeListener {
 				errorMessage = "Trade failed.";
 				break;
 			case TradeStatusCodes.TRADE_REQUIRES_CONFIRMATION:
-				errorMessage = "Trade successful, but both parties may need to confirm by email due to new Valve restrictions.";
+				errorMessage = "Trade successful; however, both parties may need to confirm the trade via email due to Steam security restrictions.";
 				break;
 			default:
 				errorMessage = "Unhandled error code " + errorCode + ".";
@@ -184,7 +184,7 @@ public class UserTradeListener extends TradeListener {
 			@Override
 			public void run() {
 				if (fragment() != null)
-					fragment().onError(error);
+					fragment().onError(errorCode, error);
 			}
 		});
 	}
@@ -303,8 +303,6 @@ public class UserTradeListener extends TradeListener {
 		actionCount++;
 	}
 
-	int actionCount = 0;
-
 	/**
 	 * Called when the trade has been completed successfully.
 	 */
@@ -314,12 +312,16 @@ public class UserTradeListener extends TradeListener {
 		active = false;
 
 		// goal!
-		if (fragment() != null) {
-			if (fragment().activity() != null)
-				fragment().activity().tracker().send(new HitBuilders.EventBuilder().setCategory("Steam").setAction("Trade_Complete").setValue(trade.getPartner().getOffer().size()).build());
+		MainActivity.instance.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (fragment() == null)
+					if (fragment().activity() != null)
+						fragment().activity().tracker().send(new HitBuilders.EventBuilder().setCategory("Steam").setAction("Trade_Complete").setValue(trade.getPartner().getOffer().size()).build());
 
-			fragment().onCompleted(new ArrayList<TradeInternalAsset>(trade.getPartner().getOffer()));
-		}
+				fragment().onCompleted(new ArrayList<TradeInternalAsset>(trade.getPartner().getOffer()));
+			}
+		});
 	}
 
 	/**

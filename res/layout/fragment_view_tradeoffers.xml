@@ -1,23 +1,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:divider="@null"
               android:orientation="vertical">
 
-    <TextView
+    <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/offers_status"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dip"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/offers_radio_incoming"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/offer_radio_incoming"/>
+
+        <RadioButton
+            android:id="@+id/offers_radio_sent"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/offer_radio_sent"/>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/offers_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="10dip"
-        android:textStyle="bold"
-        android:gravity="center"/>
+        android:layout_marginTop="5dip"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"/>
 
     <View
-        android:background="@color/accent_material_dark"
         android:layout_width="match_parent"
-        android:layout_height="1.5dip">
+        android:layout_height="1.5dip"
+        android:background="@color/accent_material_dark">
     </View>
 
     <LinearLayout
@@ -40,10 +63,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:divider="@color/accent_material_dark"
-        android:dividerHeight="1.5dip"
-        android:headerDividersEnabled="false"
-        android:footerDividersEnabled="false">
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false">
     </ListView>
 
 </LinearLayout>

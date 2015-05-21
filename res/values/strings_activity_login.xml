@@ -19,6 +19,7 @@
     <string name="signingout">Signing out…</string>
     <string name="logging_on">Logging on…</string>
     <string name="connecting">Connecting…</string>
+    <string name="fetching_key">Fetching API Key…</string>
     <string name="cannot_connect_to_steam">Cannot connect to Steam!</string>
 
 </resources>

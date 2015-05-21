@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/web_button_back"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:contentDescription="@string/web_back"
+            android:padding="4dp"
+            android:src="@drawable/ic_arrow_left"/>
+
+        <ImageButton
+            android:id="@+id/web_button_forward"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:contentDescription="@string/web_forward"
+            android:padding="4dp"
+            android:src="@drawable/ic_arrow_right"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/web_button_refresh"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:contentDescription="@string/web_reload"
+            android:padding="4dp"
+            android:src="@drawable/ic_refresh"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/web_button_home"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:contentDescription="@string/web_community"
+            android:padding="4dp"
+            android:src="@drawable/ic_account"/>
+
+        <ImageButton
+            android:id="@+id/web_button_store"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:contentDescription="@string/web_store"
+            android:padding="4dp"
+            android:src="@drawable/ic_shopping"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/web_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"/>
+
+    <WebView
+        android:id="@+id/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"/>
+
+</LinearLayout>

@@ -17,11 +17,11 @@ public class FragmentAbout extends FragmentBase {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 
-		fragmentName = "FragmentAbout";
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		inflater = activity().getLayoutInflater();
 		View v = inflater.inflate(R.layout.fragment_about, container, false);
 		String version = "";
 		try {

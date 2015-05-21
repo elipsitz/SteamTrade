@@ -1,6 +1,5 @@
 package com.aegamesi.steamtrade.fragments;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,14 +9,18 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 
 import com.aegamesi.steamtrade.R;
 
 public class FragmentEula extends DialogFragment {
-	private String EULA_PREFIX = "eula___ae-ice__";
+	private String EULA_PREFIX = "eula__ae-ice__";
 
 	private PackageInfo getPackageInfo(Context context) {
 		PackageInfo pi = null;
@@ -45,7 +48,7 @@ public class FragmentEula extends DialogFragment {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 		// Show the Eula
-		String title = getActivity().getString(R.string.app_name) + " v" + versionInfo.versionName;
+		String title = getActivity().getString(R.string.app_name) + " " + versionInfo.versionName;
 		// Includes the updates as well so users know what changed.
 		String message = getActivity().getString(R.string.eula);
 
@@ -66,12 +69,12 @@ public class FragmentEula extends DialogFragment {
 			}
 		}).create();
 
-		TextView msg = new TextView(getActivity());
-		msg.setMovementMethod(new ScrollingMovementMethod());
-		float scale = getResources().getDisplayMetrics().density;
-		msg.setPadding((int) (10 * scale), (int) (10 * scale), (int) (10 * scale), (int) (10 * scale));
-		msg.setText(Html.fromHtml(message));
-		dialog.setView(msg);
+		View viewEula = LayoutInflater.from(getActivity()).inflate(R.layout.eula, null);
+		dialog.setView(viewEula);
+
+		TextView textEula = (TextView) viewEula.findViewById(R.id.eula_text);
+		textEula.setText(Html.fromHtml(message));
+		textEula.setMovementMethod(new LinkMovementMethod());
 
 		setCancelable(false);
 		return dialog;

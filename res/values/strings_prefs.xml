@@ -2,10 +2,15 @@
 <resources>
     <string name="pref_vibrate">Vibrate on Message</string>
     <string name="pref_vibrate_summ">Vibrate when you receive a chat message</string>
+    <string name="persist_notification">Persistent Notification</string>
+    <string name="persist_notification_summ">Unchecking this will tell Android that Ice is low-priority.</string>
     <string name="pref_reconnect">Auto-Reconnect</string>
     <string name="pref_reconnect_summ">Reconnect when disconnected from the Steam network</string>
     <string name="pref_advanced">Advanced</string>
     <string name="pref_advanced_summ">Do not use these unless you know what you\'re doing.</string>
     <string name="pref_machineauth">Override machineAuth</string>
     <string name="pref_machineauth_prompt">Input machineAuth:</string>
+    <string name="pref_remove_ads">Remove Advertisements</string>
+    <string name="pref_remove_ads_summ">Support the development of Ice by donating!</string>
+    <string name="pref_notification_sound">Notification Sound</string>
 </resources>

@@ -18,6 +18,10 @@ public class AndroidUtil {
 				apkUpdateTime(packageManager, packageName));
 	}
 
+	public static int intCompare(int x, int y) {
+		return (x < y) ? -1 : ((x == y) ? 0 : 1);
+	}
+
 	private static Date apkUpdateTime(
 			PackageManager packageManager, String packageName) {
 		try {

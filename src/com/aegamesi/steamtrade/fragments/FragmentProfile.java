@@ -1,15 +1,14 @@
 package com.aegamesi.steamtrade.fragments;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,40 +16,41 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aegamesi.lib.UILImageGetter;
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.fragments.support.FriendListAdapter;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.aegamesi.steamtrade.steam.SteamWeb;
-import com.loopj.android.image.SmartImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EFriendRelationship;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.ProfileInfoCallback;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentProfile extends FragmentBase implements View.OnClickListener {
-	public FriendListAdapter adapter;
-
 	public SteamID id;
-	public String url;
+	public int steam_level = -1;
 	public EFriendRelationship relationship;
 	public EPersonaState state;
 	public String name;
 	public String game;
 	public String avatar;
 
-	public SmartImageView avatarView;
+	public CircleImageView avatarView;
 	public TextView nameView;
 	public TextView statusView;
 	public TextView summaryView;
-	public View loadingView;
+	public TextView levelView;
 	public Button chatButton;
 	public Button tradeButton;
 	public Button tradeOfferButton;
@@ -60,33 +60,45 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 	public Button viewSteamButton;
 	public Button viewSteamRepButton;
 
-	public ProfileInfo info = null;
+	public ProfileInfoCallback profile_info = null;
+	public PersonaStateCallback persona_info = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 
-		url = getArguments().getString("url");
-		if(url == null) {
+		if (getArguments().containsKey("steamId")) {
 			id = new SteamID(getArguments().getLong("steamId"));
-			url = "http://steamcommunity.com/profiles/"+id.convertToLong()+"/?xml=1";
 		} else {
-			url += "?xml=1"; // for xml access
-			id = null;
+			String url = getArguments().getString("url");
+
+			Matcher matcher = Pattern.compile("steamcommunity.com/id/([a-zA-Z0-9]+)").matcher(url);
+			if (matcher.find()) {
+				id = null;
+				String vanity = matcher.group(1);
+				(new ResolveVanityURLTask()).execute(vanity);
+			} else {
+				matcher = Pattern.compile("steamcommunity.com/profiles/([0-9]+)").matcher(url);
+				if (matcher.find())
+					id = new SteamID(Long.parseLong(matcher.group(1)));
+				else
+					id = null;
+			}
 		}
 
-		fragmentName = "FragmentProfile";
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-		avatarView = (SmartImageView) view.findViewById(R.id.profile_avatar);
+		avatarView = (CircleImageView) view.findViewById(R.id.profile_avatar);
 		nameView = (TextView) view.findViewById(R.id.profile_name);
 		statusView = (TextView) view.findViewById(R.id.profile_status);
 		summaryView = (TextView) view.findViewById(R.id.profile_summary);
+		levelView = (TextView) view.findViewById(R.id.profile_level);
 		chatButton = (Button) view.findViewById(R.id.profile_button_chat);
 		tradeButton = (Button) view.findViewById(R.id.profile_button_trade);
 		tradeOfferButton = (Button) view.findViewById(R.id.profile_button_tradeoffer);
@@ -95,7 +107,6 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		addFriendButton = (Button) view.findViewById(R.id.profile_button_add_friend);
 		viewSteamButton = (Button) view.findViewById(R.id.profile_button_viewsteam);
 		viewSteamRepButton = (Button) view.findViewById(R.id.profile_button_viewsteamrep);
-		loadingView = view.findViewById(R.id.loading_view);
 
 		chatButton.setOnClickListener(this);
 		tradeButton.setOnClickListener(this);
@@ -107,6 +118,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 
 		nameView.setSelected(true);
 		statusView.setSelected(true);
+		summaryView.setMovementMethod(LinkMovementMethod.getInstance());
 
 		updateView();
 		return view;
@@ -116,8 +128,9 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 	public void onStart() {
 		super.onStart();
 
+		requestInfo();
 		// fetch the data
-		(new ProfileFetchTask()).execute();
+		//(new ProfileFetchTask()).execute();
 	}
 
 	@Override
@@ -185,46 +198,64 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		if (activity() == null || activity().steamFriends == null)
 			return;
 
-		state = activity().steamFriends.getFriendPersonaState(id);
 		relationship = activity().steamFriends.getFriendRelationship(id);
-		name = activity().steamFriends.getFriendPersonaName(id);
-		game = activity().steamFriends.getFriendGamePlayedName(id);
-		avatar = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(id)).toLowerCase(Locale.US);
+		if (relationship == EFriendRelationship.Friend || persona_info == null) {
+			state = activity().steamFriends.getFriendPersonaState(id);
+			relationship = activity().steamFriends.getFriendRelationship(id);
+			name = activity().steamFriends.getFriendPersonaName(id);
+			game = activity().steamFriends.getFriendGamePlayedName(id);
+			avatar = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(id)).toLowerCase(Locale.US);
+		} else {
+			// use the found persona info stuff
+			state = persona_info.getState();
+			relationship = activity().steamFriends.getFriendRelationship(id);
+			name = persona_info.getName();
+			game = persona_info.getGameName();
+			avatar = SteamUtil.bytesToHex(persona_info.getAvatarHash()).toLowerCase(Locale.US);
+		}
+
+		if (profile_info != null) {
+			String summary = profile_info.getSummary();
+			summary = SteamUtil.parseBBCode(summary);
+			Html.ImageGetter imageGetter = new UILImageGetter(summaryView, summaryView.getContext());
+			summaryView.setText(Html.fromHtml(summary, imageGetter, null));
+			//Linkify.addLinks(summaryView, Linkify.WEB_URLS);
+		}
+
+		if (steam_level == -1) {
+			levelView.setText(R.string.unknown);
+		} else {
+			levelView.setText(steam_level + "");
+		}
 
 		activity().getSupportActionBar().setTitle(name);
 		nameView.setText(name);
 
 		avatarView.setImageResource(R.drawable.default_avatar);
 		if (avatar != null && avatar.length() == 40 && !avatar.equals("0000000000000000000000000000000000000000"))
-			avatarView.setImageUrl("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg");
+			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg", avatarView);
 
 		if (game != null && game.length() > 0)
 			statusView.setText("Playing " + game);
 		else
 			statusView.setText(state.toString());
-		if (game != null && game.length() > 0) {
-			// 8BC53F (AED04E ?) game
-			nameView.setTextColor(SteamUtil.colorGame);
-			statusView.setTextColor(SteamUtil.colorGame);
-			avatarView.setBackgroundColor(SteamUtil.colorGame);
-		} else if (state == EPersonaState.Offline || state == null) {
-			// 898989 (CFD2D3 ?) offline
-			nameView.setTextColor(SteamUtil.colorOffline);
-			statusView.setTextColor(SteamUtil.colorOffline);
-			avatarView.setBackgroundColor(SteamUtil.colorOffline);
-		} else {
-			// 86B5D9 (9CC6FF ?) online
-			nameView.setTextColor(SteamUtil.colorOnline);
-			statusView.setTextColor(SteamUtil.colorOnline);
-			avatarView.setBackgroundColor(SteamUtil.colorOnline);
-		}
+
+		int color = SteamUtil.colorOnline;
+		if (relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend)
+			color = SteamUtil.colorBlocked;
+		else if (game != null && game.length() > 0)
+			color = SteamUtil.colorGame;
+		else if (state == EPersonaState.Offline || state == null)
+			color = SteamUtil.colorOffline;
+		nameView.setTextColor(color);
+		statusView.setTextColor(color);
+		avatarView.setBorderColor(color);
 
 		// things to do if we are not friends
 		boolean isFriend = relationship == EFriendRelationship.Friend;
-		if(!isFriend) {
+		if (!isFriend) {
 			statusView.setText(relationship.toString());
-			if(id == null)
-				addFriendButton.setEnabled(false);
+			addFriendButton.setEnabled(id != null);
 		}
 
 		// visibility of buttons and stuff
@@ -235,105 +266,65 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		tradeOfferButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
 	}
 
-	private class ProfileInfo {
-		public SteamID steamID = null; // steamID64
-		public String name = ""; // steamID
-		public String state = ""; // stateMessage
-		public String memberSince = ""; // memberSince
-		public String avatar = ""; // avatarFull
-		public String summary = ""; // summary
+	public void updateProfile(ProfileInfoCallback obj) {
+		profile_info = obj;
+		updateView();
 	}
 
-	private class ProfileFetchTask extends AsyncTask<Void, Void, ProfileInfo> {
+	public void updatePersona(PersonaStateCallback obj) {
+		persona_info = obj;
+		updateView();
+	}
+
+	public void updateLevel(int level) {
+		steam_level = level;
+		updateView();
+	}
+
+	private void requestInfo() {
+		if (id != null) {
+			if (profile_info == null)
+				activity().steamFriends.requestProfileInfo(id);
+			int request_flags = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024;
+			relationship = activity().steamFriends.getFriendRelationship(id);
+			if (relationship != EFriendRelationship.Friend && persona_info == null)
+				activity().steamFriends.requestFriendInfo(id, request_flags);
+			if (steam_level == -1)
+				activity().steamFriends.requestSteamLevel(id);
+		}
+	}
+
+	private class ResolveVanityURLTask extends AsyncTask<String, Void, SteamID> {
 		@Override
-		protected ProfileInfo doInBackground(Void... voids) {
-			if(info != null)
-				return info;
-			info = new ProfileInfo();
-			String response = SteamWeb.fetch(url, "GET", null, null);
+		protected SteamID doInBackground(String... args) {
+			String vanity = args[0];
 
-			// parse xml file now
+			String api_url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=" + SteamUtil.apikey + "&format=json&vanityurl=" + vanity;
+			String response = SteamWeb.fetch(api_url, "GET", null, "");
+			if (response.length() == 0)
+				return null;
+			JSONObject response_obj;
 			try {
-				XmlPullParser parser = Xml.newPullParser();
-				parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-				parser.setInput(new StringReader(response));
-				parser.nextTag();
-				parser.require(XmlPullParser.START_TAG, null, "profile");
-				while (parser.next() != XmlPullParser.END_TAG) {
-					if (parser.getEventType() != XmlPullParser.START_TAG)
-						continue;
-					String name = parser.getName();
+				response_obj = new JSONObject(response);
+				response_obj = response_obj.getJSONObject("response");
+				int result = response_obj.getInt("success");
+				if (result != 1)
+					return null;
 
-					if (name.equals("steamID64"))
-						info.steamID = new SteamID(Long.parseLong(readText(parser)));
-					else if (name.equals("steamID"))
-						info.name = readText(parser);
-					else if (name.equals("stateMessage"))
-						info.state = readText(parser);
-					else if (name.equals("memberSince"))
-						info.memberSince = readText(parser);
-					else if(name.equals("avatarFull"))
-						info.avatar = readText(parser);
-					else if(name.equals("summary"))
-						info.summary = readText(parser);
-					else
-						skip(parser);
-				}
-			} catch (Exception e) {
+				String steam_id = response_obj.getString("steamid");
+				long long_value = Long.parseLong(steam_id);
+				return new SteamID(long_value);
+			} catch (JSONException e) {
 				e.printStackTrace();
 				return null;
 			}
-
-			return info;
 		}
 
 		@Override
-		protected void onPostExecute(ProfileInfo profileInfo) {
-			loadingView.setVisibility(View.GONE);
-
-			if(profileInfo != null) {
-				id = profileInfo.steamID;
-				updateView();
-
-				nameView.setText(Html.fromHtml(profileInfo.name));
-				statusView.setText(Html.fromHtml(profileInfo.state));
-				summaryView.setText(Html.fromHtml(profileInfo.summary));
-				summaryView.setMovementMethod(LinkMovementMethod.getInstance());
-				avatarView.setImageUrl(profileInfo.avatar);
-
-				addFriendButton.setEnabled(true);
-			}
-		}
-
-		@Override
-		protected void onPreExecute() {
-			loadingView.setVisibility(View.VISIBLE);
-		}
-
-		private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
-			String result = "";
-			if (parser.next() == XmlPullParser.TEXT) {
-				result = parser.getText();
-				parser.nextTag();
-			}
-			return result;
-		}
-
-		private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
-			if (parser.getEventType() != XmlPullParser.START_TAG) {
-				throw new IllegalStateException();
-			}
-			int depth = 1;
-			while (depth != 0) {
-				switch (parser.next()) {
-					case XmlPullParser.END_TAG:
-						depth--;
-						break;
-					case XmlPullParser.START_TAG:
-						depth++;
-						break;
-				}
-			}
+		protected void onPostExecute(SteamID id) {
+			FragmentProfile.this.id = id;
+			requestInfo();
+			updateView();
 		}
 	}
 }

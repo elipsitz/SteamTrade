@@ -2,7 +2,6 @@ package com.aegamesi.steamtrade.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -34,6 +32,7 @@ import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.trade2.Trade;
 import com.aegamesi.steamtrade.trade2.TradeUtil;
+import com.nosoop.steamtrade.TradeListener.TradeStatusCodes;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nosoop.steamtrade.inventory.TradeInternalInventories;
@@ -45,15 +44,13 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentTrade extends FragmentBase implements OnClickListener, AdapterView.OnItemSelectedListener {
+	public static int[] tab_notifications = new int[]{0, 0, 0};
 	public Button[] tab_buttons;
 	public View[] tab_views;
-	public static int[] tab_notifications = new int[]{0, 0, 0};
 	public int tab_selected;
 
 	public Spinner tabInventorySelect;
@@ -87,7 +84,6 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tab_views = new View[3];
 		tab_buttons = new Button[3];
 
-		fragmentName = "FragmentTrade";
 	}
 
 	@Override
@@ -122,7 +118,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		switch (item.getItemId()) {
 			case R.id.menu_inventory_toggle_view:
 				int new_list_mode = tabInventoryListAdapter.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID;
-				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_collections_view_as_list : R.drawable.ic_collections_view_as_grid);
+				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
 
 				tabInventoryListAdapter.setListMode(new_list_mode);
 				tabOfferMeOfferAdapter.setListMode(new_list_mode);
@@ -144,6 +140,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
+		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_trade, container, false);
 		tab_views[0] = view.findViewById(R.id.trade_tab_inventory);
 		tab_views[1] = view.findViewById(R.id.trade_tab_offerings);
@@ -174,9 +171,9 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 					@Override
 					public void run() {
 						if (checked)
-							trade.listener.tradePutItem((TradeInternalItem)item);
+							trade.listener.tradePutItem((TradeInternalItem) item);
 						else
-							trade.listener.tradeRemoveItem((TradeInternalItem)item);
+							trade.listener.tradeRemoveItem((TradeInternalItem) item);
 					}
 				});
 
@@ -315,14 +312,21 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		}
 	}
 
-	public void onError(String error) {
+	public void onError(int code, String message) {
 		if (activity() == null || getView() == null)
 			return;
 		((ViewGroup) getView()).removeAllViews();
 		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_error, null, false);
 		((ViewGroup) getView()).addView(result);
+		TextView errorTitle = (TextView) result.findViewById(R.id.trade_error_title);
 		TextView errorText = (TextView) result.findViewById(R.id.trade_error_text);
-		errorText.setText(error);
+		errorText.setText(message);
+
+		if (code == TradeStatusCodes.TRADE_REQUIRES_CONFIRMATION) {
+			// this isn't really an error-- just a sort of notification that the trade hasn't been completed *yet*
+			// as such, adjust the message
+			errorTitle.setText(R.string.trade_completed);
+		}
 	}
 
 	public void onCompleted(List<TradeInternalAsset> items) {

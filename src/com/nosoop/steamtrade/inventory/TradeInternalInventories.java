@@ -25,7 +25,7 @@ public class TradeInternalInventories {
 	/**
 	 * A default AssetBuilder instance. Accepts all inventories.
 	 */
-	final static AssetBuilder DEFAULT_ASSET_BUILDER = new AssetBuilder() {
+	public final static AssetBuilder DEFAULT_ASSET_BUILDER = new AssetBuilder() {
 		@Override
 		public boolean isSupported(AppContextPair appContext) {
 			return true;

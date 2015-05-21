@@ -18,7 +18,7 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:buttonStyle">@style/MaterialStyleButton</item>
+        <!--<item name="android:buttonStyle">@style/MaterialStyleButton</item>-->
         <item name="android:imageButtonStyle">@style/MaterialStyleImageButton</item>
         <item name="android:spinnerStyle">@style/CustomSpinner</item>
     </style>
@@ -29,18 +29,9 @@
         <item name="android:padding">16dp</item>
     </style>
 
-    <style name="MaterialStyleButton" parent="@android:style/Widget.Button">
-        <item name="android:background">@drawable/drawable_button</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:minHeight">32dp</item>
-        <item name="android:layout_height">32dp</item>
-    </style>
 
-    <style name="MaterialStyleImageButton" parent="@android:style/Widget.Button">
-        <item name="android:background">@drawable/drawable_button</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:textSize">18sp</item>
+    <style name="MaterialStyleImageButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 
     <style name="CustomSpinner" parent="@style/Widget.AppCompat.Spinner">

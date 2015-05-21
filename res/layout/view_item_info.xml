@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginBottom="5dip"
@@ -10,41 +11,41 @@
               android:orientation="vertical"
               android:padding="5dip">
 
-        <com.aegamesi.steamtrade.SquareSmartImageView
-            android:id="@+id/item_image"
-            android:layout_width="128dip"
-            android:layout_height="128dip"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="4"
-            android:contentDescription="@string/inv_item_image"
-            android:scaleType="fitCenter"
-            android:src="@drawable/default_avatar"/>
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="128dip"
+        android:layout_height="128dip"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="4"
+        android:contentDescription="@string/inv_item_image"
+        android:scaleType="fitCenter"
+        android:src="@drawable/default_avatar"/>
 
-        <TextView
-            android:id="@+id/item_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Name"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        tools:text="Name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/item_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Type"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#767676"/>
+    <TextView
+        android:id="@+id/item_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        tools:text="Type"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        />
 
-        <TextView
-            android:id="@+id/item_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Description"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#B4B4B4"/>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/item_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dip"
+        android:gravity="center"
+        tools:text="Description"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+</LinearLayout>

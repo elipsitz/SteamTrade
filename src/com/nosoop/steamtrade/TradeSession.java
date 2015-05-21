@@ -146,6 +146,14 @@ public class TradeSession implements Runnable {
 					ex.printStackTrace();
 				}
 				tradeListener.onTradeClosed();
+				return;
+			}
+
+			if(status == null) {
+				// not quite sure why this happens, but it seems to happen, kind of a lot.
+				tradeListener.onError(TradeStatusCodes.TRADE_FAILED, "status = null");
+				tradeListener.onTradeClosed();
+				return;
 			}
 
 			if (status.trade_status == TradeStatusCodes.TRADE_COMPLETED) {
@@ -156,11 +164,13 @@ public class TradeSession implements Runnable {
 					== TradeStatusCodes.STATUS_ERRORMESSAGE) {
 				tradeListener.onError(status.trade_status, status.error);
 				tradeListener.onTradeClosed();
+				return;
 			} else if (status.trade_status > 1) {
 				// Refer to TradeListener.TradeStatusCodes for known values.
 				tradeListener.onError(status.trade_status,
 						TradeStatusCodes.EMPTY_MESSAGE);
 				tradeListener.onTradeClosed();
+				return;
 			}
 
 			if (status.trade_status != TradeStatusCodes.STATUS_OK) {
@@ -304,6 +314,7 @@ public class TradeSession implements Runnable {
 				tradeListener.onError(TradeStatusCodes.USER_ITEM_NOT_FOUND,
 						String.format(errorMsg, evt.assetid, evt.appid,
 								evt.contextid));
+				return;
 			}
 		}
 

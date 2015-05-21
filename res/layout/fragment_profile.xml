@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
 
     <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.loopj.android.image.SmartImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_avatar"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_margin="5dip"
+            android:layout_margin="8dp"
             android:contentDescription="@string/steam_avatar"
             android:padding="2dip"
-            android:src="@drawable/default_avatar"/>
+            android:src="@drawable/default_avatar"
+            app:border_width="2dip"/>
 
         <LinearLayout
             android:layout_width="0dip"
@@ -31,8 +35,8 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                android:text="Name"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="Name"/>
 
             <TextView
                 android:id="@+id/profile_status"
@@ -40,129 +44,140 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                android:text="Status"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:text="Status"/>
 
         </LinearLayout>
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/loading_view"
-            android:indeterminate="true"/>
+        <TextView
+            android:id="@+id/profile_level"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_steam_level"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24dp"
+            tools:text="\?"/>
+
     </LinearLayout>
 
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrollView"
         android:layout_gravity="center_horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <Button
-            android:id="@+id/profile_button_chat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/chat"/>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
 
             <Button
-                android:id="@+id/profile_button_add_friend"
-                android:layout_width="0dip"
+                android:id="@+id/profile_button_chat"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/friend_add"
+                android:text="@string/chat"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_weight="1"/>
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/profile_button_remove_friend"
-                android:layout_width="0dip"
+                <Button
+                    android:id="@+id/profile_button_add_friend"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:text="@string/friend_add"/>
+
+                <Button
+                    android:id="@+id/profile_button_remove_friend"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/friend_remove"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/friend_remove"
-                android:layout_weight="1"/>
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/profile_button_viewsteam"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/friend_view_steam"/>
+
+                <Button
+                    android:id="@+id/profile_button_viewsteamrep"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/friend_view_steamrep"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <Button
+                    android:id="@+id/profile_button_trade"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/trade"/>
+
+                <Button
+                    android:id="@+id/profile_button_inventory"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/inventory"/>
+
+                <Button
+                    android:id="@+id/profile_button_tradeoffer"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/offer_trade"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dip"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dip"
+                android:text="@string/profile_summary"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/profile_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dip"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip"
+                android:background="#666666"
+                android:linksClickable="true"
+                android:padding="10dip"
+                android:text="@string/profile_loading_summary"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFFFF"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
-
-            <Button
-                android:id="@+id/profile_button_viewsteam"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:text="@string/friend_view_steam"
-                android:layout_weight="1"/>
-
-            <Button
-                android:id="@+id/profile_button_viewsteamrep"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:text="@string/friend_view_steamrep"
-                android:layout_weight="1"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-
-            <Button
-                android:id="@+id/profile_button_trade"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/trade"/>
-
-            <Button
-                android:id="@+id/profile_button_inventory"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/inventory"
-                android:layout_weight="1"/>
-
-            <Button
-                android:id="@+id/profile_button_tradeoffer"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/offer_trade"/>
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/profile_summary"
-            android:id="@+id/textView3"
-            android:gravity="center"
-            android:layout_marginTop="20dip"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/profile_loading_summary"
-            android:id="@+id/profile_summary"
-            android:layout_gravity="center_horizontal"
-            android:padding="10dip"
-            android:textColor="#FFFFFF"
-            android:background="#666666"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginBottom="10dip"
-            android:linksClickable="true"/>
-        </LinearLayout>
-        </ScrollView>
+    </ScrollView>
 
 </LinearLayout>

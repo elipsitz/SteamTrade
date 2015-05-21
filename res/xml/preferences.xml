@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
+        android:key="pref_remove_ads"
+        android:title="@string/pref_remove_ads"
+        android:summary="@string/pref_remove_ads_summ" />
+    <CheckBoxPreference
+        android:key="pref_persist_notification"
+        android:title="@string/persist_notification"
+        android:summary="@string/persist_notification_summ"
+        android:defaultValue="true" />
+    <CheckBoxPreference
         android:key="pref_vibrate"
         android:title="@string/pref_vibrate"
         android:summary="@string/pref_vibrate_summ"
         android:defaultValue="true" />
+    <RingtonePreference
+        android:key="pref_notification_sound"
+        android:title="@string/pref_notification_sound"
+        android:showDefault="true"
+        android:showSilent="true"
+        android:ringtoneType="notification"
+        android:defaultValue="content://settings/system/notification_sound"
+        />
     <CheckBoxPreference
         android:key="pref_reconnect"
         android:title="@string/pref_reconnect"

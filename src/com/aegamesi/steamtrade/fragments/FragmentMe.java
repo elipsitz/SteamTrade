@@ -1,8 +1,8 @@
 package com.aegamesi.steamtrade.fragments;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,14 +21,14 @@ import android.widget.Toast;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.loopj.android.image.SmartImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 
 public class FragmentMe extends FragmentBase implements OnClickListener, OnItemSelectedListener {
-	public SmartImageView avatarView;
+	public ImageView avatarView;
 	public TextView nameView;
 	public Spinner statusSpinner;
 	public Button changeNameButton;
@@ -40,20 +41,20 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 
-		fragmentName = "FragmentMe";
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_me, container, false);
-		avatarView = (SmartImageView) view.findViewById(R.id.profile_avatar);
+		avatarView = (ImageView) view.findViewById(R.id.profile_avatar);
 		nameView = (TextView) view.findViewById(R.id.profile_name);
 		statusSpinner = (Spinner) view.findViewById(R.id.profile_status_spinner);
 		changeNameButton = (Button) view.findViewById(R.id.me_set_name);
 		changeGameButton = (Button) view.findViewById(R.id.me_set_game);
 
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity(), R.array.allowed_states, android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 		statusSpinner.setAdapter(adapter);
 		statusSpinner.setOnItemSelectedListener(this);
 		changeNameButton.setOnClickListener(this);
@@ -75,12 +76,10 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		statusSpinner.setSelection(stateToIndex(state));
 
 		avatarView.setImageResource(R.drawable.default_avatar);
-		if (avatar != null && !avatar.equals("0000000000000000000000000000000000000000"))
-			avatarView.setImageUrl("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg");
+		if (!avatar.equals("0000000000000000000000000000000000000000"))
+			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg", avatarView);
 
 		nameView.setTextColor(SteamUtil.colorOnline);
-		//statusSpinner.setTextColor(SteamUtil.colorOnline);
-		avatarView.setBackgroundColor(SteamUtil.colorOnline);
 	}
 
 	public int stateToIndex(EPersonaState state) {

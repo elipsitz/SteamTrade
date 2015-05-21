@@ -15,5 +15,11 @@ public class SteamLogcatDebugListener implements IDebugListener {
 		String[] lines = msg.split(System.getProperty("line.separator"));
 		for (String line : lines)
 			Log.d("SteamKit", "[" + tag + "] " + line);
+
+		/* debug mode */
+		if (tag.equals("NEW_EX")) {
+			for (StackTraceElement e : Thread.currentThread().getStackTrace())
+				Log.d("StackTrace", e.toString());
+		}
 	}
 }

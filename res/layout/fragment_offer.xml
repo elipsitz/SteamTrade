@@ -2,34 +2,34 @@
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
         >
 
         <Button
+            android:id="@+id/offer_button_inventories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/offer_button_inventories"
             android:layout_weight="1"
             />
 
         <Button
+            android:id="@+id/offer_button_offerings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/offer_button_offerings"
             android:layout_weight="1"/>
 
         <Button
+            android:id="@+id/offer_button_review"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/offer_button_review"
             android:layout_weight="1"/>
     </LinearLayout>
 
@@ -41,12 +41,12 @@
         android:visibility="visible">
 
         <TextView
+            android:id="@+id/loading_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/loading_status"
             android:layout_gravity="center_horizontal"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <ProgressBar
             android:id="@+id/loading_spinner"
@@ -57,30 +57,30 @@
     </LinearLayout>
 
     <FrameLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:id="@+id/d">
-
-    <include
-        android:id="@+id/offer_tab_inventories"
+        android:id="@+id/d"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/offer_tab_inventories"
-        android:visibility="visible"/>
+        android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/offer_tab_offerings"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/offer_tab_offerings"
-        android:visibility="visible"/>
+        <include
+            android:id="@+id/offer_tab_inventories"
+            layout="@layout/offer_tab_inventories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
 
-    <include
-        android:id="@+id/offer_tab_review"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/offer_tab_review"
-        android:visibility="visible"/>
+        <include
+            android:id="@+id/offer_tab_offerings"
+            layout="@layout/offer_tab_offerings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
+
+        <include
+            android:id="@+id/offer_tab_review"
+            layout="@layout/offer_tab_review"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
 
     </FrameLayout>
 

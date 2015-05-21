@@ -99,10 +99,16 @@ public abstract class TradeInternalAsset {
 		classidString = rgInventoryItem.getString("classid");
 		this.classid = Integer.parseInt(classidString);
 
-		this.amount = Integer.parseInt(
-				rgInventoryItem.optString("amount", "1"));
-		this.assetid = Long.parseLong(rgInventoryItem.getString("id"));
+		this.amount = Integer.parseInt(rgInventoryItem.optString("amount", "1"));
 		this.pos = rgInventoryItem.optInt("pos", -1);
+
+
+		if(rgInventoryItem.has("id"))
+			this.assetid = Long.parseLong(rgInventoryItem.getString("id"));
+		else if(rgInventoryItem.has("assetid"))
+			this.assetid = Long.parseLong(rgInventoryItem.getString("assetid"));
+		else if(rgInventoryItem.has("currencyid"))
+			this.assetid = Long.parseLong(rgInventoryItem.getString("currencyid"));
 
 		this.descriptions = new ArrayList<>();
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/item_image_container"
-              android:layout_width="72dip"
-              android:layout_height="72dip"
-              android:background="@color/color_trade_white"
-              android:padding="2dip">
+<FrameLayout android:id="@+id/item_image_container"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="72dip"
+             android:layout_height="72dip"
+             android:background="@color/color_trade_white"
+             android:padding="2dip">
 
-    <com.aegamesi.steamtrade.SquareSmartImageView
+    <com.aegamesi.lib.SquareImageView
         android:id="@+id/itemlist_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,9 +19,9 @@
         android:id="@+id/itemlist_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:textSize="0sp"
-        android:layout_gravity="left|top"/>
+        android:textSize="0sp"/>
 
 </FrameLayout>

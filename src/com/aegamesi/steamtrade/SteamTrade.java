@@ -1,20 +1,24 @@
 package com.aegamesi.steamtrade;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
-import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
 import java.io.File;
-import java.util.Random;
+
+import uk.co.thomasc.steamkit.steam3.CMClient;
 
 @ReportsCrashes(
-		formKey = "",
 		formUri = "https://pickleman.cloudant.com/acra-steamtrade/_design/acra-storage/_update/report",
 		reportType = org.acra.sender.HttpSender.Type.JSON,
 		httpMethod = org.acra.sender.HttpSender.Method.PUT,
@@ -35,13 +39,31 @@ public class SteamTrade extends Application {
 		getTracker().enableAdvertisingIdCollection(true);
 		filesDir = getFilesDir();
 
-		Random r = new Random();
+		/*Random r = new Random();
 		r.setSeed(System.currentTimeMillis());
 		String[] keys = getResources().getStringArray(R.array.steam_apikey);
-		SteamUtil.apikey = keys[r.nextInt(keys.length)];
-	}
+		//SteamUtil.apikey = keys[r.nextInt(keys.length)];*/
 
-	private Tracker tracker;
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (prefs.contains("cm_server_list")) {
+			String serverString = prefs.getString("cm_server_list", "");
+			if (serverString != null) {
+				String[] servers = serverString.split(",");
+				if (servers.length > 0)
+					CMClient.updateCMServers(servers);
+			}
+		}
+
+		// setup universal image loader
+		DisplayImageOptions defaultImageOptions = new DisplayImageOptions.Builder()
+				.cacheInMemory(true)
+				.cacheOnDisk(true)
+				.build();
+		ImageLoaderConfiguration imageLoaderConfiguration = new ImageLoaderConfiguration.Builder(this)
+				.defaultDisplayImageOptions(defaultImageOptions)
+				.build();
+		ImageLoader.getInstance().init(imageLoaderConfiguration);
+	}
 
 	public Tracker getTracker() {
 		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);

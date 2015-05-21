@@ -2,61 +2,61 @@
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
 
         <Button
+            android:id="@+id/trade_button_inventory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/trade_button_inventory"
             android:layout_weight="1"
             />
 
         <Button
+            android:id="@+id/trade_button_offerings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/trade_button_offerings"
             android:layout_weight="1"/>
 
         <Button
+            android:id="@+id/trade_button_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/trade_button_chat"
             android:layout_weight="1"/>
     </LinearLayout>
 
     <FrameLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:id="@+id/d">
-
-    <include
-        android:id="@+id/trade_tab_chat"
+        android:id="@+id/d"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/trade_tab_chat"
-        android:visibility="visible"/>
+        android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/trade_tab_inventory"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/trade_tab_inventory"
-        android:visibility="visible"/>
+        <include
+            android:id="@+id/trade_tab_chat"
+            layout="@layout/trade_tab_chat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
 
-    <include
-        android:id="@+id/trade_tab_offerings"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/trade_tab_offerings"
-        android:visibility="visible"/>
+        <include
+            android:id="@+id/trade_tab_inventory"
+            layout="@layout/trade_tab_inventory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
+
+        <include
+            android:id="@+id/trade_tab_offerings"
+            layout="@layout/trade_tab_offerings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
 
     </FrameLayout>
 

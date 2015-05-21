@@ -6,9 +6,9 @@
 
     <include
         android:id="@+id/friend_info"
+        layout="@layout/fragment_friends_list_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/fragment_friends_listitem"/>
+        android:layout_height="wrap_content"/>
 
     <View
         android:layout_width="fill_parent"
@@ -21,20 +21,20 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
-        android:transcriptMode="normal"
         android:divider="@null"
-        android:dividerHeight="10dip">
+        android:dividerHeight="10dip"
+        android:transcriptMode="normal">
     </ListView>
 
     <TextView
+        android:id="@+id/chat_typing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/friend_is_typing"
-        android:id="@+id/chat_typing"
         android:layout_gravity="center_horizontal"
-        android:textStyle="italic"
         android:gravity="center"
+        android:text="@string/friend_is_typing"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="italic"
         android:visibility="invisible"/>
 
     <LinearLayout
@@ -49,7 +49,7 @@
             android:ems="10"
             android:hint="@string/chat_hint"
             android:imeOptions="actionSend"
-            android:inputType="text"/>
+            android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect"/>
 
         <Button
             android:id="@+id/chat_button"

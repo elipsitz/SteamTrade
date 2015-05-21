@@ -11,25 +11,25 @@
         android:orientation="horizontal">
 
         <RadioButton
+            android:id="@+id/offer_tab_inventory_us"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/offer_inventory_us"
-            android:id="@+id/offer_tab_inventory_us"
             android:layout_weight="1"
-            android:checked="true"/>
+            android:checked="true"
+            android:text="@string/offer_inventory_us"/>
 
         <RadioButton
+            android:id="@+id/offer_tab_inventory_them"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/offer_inventory_them"
-            android:id="@+id/offer_tab_inventory_them"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/offer_inventory_them"/>
     </RadioGroup>
 
     <include
+        layout="@layout/fragment_inventory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/fragment_inventory"
         android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

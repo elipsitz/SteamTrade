@@ -21,9 +21,9 @@
 
     <include
         android:id="@+id/trade_status"
+        layout="@layout/view_trade_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/view_trade_status"
         android:visibility="gone"/>
 
 </LinearLayout>

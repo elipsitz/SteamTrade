@@ -25,23 +25,21 @@ import java.util.regex.Pattern;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class TradeOffer {
-	private String sessionID;
 	public String partnerName;
 	public SteamID partnerID;
-	private long tradeID = 1;
-	private String inventoryLoadUrl;
-	private String partnerInventoryLoadUrl;
 	public List<AppContextPair> appContextData;
 	public List<AppContextPair> partnerAppContextData;
 	public String message = null;
 	public boolean newOffer = false;
 	public boolean counterOffer = false;
-
 	public int trade_version;
 	public String accessToken = null;
-
 	public TradeSession.TradeUser TRADE_USER_SELF;
 	public TradeSession.TradeUser TRADE_USER_PARTNER;
+	private String sessionID;
+	private long tradeID = 1;
+	private String inventoryLoadUrl;
+	private String partnerInventoryLoadUrl;
 
 	protected TradeOffer() {
 		TRADE_USER_SELF = new TradeSession.TradeUser(SteamService.singleton.steamClient.getSteamId().convertToLong(), new ArrayList<AssetBuilder>());
@@ -156,7 +154,7 @@ public class TradeOffer {
 			return;
 
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("sessionid", SteamService.singleton.sessionID.trim());
+		data.put("sessionid", SteamService.singleton.sessionID);
 		data.put("partner", Long.toString(partnerID.convertToLong()));
 		data.put("appid", Long.toString(appContext.getAppid()));
 		data.put("contextid", Long.toString(appContext.getContextid()));
@@ -213,7 +211,7 @@ public class TradeOffer {
 			Log.d("JSON", tradeStatus.toString());
 
 			Map<String, String> data = new HashMap<String, String>();
-			data.put("sessionid", SteamService.singleton.sessionID.trim());
+			data.put("sessionid", SteamService.singleton.sessionID);
 			data.put("partner", Long.toString(partnerID.convertToLong()));
 			data.put("serverid", "1");
 			data.put("tradeoffermessage", message);
@@ -227,7 +225,7 @@ public class TradeOffer {
 
 			String response = SteamWeb.fetch("https://steamcommunity.com/tradeoffer/new/send", "POST", data, "https://steamcommunity.com/tradeoffer/" + tradeID);
 			Log.d("TradeOffer", response);
-			return (response != null && response.length() > 0) ? new JSONObject(response) : null;
+			return (response.length() > 0) ? new JSONObject(response) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -238,12 +236,12 @@ public class TradeOffer {
 		try {
 			String url = "https://steamcommunity.com/tradeoffer/" + tradeID + "/accept";
 			Map<String, String> data = new HashMap<String, String>();
-			data.put("sessionid", SteamService.singleton.sessionID.trim());
+			data.put("sessionid", SteamService.singleton.sessionID);
 			data.put("serverid", "1");
 			data.put("tradeofferid", tradeID + "");
 			String response = SteamWeb.fetch(url, "POST", data, "https://steamcommunity.com/tradeoffer/" + tradeID);
 			Log.d("TradeOffer", response);
-			return (response != null && response.length() > 0) ? new JSONObject(response) : null;
+			return (response.length() > 0) ? new JSONObject(response) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -259,7 +257,7 @@ public class TradeOffer {
 			data.put("tradeofferid", tradeID + "");
 			String response = SteamWeb.fetch(url, "POST", data, "https://steamcommunity.com/tradeoffer/" + tradeID);
 			Log.d("TradeOffer", response);
-			return (response != null && response.length() > 0) ? new JSONObject(response) : null;
+			return (response.length() > 0) ? new JSONObject(response) : null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

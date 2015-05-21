@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/menu_inventory_toggle_view"
-        android:icon="@drawable/ic_collections_view_as_grid"
+        android:icon="@drawable/ic_view_list"
         ae:showAsAction="always"
         android:title="@string/toggle_view_mode">
     </item>

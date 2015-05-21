@@ -5,9 +5,9 @@
               android:orientation="vertical">
 
     <include
+        layout="@layout/fragment_inventory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/fragment_inventory"
         android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

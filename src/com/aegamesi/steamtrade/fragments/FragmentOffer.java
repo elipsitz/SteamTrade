@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aegamesi.lib.ExpandableHeightGridView;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.support.ItemListAdapter;
 import com.aegamesi.steamtrade.trade2.TradeOffer;
@@ -33,15 +34,18 @@ import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nosoop.steamtrade.inventory.TradeInternalInventories;
 import com.nosoop.steamtrade.inventory.TradeInternalInventory;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentOffer extends FragmentBase implements OnClickListener, AdapterView.OnItemSelectedListener {
+	public static int[] tab_notifications = new int[]{0, 0, 0};
 	public Button[] tab_buttons;
 	public View[] tab_views;
-	public static int[] tab_notifications = new int[]{0, 0, 0};
 	public int tab_selected;
 	public TradeOffer offer = null;
+	public JSONObject jsonResult = null;
 
 	public View loadingView;
 	public TextView loadingStatusView;
@@ -55,8 +59,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	public EditText tabInventorySearch;
 	public ItemListAdapter tabInventoryListAdapter;
 	//
-	public GridView tabOfferMeOffer;
-	public GridView tabOfferOtherOffer;
+	public ExpandableHeightGridView tabOfferMeOffer;
+	public ExpandableHeightGridView tabOfferOtherOffer;
 	public ItemListAdapter tabOfferMeOfferAdapter;
 	public ItemListAdapter tabOfferOtherOfferAdapter;
 	//
@@ -79,7 +83,6 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		tab_views = new View[3];
 		tab_buttons = new Button[3];
 
-		fragmentName = "FragmentOffer";
 	}
 
 	@Override
@@ -93,7 +96,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		switch (item.getItemId()) {
 			case R.id.menu_inventory_toggle_view:
 				int new_list_mode = tabInventoryListAdapter.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID;
-				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_collections_view_as_list : R.drawable.ic_collections_view_as_grid);
+				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
 
 				tabInventoryListAdapter.setListMode(new_list_mode);
 				tabOfferMeOfferAdapter.setListMode(new_list_mode);
@@ -104,66 +107,12 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		}
 	}
 
-	private class LoadOfferTask extends AsyncTask<Void, Void, TradeOffer> {
-		private Bundle bundle;
-		private ProgressDialog dialog;
-
-		protected void onPreExecute() {
-			if (loadingView != null)
-				loadingView.setVisibility(View.VISIBLE);
-
-			dialog = new ProgressDialog(activity());
-			dialog.setIndeterminate(true);
-			dialog.setMessage(getString(R.string.offer_loading));
-			dialog.show();
-
-			bundle = getArguments();
-		}
-
-		protected TradeOffer doInBackground(Void... voids) { // the fuck
-			TradeOffer offer = null;
-
-			try {
-				if (!bundle.getBoolean("from_existing", false)) {
-					// generate a new offer
-					long user_id = bundle.getLong("user_id"); // either SteamId#getAccountId or the public url...
-					String token = bundle.getString("token"); // only if public url
-					offer = TradeOffer.createNewOffer(user_id, token);
-				} else {
-					// load an existing offer
-					long id = bundle.getLong("offer_id");
-					offer = TradeOffer.loadFromExistingOffer(id);
-					offer.message = bundle.getString("offer_message");
-				}
-			} catch (Exception e) {
-				return null;
-			}
-
-			return offer;
-		}
-
-		protected void onPostExecute(TradeOffer result) {
-			offer = result;
-
-			updateUIInventory();
-			updateUIOffers();
-			updateUIReview();
-
-			dialog.dismiss();
-			if (offer == null) {
-				if (loadingStatusView != null)
-					loadingStatusView.setText(R.string.offer_error_loading);
-			} else {
-				if (loadingView != null)
-					loadingView.setVisibility(View.GONE);
-			}
-		}
-	}
-
 	@Override
 	public void onStart() {
 		super.onStart();
-		(new LoadOfferTask()).execute();
+
+		if (offer == null)
+			(new LoadOfferTask()).execute();
 	}
 
 	@Override
@@ -197,6 +146,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
+		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_offer, container, false);
 		loadingView = view.findViewById(R.id.loading);
 		loadingView.setVisibility(offer == null ? View.VISIBLE : View.GONE);
@@ -262,11 +212,13 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			}
 		});
 		// TAB 1: Offers
-		tabOfferMeOffer = (GridView) tab_views[1].findViewById(R.id.trade_offer_mylist);
+		tabOfferMeOffer = (ExpandableHeightGridView) tab_views[1].findViewById(R.id.trade_offer_mylist);
+		tabOfferMeOffer.setExpanded(true);
 		tabOfferMeOfferAdapter = new ItemListAdapter(activity(), tabOfferMeOffer, false, null);
 		tabOfferMeOffer.setAdapter(tabOfferMeOfferAdapter);
 
-		tabOfferOtherOffer = (GridView) tab_views[1].findViewById(R.id.trade_offer_otherlist);
+		tabOfferOtherOffer = (ExpandableHeightGridView) tab_views[1].findViewById(R.id.trade_offer_otherlist);
+		tabOfferOtherOffer.setExpanded(true);
 		tabOfferOtherOfferAdapter = new ItemListAdapter(activity(), tabOfferOtherOffer, false, null);
 		tabOfferOtherOffer.setAdapter(tabOfferOtherOfferAdapter);
 
@@ -404,7 +356,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			new GenericAsyncTask(getString(R.string.offer_declining)).execute(new Runnable() {
 				@Override
 				public void run() {
-					offer.declineOffer();
+					jsonResult = offer.declineOffer();
 				}
 			}, new Runnable() {
 				@Override
@@ -418,7 +370,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			new GenericAsyncTask(getString(R.string.offer_accepting)).execute(new Runnable() {
 				@Override
 				public void run() {
-					offer.acceptOffer();
+					jsonResult = offer.acceptOffer();
 				}
 			}, new Runnable() {
 				@Override
@@ -433,7 +385,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			new GenericAsyncTask(getString(R.string.offer_submitting)).execute(new Runnable() {
 				@Override
 				public void run() {
-					offer.send(message);
+					jsonResult = offer.send(message);
 				}
 			}, new Runnable() {
 				@Override
@@ -470,10 +422,19 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		if (activity() == null || getView() == null)
 			return;
 		((ViewGroup) getView()).removeAllViews();
-		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_success, null, false);
+		View result = activity().getLayoutInflater().inflate(R.layout.offer_result_success, null, false);
 		((ViewGroup) getView()).addView(result);
 		TextView successText = (TextView) result.findViewById(R.id.trade_success_text);
-		successText.setText(R.string.trade_confirm_email);
+
+		if (jsonResult != null) {
+			boolean trade_confirm_email = jsonResult.optBoolean("needs_email_confirmation", false);
+			if (trade_confirm_email) {
+				String email_domain = jsonResult.optString("email_domain", "unknown");
+				successText.setText(String.format(getString(R.string.offer_confirm_email), email_domain));
+			} else {
+				successText.setText(R.string.offer_successful);
+			}
+		}
 	}
 
 	@Override
@@ -504,6 +465,62 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 
 	@Override
 	public void onNothingSelected(AdapterView<?> adapterView) {
+	}
+
+	private class LoadOfferTask extends AsyncTask<Void, Void, TradeOffer> {
+		private Bundle bundle;
+		private ProgressDialog dialog;
+
+		protected void onPreExecute() {
+			if (loadingView != null)
+				loadingView.setVisibility(View.VISIBLE);
+
+			dialog = new ProgressDialog(activity());
+			dialog.setIndeterminate(true);
+			dialog.setMessage(getString(R.string.offer_loading));
+			dialog.show();
+
+			bundle = getArguments();
+		}
+
+		protected TradeOffer doInBackground(Void... voids) { // the fuck
+			TradeOffer offer = null;
+
+			try {
+				if (!bundle.getBoolean("from_existing", false)) {
+					// generate a new offer
+					long user_id = bundle.getLong("user_id"); // either SteamId#getAccountId or the public url...
+					String token = bundle.getString("token"); // only if public url
+					offer = TradeOffer.createNewOffer(user_id, token);
+				} else {
+					// load an existing offer
+					long id = bundle.getLong("offer_id");
+					offer = TradeOffer.loadFromExistingOffer(id);
+					offer.message = bundle.getString("offer_message");
+				}
+			} catch (Exception e) {
+				return null;
+			}
+
+			return offer;
+		}
+
+		protected void onPostExecute(TradeOffer result) {
+			offer = result;
+
+			updateUIInventory();
+			updateUIOffers();
+			updateUIReview();
+
+			dialog.dismiss();
+			if (offer == null) {
+				if (loadingStatusView != null)
+					loadingStatusView.setText(R.string.offer_error_loading);
+			} else {
+				if (loadingView != null)
+					loadingView.setVisibility(View.GONE);
+			}
+		}
 	}
 
 	private class GenericAsyncTask extends AsyncTask<Runnable, Void, Void> {

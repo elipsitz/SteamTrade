@@ -13,10 +13,8 @@ import android.widget.Toast;
 import com.aegamesi.steamtrade.fragments.FragmentTrade;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.trade2.Trade;
-import com.aegamesi.steamtrade.trade2.UserTradeListener;
 import com.google.android.gms.analytics.HitBuilders;
 
-import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.SessionStartCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeProposedCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeResultCallback;
@@ -24,7 +22,6 @@ import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class TradeManager implements OnClickListener {
 	public Trade currentTrade = null;
-	public UserTradeListener tradeListener = null;
 
 	public View tradeStatus = null;
 	public ImageButton yesButton;
@@ -86,7 +83,7 @@ public class TradeManager implements OnClickListener {
 		tradeRequestSentByUs = false;
 		updateTradeStatus();
 
-		Toast.makeText(activity(), String.format(activity().getString(R.string.trade_got_request), obj.getOtherName()), Toast.LENGTH_LONG);
+		Toast.makeText(activity(), String.format(activity().getString(R.string.trade_got_request), obj.getOtherName()), Toast.LENGTH_LONG).show();
 	}
 
 	public void callbackTradeResult(TradeResultCallback obj) {
@@ -94,7 +91,7 @@ public class TradeManager implements OnClickListener {
 			Log.e("Steam", "Unexpected null TradeResultCallback...");
 			return;
 		}
-		String name = SteamService.singleton.steamClient.getHandler(SteamFriends.class).getFriendPersonaName(obj.getOtherClient());
+		String name = activity().steamFriends.getFriendPersonaName(obj.getOtherClient());
 		switch (obj.getResponse()) {
 			case Accepted:
 				Toast.makeText(activity(), String.format(activity().getString(R.string.trade_result_accepted), name), Toast.LENGTH_LONG).show();

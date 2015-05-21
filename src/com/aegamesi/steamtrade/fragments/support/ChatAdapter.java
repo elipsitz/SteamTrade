@@ -1,6 +1,7 @@
 package com.aegamesi.steamtrade.fragments.support;
 
 import android.graphics.PorterDuff;
+import android.text.Html;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,23 +47,25 @@ public class ChatAdapter extends BaseAdapter {
 
 		View v = convertView;
 		if (v == null || v.getTag() == null || !(v.getTag() instanceof ChatLine) || (((ChatLine) v.getTag()).steamId != null) != left)
-			v = MainActivity.instance.getLayoutInflater().inflate(left ? R.layout.chat_item_left : R.layout.chat_item_right, null);
+			v = MainActivity.instance.getLayoutInflater().inflate(left ? R.layout.chat_item_left_new : R.layout.chat_item_right_new, null);
 		v.setTag(line);
 
 		int bgColor = 0;
-		if(line.time < last_read) {
+		if (line.time < last_read) {
 			bgColor = SteamUtil.colorOffline;
 		} else {
-			if(left) {
+			if (left) {
 				bgColor = color_default;
 			} else {
 				bgColor = SteamUtil.colorOnline;
 			}
 		}
 
-		TextView message = (TextView) v.findViewById(R.id.chat_message);
-		message.setText(line.message);
-		message.getBackground().setColorFilter(bgColor, PorterDuff.Mode.MULTIPLY);
+		String message = SteamUtil.parseEmoticons(line.message);
+
+		TextView textMessage = (TextView) v.findViewById(R.id.chat_message);
+		textMessage.setText(Html.fromHtml(message));
+		v.findViewById(R.id.chat_bubble).getBackground().setColorFilter(bgColor, PorterDuff.Mode.MULTIPLY);
 		TextView timestamp = (TextView) v.findViewById(R.id.chat_timestamp);
 		timestamp.setText(DateFormat.format("yyyy-MM-dd - h:mm a", line.time));
 

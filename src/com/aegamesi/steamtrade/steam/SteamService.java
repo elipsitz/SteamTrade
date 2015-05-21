@@ -3,6 +3,7 @@ package com.aegamesi.steamtrade.steam;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,6 +37,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.MachineAuthDetails
 import uk.co.thomasc.steamkit.steam3.steamclient.SteamClient;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.JobCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.CMListCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
@@ -65,11 +67,20 @@ public class SteamService extends Service {
 	public String tokenSecure = null;
 	public String webapiKey = null;
 	public String sentryHash = null;
-
-	private Handler handler;
 	Timer myTimer;
+	private Handler handler;
 	private boolean timerRunning = false;
-	private long POLL_TIME = 500; // 500 ms = 0.5 sec
+	private long POLL_TIME = 1000; // 500 ms = 0.5 sec
+
+	public static String generateSteamWebCookies() {
+		String cookies = "";
+		cookies += "sessionid=" + singleton.sessionID + ";";
+		cookies += "steamLogin=" + singleton.token + ";";
+		cookies += "steamLoginSecure=" + singleton.tokenSecure + ";";
+		cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
+		cookies += "steamMachineAuth" + singleton.steamClient.getSteamId().convertToLong() + "=" + singleton.sentryHash + "";
+		return cookies;
+	}
 
 	@Override
 	public void onCreate() {
@@ -100,6 +111,7 @@ public class SteamService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		stopForeground(true);
 		running = false;
 		singleton = null;
 
@@ -110,59 +122,25 @@ public class SteamService extends Service {
 		timerRunning = false;
 	}
 
-	public static String generateSteamWebCookies() {
-		String cookies = "";
-		cookies += "sessionid=" + singleton.sessionID.trim() + ";";
-		cookies += "steamLogin=" + singleton.token + ";";
-		cookies += "steamLoginSecure=" + singleton.tokenSecure + ";";
-		cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
-		cookies += "steamMachineAuth" + singleton.steamClient.getSteamId().convertToLong() + "=" + singleton.sentryHash + ";";
-		return cookies;
-	}
-
 	public void attemptLogon(Bundle bundle) {
-		abandonLogon();
 		extras = bundle;
 		steamClient.connect(true);
 
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_notification).setContentTitle("Ice").setContentText("Connected");
-		Intent notificationIntent = new Intent(this, LoginActivity.class);
-		notificationIntent.setAction(Intent.ACTION_MAIN);
-		notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-		builder.setContentIntent(contentIntent);
-		startForeground(49716, builder.build());
-	}
-
-	public void abandonLogon() {
-		SteamService.this.stopForeground(true);
+		// this is only required if we want an ongoing notificiation and more resilience
+		boolean persist_notification = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).getBoolean("pref_persist_notification", true);
+		if (persist_notification) {
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_notify_base).setContentTitle("Ice").setContentText("Connected");
+			Intent notificationIntent = new Intent(this, LoginActivity.class);
+			notificationIntent.setAction(Intent.ACTION_MAIN);
+			notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+			builder.setContentIntent(contentIntent);
+			startForeground(49716, builder.build());
+		}
 	}
 
 	public void disconnect() {
-
-	}
-
-	public class CheckCallbacksTask extends TimerTask {
-		@Override
-		public void run() {
-			if (steamClient == null)
-				return;
-			while (true) {
-				final CallbackMsg msg = steamClient.getCallback(true);
-				if (msg == null)
-					break;
-				if (messageHandler != null) {
-					// gotta run this on the ui thread
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							messageHandler.handleSteamMessage(msg);
-						}
-					});
-				}
-				handleSteamMessage(msg);
-			}
-		}
+		stopSelf();
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -171,15 +149,14 @@ public class SteamService extends Service {
 			@Override
 			public void call(DisconnectedCallback obj) {
 				Log.i("Steam", "Disconnected from Steam Network, new connection: " + obj.isNewconnection());
-				SteamService.this.stopForeground(true);
+				disconnect();
 			}
 		});
 		msg.handle(LoggedOffCallback.class, new ActionT<LoggedOffCallback>() {
 			@Override
 			public void call(LoggedOffCallback obj) {
 				Log.i("Steam", "Logged off from Steam, " + obj.getResult());
-				steamClient.disconnect();
-				SteamService.this.stopForeground(true);
+				disconnect();
 			}
 		});
 		msg.handle(ConnectedCallback.class, new ActionT<ConnectedCallback>() {
@@ -218,7 +195,7 @@ public class SteamService extends Service {
 					}
 					steamClient.getHandler(SteamUser.class).logOn(details, com.aegamesi.steamtrade.Installation.id());
 				} else {
-					abandonLogon();
+					disconnect();
 				}
 			}
 		});
@@ -227,7 +204,7 @@ public class SteamService extends Service {
 			public void call(LoggedOnCallback callback) {
 				if (callback.getResult() != EResult.OK) {
 					Log.i("Steam", "Login Failure: " + callback.getResult());
-					abandonLogon();
+					disconnect();
 				}
 			}
 		});
@@ -278,10 +255,27 @@ public class SteamService extends Service {
 				}
 			}
 		});
+		msg.handle(CMListCallback.class, new ActionT<CMListCallback>() {
+			@Override
+			public void call(CMListCallback obj) {
+				if (obj.getServerList().length > 0) {
+					String serverString = "";
+					for (String entry : obj.getServerList()) {
+						if (serverString.length() > 0)
+							serverString += ",";
+						serverString += entry;
+					}
+
+					SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).edit();
+					prefs.putString("cm_server_list", serverString);
+					prefs.commit();
+				}
+			}
+		});
 	}
 
 	public boolean authenticate(LoginKeyCallback callback) {
-		sessionID = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT);
+		sessionID = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT).trim();
 		final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);//SteamUtil.apikey); // this shouldn't require an api key
 		// generate an AES session key
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
@@ -325,5 +319,28 @@ public class SteamService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+
+	public class CheckCallbacksTask extends TimerTask {
+		@Override
+		public void run() {
+			if (steamClient == null)
+				return;
+			while (true) {
+				final CallbackMsg msg = steamClient.getCallback(true);
+				if (msg == null)
+					break;
+				if (messageHandler != null) {
+					// gotta run this on the ui thread
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							messageHandler.handleSteamMessage(msg);
+						}
+					});
+				}
+				handleSteamMessage(msg);
+			}
+		}
 	}
 }

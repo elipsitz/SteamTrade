@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="friend_avatar">Friend\'s Avatar</string>
-    <string name="placeholder_friend_name">Friend\'s Name</string>
-    <string name="placeholder_friend_status">Friend\'s Status</string>
-    <color name="color_friend_unread">#3F3F3F</color>
+    <color name="color_friend_unread">#555</color>
     <string name="friend_add">Add Friend</string>
     <string name="friend_add_prompt">Please enter the SteamID64 or email address of the friend you wish to add:</string>
     <string name="friend_add_fail">Failed to add friend: %1$s</string>
@@ -17,9 +14,14 @@
     <string name="friend_view_steam">View on Steam</string>
     <string name="friend_view_steamrep">View on SteamRep</string>
     <string name="friend_is_typing">Other user is typing…</string>
-    <string name="profile_summary">Summary:</string>
+    <string name="profile_summary">Summary</string>
     <string name="profile_loading_summary">Loading summary…</string>
 
     <color name="color_chat_left">#B3E5FC</color>
     <color name="color_chat_right">#607D8B</color>
+
+    <color name="steam_online">#9CC6FF</color>
+    <color name="steam_game">#AED04E</color>
+    <color name="steam_offline">#CFD2D3</color>
+    <color name="steam_blocked">#F26C4F</color>
 </resources>

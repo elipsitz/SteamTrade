@@ -4,13 +4,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.loopj.android.image.SmartImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,9 +30,8 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 	public FragmentFriends fragment;
 	public Map<FriendListCategory, List<FriendListItem>> friendsList = new LinkedHashMap<FriendListCategory, List<FriendListItem>>();
 	public List<FriendListCategory> categories = new ArrayList<FriendListCategory>();
-	private SteamFriends steamFriends;
-
 	public String filterString = "";
+	private SteamFriends steamFriends;
 	private List<SteamID> recentChats = null;
 	private List<SteamID> list = null;
 
@@ -127,18 +127,22 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 	public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 		View v = convertView;
 		if (v == null)
-			v = fragment.activity().getLayoutInflater().inflate(R.layout.fragment_friends_listitem, null);
+			v = fragment.activity().getLayoutInflater().inflate(R.layout.fragment_friends_list_item, null);
 
 		FriendListItem p = (FriendListItem) getChild(groupPosition, childPosition);
 		if (p != null) {
-			SmartImageView avatar = (SmartImageView) v.findViewById(R.id.friend_avatar_left);
+			ImageView avatar = (ImageView) v.findViewById(R.id.friend_avatar_left);
 			TextView name = (TextView) v.findViewById(R.id.friend_name);
 			TextView status = (TextView) v.findViewById(R.id.friend_status);
-			ImageButton chatButton = (ImageButton) v.findViewById(R.id.friend_chat_button);
+			ImageButton profileButton = (ImageButton) v.findViewById(R.id.friend_profile_button);
 			ImageButton acceptButton = (ImageButton) v.findViewById(R.id.friend_request_accept);
 			ImageButton rejectButton = (ImageButton) v.findViewById(R.id.friend_request_reject);
 
-			name.setText(p.name);
+			if (p.nickname == null)
+				name.setText(p.name);
+			else
+				name.setText(p.name + " (" + p.nickname + ")");
+
 			if (p.game != null && p.game.length() > 0)
 				status.setText("Playing " + p.game);
 			else if (p.category == FriendListCategory.BLOCKED)
@@ -153,9 +157,7 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 			if (p.category == FriendListCategory.FRIENDREQUEST) {
 				acceptButton.setVisibility(View.VISIBLE);
 				rejectButton.setVisibility(View.VISIBLE);
-				chatButton.setVisibility(View.GONE);
 			} else {
-				chatButton.setVisibility(View.VISIBLE);
 				acceptButton.setVisibility(View.GONE);
 				rejectButton.setVisibility(View.GONE);
 			}
@@ -182,9 +184,9 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 			else
 				v.setBackgroundColor(0x00000000);
 
-			chatButton.setTag(p.steamid);
-			chatButton.setOnClickListener(fragment);
-			chatButton.setFocusable(false);
+			profileButton.setTag(p.steamid);
+			profileButton.setOnClickListener(fragment);
+			profileButton.setFocusable(false);
 			acceptButton.setTag(p.steamid);
 			acceptButton.setOnClickListener(fragment);
 			acceptButton.setFocusable(false);
@@ -194,7 +196,7 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 
 			avatar.setImageResource(R.drawable.default_avatar);
 			if (p.avatar_url != null)
-				avatar.setImageUrl(p.avatar_url);
+				ImageLoader.getInstance().displayImage(p.avatar_url, avatar);
 		}
 		return v;
 	}
@@ -218,7 +220,27 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 		return true;
 	}
 
-	public class FriendListItem implements Comparable<FriendListItem> {
+	public void filter(String string) {
+		filterString = string.toLowerCase(Locale.ENGLISH);
+		redoList();
+	}
+
+	public enum FriendListCategory {
+		FRIENDREQUEST("Friend Requests"), RECENTCHAT("Recent Chats"), INGAME("In-Game"), ONLINE("Online"), OFFLINE("Offline"), BLOCKED("Blocked");
+
+		private final String text;
+
+		FriendListCategory(final String text) {
+			this.text = text;
+		}
+
+		@Override
+		public String toString() {
+			return text;
+		}
+	}
+
+	public static class FriendListItem implements Comparable<FriendListItem> {
 		public FriendListCategory category;
 		public EPersonaState state = null;
 		public EFriendRelationship relationship = null;
@@ -226,13 +248,19 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 		public String name = null;
 		public String game = null;
 		public String avatar_url = null;
+		public String nickname = null;
 
 		public FriendListItem(SteamID steamid) {
 			this.steamid = steamid;
+			SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
+			if (steamFriends == null)
+				return;
+
 			this.relationship = steamFriends.getFriendRelationship(steamid);
 			this.state = steamFriends.getFriendPersonaState(steamid);
 			this.name = steamFriends.getFriendPersonaName(steamid);
 			this.game = steamFriends.getFriendGamePlayedName(steamid);
+			this.nickname = steamFriends.getFriendNickname(steamid);
 			category = findCategory();
 
 			if (steamid != null && steamFriends.getFriendAvatar(steamid) != null) {
@@ -263,25 +291,5 @@ public class FriendListAdapter extends BaseExpandableListAdapter {
 		public int compareTo(FriendListItem friendListItem) {
 			return this.name.toLowerCase(Locale.getDefault()).compareTo(friendListItem.name.toLowerCase(Locale.getDefault()));
 		}
-	}
-
-	public enum FriendListCategory {
-		FRIENDREQUEST("Friend Requests"), RECENTCHAT("Recent Chats"), INGAME("In-Game"), ONLINE("Online"), OFFLINE("Offline"), BLOCKED("Blocked");
-
-		private FriendListCategory(final String text) {
-			this.text = text;
-		}
-
-		private final String text;
-
-		@Override
-		public String toString() {
-			return text;
-		}
-	}
-
-	public void filter(String string) {
-		filterString = string.toLowerCase(Locale.ENGLISH);
-		redoList();
 	}
 }

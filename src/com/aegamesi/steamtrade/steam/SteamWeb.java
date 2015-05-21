@@ -7,7 +7,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -39,6 +42,38 @@ public class SteamWeb {
 	}
 
 	/**
+	 * Fetches an api key from /dev/registerkey.
+	 *
+	 * @param domain "Domain" to send to Steam.
+	 * @return The api key, or null if there was an error.
+	 */
+	public static String requestWebAPIKey(String domain) {
+		String page = fetch("https://steamcommunity.com/dev/apikey", "GET", null, "http://steamcommunity.com/dev/");
+		String key = parseWebAPIKey(page);
+		if (key != null)
+			return key;
+		// otherwise, we need to register for a key
+
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("domain", domain);
+		data.put("agreeToTerms", "agreed");
+		data.put("Submit", "Register");
+		data.put("sessionid", SteamService.singleton.sessionID); // new as of 5/12/2015
+		page = fetch("https://steamcommunity.com/dev/registerkey", "POST", data, "https://steamcommunity.com/dev/apikey");
+		return parseWebAPIKey(page);
+	}
+
+	private static String parseWebAPIKey(String page) {
+		Matcher matcher = Pattern.compile("<p>Key: ([0-9A-F]+)</p>").matcher(page);
+
+		String apikey = null;
+		if (matcher.find())
+			apikey = matcher.group(1);
+
+		return (apikey != null && apikey.length() == 32) ? apikey : null;
+	}
+
+	/**
 	 * Requests a String representation of an online file (for Steam).
 	 *
 	 * @param url     Location to fetch.
@@ -66,7 +101,7 @@ public class SteamWeb {
 				}
 			}
 			dataString = dataStringBuffer.toString();
-			if (!method.equals("POST") && dataString != null && dataString.length() > 0) {
+			if (!method.equals("POST") && dataString.length() > 0) {
 				url += "?" + dataString;
 			}
 			final URL url2 = new URL(url);

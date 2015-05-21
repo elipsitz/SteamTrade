@@ -5,10 +5,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.Html;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -92,35 +96,53 @@ public class SteamChatHandler {
 	}
 
 	public void updateNotification() {
-		int unread = 0;
-		String body = "";
-		for (Map.Entry<SteamID, Integer> entry : unreadMessages.entrySet()) {
-			unread += entry.getValue();
-			body += (body.length() == 0 ? "" : ", ") + service.steamClient.getHandler(SteamFriends.class).getFriendPersonaName(entry.getKey());
-		}
-		String title = String.format(service.getString(R.string.x_new_messages), unread);
-		body = String.format(service.getString(R.string.from), body);
-
 		NotificationManager notificationManager = (NotificationManager) SteamService.singleton.getSystemService(Context.NOTIFICATION_SERVICE);
-		if (unread == 0) {
+		if (unreadMessages.size() == 0) {
 			notificationManager.cancel(49717);
 			return;
 		}
+		SteamFriends steamFriends = service.steamClient.getHandler(SteamFriends.class);
+		if (steamFriends == null)
+			return;
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
 
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(SteamService.singleton).setSmallIcon(R.drawable.ic_launcher);
-		builder.setContentTitle(title).setContentText(body);
-		// builder.setAutoCancel(true);
-		// lights, sound, vibrate
-		builder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+		// basics for the notification
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(SteamService.singleton).setSmallIcon(R.drawable.ic_notify_msg);
+		builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+		builder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
+		//builder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
 		builder.setLights(0xFFAEDEDC, 1250, 1000);
+		builder.setVibrate(prefs.getBoolean("pref_vibrate", true) ? new long[]{0, 400, 100, 300} : new long[]{0});
+		builder.setSound(Uri.parse(prefs.getString("pref_notification_sound", "DEFAULT_SOUND")));
 
-		// check if the preferences say okay
-		if (PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).getBoolean("pref_vibrate", true))
-			builder.setVibrate(new long[]{0, 400, 100, 300});
-		else
-			builder.setVibrate(new long[]{0});
-		//builder.setStyle(new NotificationCompat.InboxStyle());
-		builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+		// content of the notifications
+		if (unreadMessages.size() == 1) {
+			// just one person
+			Map.Entry<SteamID, Integer> entry = unreadMessages.entrySet().iterator().next();
+			String friendName = steamFriends.getFriendPersonaName(entry.getKey());
+			String lastLine = getLastLine(entry.getKey());
+			builder.setContentTitle(friendName);
+			builder.setContentText(lastLine); // still pretty inefficient
+		} else {
+			// more than one person
+			Iterator<Map.Entry<SteamID, Integer>> i = unreadMessages.entrySet().iterator();
+			NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
+			String friendNames = "";
+			while (i.hasNext()) {
+				Map.Entry<SteamID, Integer> entry = i.next();
+				String friendName = steamFriends.getFriendPersonaName(entry.getKey());
+				String lastLine = getLastLine(entry.getKey());
+				style.addLine(Html.fromHtml("<b>" + friendName + "</b>   " + lastLine));
+
+				if (friendNames.length() > 0)
+					friendNames += ", ";
+				friendNames += friendName;
+			}
+
+			builder.setContentTitle(String.format(service.getString(R.string.x_new_messages), unreadMessages.size()));
+			builder.setContentText(friendNames);
+			builder.setStyle(style);
+		}
 
 		// and the intent
 		Intent intent = new Intent(SteamService.singleton, MainActivity.class);
@@ -132,6 +154,29 @@ public class SteamChatHandler {
 		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 		builder.setContentIntent(resultPendingIntent);
 		notificationManager.notify(49717, builder.build());
+	}
+
+	public String getLastLine(SteamID key) {
+		File logfolder = new File(SteamTrade.filesDir, "logs/" + SteamService.singleton.steamClient.getSteamId().convertToLong());
+		logfolder.mkdirs();
+		File file = new File(logfolder, key.convertToLong() + ".log");
+
+		try {
+			BufferedReader input = new BufferedReader(new FileReader(file));
+			String last = "";
+			String line;
+
+			while ((line = input.readLine()) != null)
+				last = line;
+
+			input.close();
+
+			last = last.substring(last.indexOf(": ") + 1);
+			return last;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 	public ArrayList<ChatLine> getChatHistory(SteamID key, String filter, String startAt) {
@@ -217,25 +262,26 @@ public class SteamChatHandler {
 
 	public void appendToLog(String key, String line) {
 		File logfolder = new File(SteamTrade.filesDir, "logs/" + SteamService.singleton.steamClient.getSteamId().convertToLong());
-		logfolder.mkdirs();
+		if (!(logfolder.mkdirs() || logfolder.isDirectory()))
+			return;
 		File file = new File(logfolder, key + ".log");
 
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-			writer.append(line + "\n");
+			writer.append(line).append("\n");
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	public interface ChatReceiver {
+		boolean receiveChatLine(ChatLine line, boolean delivered);
+	}
+
 	public static class ChatLine {
 		public SteamID steamId;
 		public long time;
 		public String message;
-	}
-
-	public static interface ChatReceiver {
-		public boolean receiveChatLine(ChatLine line, boolean delivered);
 	}
 }

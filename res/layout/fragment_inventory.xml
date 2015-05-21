@@ -4,9 +4,10 @@
               android:orientation="vertical">
 
     <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/inventory_select"
+        style="@style/Widget.AppCompat.Spinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
         android:layout_gravity="center_horizontal"/>
 
     <LinearLayout
@@ -41,29 +42,42 @@
             android:textAppearance="?android:attr/textAppearanceLarge"/>
     </LinearLayout>
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/inventory_search"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/inventory_search"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/search_inventory"
-            android:inputType="textNoSuggestions|textVisiblePassword"/>
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/search_inventory"
+        android:inputType="textNoSuggestions|textVisiblePassword"/>
 
     <GridView
         android:id="@+id/inventory_grid"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
         android:gravity="center"
         android:horizontalSpacing="5dp"
         android:numColumns="5"
         android:stretchMode="columnWidth"
         android:verticalSpacing="5dp">
     </GridView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/inventory_craft"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/craft_x_items"
+            android:visibility="gone"/>
+
+    </LinearLayout>
 
 </LinearLayout>

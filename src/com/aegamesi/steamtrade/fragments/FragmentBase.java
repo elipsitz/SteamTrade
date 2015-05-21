@@ -6,13 +6,12 @@ import com.aegamesi.steamtrade.MainActivity;
 import com.google.android.gms.analytics.HitBuilders;
 
 public class FragmentBase extends Fragment {
-	public String fragmentName = "FragmentBase";
 
 	@Override
 	public void onStart() {
 		super.onStart();
 
-		setAnalyticsScreen(fragmentName);
+		setAnalyticsScreen(getClass().getName());
 	}
 
 	public void setAnalyticsScreen(String name) {

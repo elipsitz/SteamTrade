@@ -21,7 +21,11 @@ public class TradeInternalCurrency extends TradeInternalAsset {
 			throws JSONException {
 		super(appContext, rgCurrencyItem, rgDescriptionItem);
 
-		currencyid = Long.parseLong(rgCurrencyItem.getString("id"));
+		if(rgCurrencyItem.has("id"))
+			currencyid = Long.parseLong(rgCurrencyItem.getString("id"));
+		else if(rgCurrencyItem.has("currencyid"))
+			currencyid = Long.parseLong(rgCurrencyItem.getString("currencyid"));
+
 		tradedAmount = 0;
 	}
 

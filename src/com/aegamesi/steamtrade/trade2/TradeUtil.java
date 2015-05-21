@@ -1,20 +1,24 @@
 package com.aegamesi.steamtrade.trade2;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.aegamesi.lib.UILImageGetter;
 import com.aegamesi.steamtrade.R;
-import com.loopj.android.image.SmartImageView;
+import com.aegamesi.steamtrade.fragments.support.ItemListAdapter;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -39,9 +43,9 @@ public class TradeUtil {
 			String element = "";
 			if (desc.getColor() != 0)
 				element += "<font color='" + String.format("#%06X", (0xFFFFFF & desc.getColor())) + "'>";
-			if (desc.getValue().equals("image"))
+			if (desc.getType().equals("image"))
 				element += "<img src='" + desc.getValue() + "'>";
-			else if (desc.getValue().equals("html"))
+			else if (desc.getType().equals("html"))
 				element += parsedDescription;
 			else
 				element += TextUtils.htmlEncode(parsedDescription).replaceAll("\n", "<br>");
@@ -56,7 +60,6 @@ public class TradeUtil {
 	}
 
 	public static void populateItemInfo(View view, TradeInternalAsset asset, List<AppContextPair> appContextPairs) {
-		Spanned item_description = Html.fromHtml(generateAssetDescription(asset));
 		// get the application name
 		String appName = null;
 		if (appContextPairs != null)
@@ -65,13 +68,17 @@ public class TradeUtil {
 					appName = pair.getName();
 
 		String image_url = "https://steamcommunity-a.akamaihd.net/economy/image/" + asset.getIconURL() + "/144x144";
-		((SmartImageView) view.findViewById(R.id.item_image)).setImageUrl(image_url);
+		ImageLoader.getInstance().displayImage(image_url, (ImageView) view.findViewById(R.id.item_image));
 		((TextView) view.findViewById(R.id.item_name)).setText(asset.getName());
 		if (asset.getNameColor() != 0) {
 			((TextView) view.findViewById(R.id.item_name)).setTextColor(asset.getNameColor());
 		}
 		((TextView) view.findViewById(R.id.item_type)).setText((appName == null ? "" : (appName + "\n")) + asset.getType());
-		((TextView) view.findViewById(R.id.item_description)).setText(item_description);
+
+		TextView item_description = (TextView) view.findViewById(R.id.item_description);
+		Html.ImageGetter imageGetter = new UILImageGetter(item_description, view.getContext());
+		Spanned description_text = Html.fromHtml(generateAssetDescription(asset), imageGetter, null);
+		item_description.setText(description_text);
 	}
 
 	public static void showItemInfo(Context context, TradeInternalAsset asset, List<AppContextPair> appContextPairs) {
@@ -80,12 +87,28 @@ public class TradeUtil {
 
 		ScrollView scrollView = new ScrollView(context);
 		scrollView.addView(view);
-		showDismissableModal(context, scrollView);
+		buildDismissableModal(context, scrollView);
 	}
 
-	public static void showDismissableModal(Context context, View view) {
+	public static AlertDialog buildDismissableModal(Context context, View view) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setView(view);
+		builder.setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+			}
+		});
+		return builder.show();
+	}
+
+	public static void showItemListModal(Context context, String title, List<TradeInternalAsset> items) {
+		GridView grid = (GridView) LayoutInflater.from(context).inflate(R.layout.item_grid, null);
+		ItemListAdapter adapter = new ItemListAdapter(context, grid, false, null);
+		adapter.setItemList(items);
+		grid.setAdapter(adapter);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle(title);
+		builder.setView(grid);
 		builder.setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 			}

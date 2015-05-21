@@ -1,48 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2013 The Android Open Source Project
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-
-<!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:text="Test Text"
-    android:textSize="25sp"
-    android:paddingTop="10dip"
-    android:paddingBottom="10dip"
-    android:textColor="#fff" />-->
 
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@android:id/text1"
+<TextView android:id="@android:id/text1"
+
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           android:layout_width="match_parent"
-          android:layout_height="48dip"
+          android:layout_height="48dp"
           android:gravity="center_vertical"
-          android:paddingLeft="12dp"
-          android:paddingRight="12dp"
-          android:paddingTop="8dp"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:text="Medium Text"
-    />
-
-    <!--
-      android:background="?android:attr/activatedBackgroundIndicator"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall"
-    -->
+          android:paddingLeft="32dp"
+          android:paddingRight="32dp"
+          android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+          tools:text="Settings"
+          android:textColor="#D7D7D7"/>

@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:ae="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_search"
+          android:title="@string/friend_search"
+          android:icon="@drawable/ic_magnify"
+          app:showAsAction="always|collapseActionView"
+          app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
         android:id="@+id/menu_friends_add_friend"
-        android:icon="@drawable/ic_add_person"
-        ae:showAsAction="always"
+        android:icon="@drawable/ic_account_plus"
+        app:showAsAction="always"
         android:title="@string/friend_add">
     </item>
 

@@ -8,9 +8,13 @@
 
     <string name="search_inventory">Search inventory</string>
     <string name="toggle_view_mode">Toggle View Mode</string>
-    <string name="view_on_backpacktf">View on backpack.tf</string>
     <string name="inv_error_loading">Unknown error loading inventory.</string>
 
-    <color name="color_craft_num_white">#A3A099</color>
-    <color name="color_craft_num_blacktext">#282827</color>
+    <string name="craft_x_items">Craft %1$d TF2 Item(s)</string>
+    <string name="craft_noncraftable">One or more of the items you have selected cannot be crafted.</string>
+    <string name="craft_nontradable">One or more of the items you have selected are untradable. Proceed anyway?</string>
+    <string name="craft_failed">Crafting failed.</string>
+    <string name="craft_successful">Crafting successful: %1$d items created. Loading…</string>
+    <string name="craft_completed">Craft Completed</string>
+    <string name="craft_crafting">Crafting…</string>
 </resources>
