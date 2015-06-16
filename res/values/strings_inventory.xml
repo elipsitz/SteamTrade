@@ -17,4 +17,15 @@
     <string name="craft_successful">Crafting successful: %1$d items created. Loading…</string>
     <string name="craft_completed">Craft Completed</string>
     <string name="craft_crafting">Crafting…</string>
+    <string name="craft_enable">Enable Crafting</string>
+
+    <string name="market_item_notfound">Market info not found</string>
+    <string name="market_info_loading">Loading market info…</string>
+    <string name="market_low">Starting at: %1$s</string>
+    <string name="market_median">Average Price: %1$s</string>
+    <string name="market_volume">%1$s sold in the last 24 hours</string>
+
+    <dimen name="itemlist_gridsize">72dp</dimen>
+    <color name="item_default_background">#292929</color>
+    <color name="item_default_border">#d2d2d2</color>
 </resources>

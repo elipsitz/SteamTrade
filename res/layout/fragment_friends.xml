@@ -3,26 +3,10 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/friends_search"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/friend_search"
-            android:inputType="textNoSuggestions|textVisiblePassword"/>
-    </LinearLayout>
-
-    <ExpandableListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/friends_list"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1">
-    </ExpandableListView>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
 
 </LinearLayout>

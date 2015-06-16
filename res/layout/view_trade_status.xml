@@ -3,10 +3,10 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@color/color_trade_white"
-              android:paddingBottom="3dip"
-              android:paddingLeft="10dip"
-              android:paddingRight="0dip"
-              android:paddingTop="3dip">
+              android:paddingBottom="4dip"
+              android:paddingLeft="8dip"
+              android:paddingRight="8dip"
+              android:paddingTop="4dip">
 
     <TextView
         android:id="@+id/trade_status_text"
@@ -32,18 +32,18 @@
 
     <ImageButton
         android:id="@+id/trade_status_yes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/accept"
         android:src="@drawable/ic_light_accept"
         android:visibility="gone"/>
 
     <ImageButton
         android:id="@+id/trade_status_no"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/cancel"
         android:src="@drawable/ic_light_cancel"
         android:visibility="gone"/>

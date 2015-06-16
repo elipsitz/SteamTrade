@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<FrameLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="#555">
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:text="@string/remove_ads_ad"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+    <com.amazon.device.ads.AdLayout
+        android:id="@+id/adview_amazon"
+        xmlns:Amazon="http://schemas.android.com/apk/lib/com.amazon.device.ads"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id"
-        >
-    </com.google.android.gms.ads.AdView>
+        android:visibility="visible"
+        Amazon:adSize="320x50"/>
 
-</RelativeLayout>
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adview_admob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/admob_ad_unit_id"/>
+
+</FrameLayout>

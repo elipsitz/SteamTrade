@@ -58,6 +58,17 @@
         <item>Looking to Play</item>
     </string-array>
 
+    <string-array name="connection_status">
+        <item>Unknown Status</item>
+        <item>Initializing…</item>
+        <item>Connecting…</item>
+        <item>Logging on…</item>
+        <item>Authenticating…</item>
+        <item>Fetching Key…</item>
+        <item>Connected</item>
+        <item>Disconnected</item>
+    </string-array>
+
     <string name="copied_to_clipboard">Copied to clipboard.</string>
 
     <string name="change">Change</string>
@@ -67,9 +78,7 @@
     <string name="error_getting_key">Error fetching WebAPI key. Some features (like trade offers) may not work properly.</string>
     <string name="error_steamapi">Error accessing SteamAPI.</string>
     <string name="ok">OK</string>
-    <string name="title_activity_intent_receiver">IntentReceiverActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <string name="web_back">Go Back</string>
@@ -77,4 +86,25 @@
     <string name="web_reload">Reload Page</string>
     <string name="web_community">Steam Community</string>
     <string name="web_store">Steam Store</string>
+
+    <color name="notification_on">#5C7E10</color>
+    <color name="notification_off">#777</color>
+    <color name="notification_text_on">#70ba24</color>
+    <color name="notification_text_off">#bfbfbf</color>
+    <plurals name="notification_comments">
+        <item quantity="one">%d new comment</item>
+        <item quantity="other">%d new comments</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d new item in your inventory</item>
+        <item quantity="other">%d new items in your inventory</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d unread chat message</item>
+        <item quantity="other">%d unread chat messages</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d new trade notification</item>
+        <item quantity="other">%d new trade notifications</item>
+    </plurals>
 </resources>

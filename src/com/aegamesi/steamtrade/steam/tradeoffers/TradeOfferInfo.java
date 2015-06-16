@@ -120,7 +120,7 @@ public class TradeOfferInfo {
 	public static String attemptCancelOffer(long tradeofferid) {
 		String webapi_url = "https://api.steampowered.com/IEconService/CancelTradeOffer/v1/";
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("key", SteamUtil.apikey);
+		data.put("key", SteamUtil.webApiKey);
 		data.put("format", "json");
 		data.put("tradeofferid", tradeofferid + "");
 
@@ -136,7 +136,7 @@ public class TradeOfferInfo {
 	public static String attemptDeclineOffer(long tradeofferid) {
 		String webapi_url = "https://api.steampowered.com/IEconService/DeclineTradeOffer/v1/";
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("key", SteamUtil.apikey);
+		data.put("key", SteamUtil.webApiKey);
 		data.put("format", "json");
 		data.put("tradeofferid", tradeofferid + "");
 
@@ -229,7 +229,7 @@ public class TradeOfferInfo {
 						Long.parseLong(invInstance.optString("instanceid", "0")));
 				AppContextPair itemAC = new AppContextPair(
 						Integer.parseInt(invInstance.getString("appid")),
-						Integer.parseInt(invInstance.getString("contextid")));
+						Long.parseLong(invInstance.getString("contextid")));
 
 				try {
 					TradeInternalAsset generatedAsset = null;

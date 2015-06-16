@@ -70,7 +70,7 @@ public class TradeSession implements Runnable {
 	/**
 	 * Timing variables to check for idle state.
 	 */
-	private final long TIME_TRADE_START;
+	public final long TIME_TRADE_START;
 	private long timeLastPartnerAction;
 
 	/**
@@ -403,9 +403,7 @@ public class TradeSession implements Runnable {
 		String pageData = API.fetch(TRADE_URL, "GET", data);
 
 		try {
-			List<AppContextPair> contexts =
-					ContextScraper.scrapeContextData(pageData);
-			myAppContextData = contexts;
+			myAppContextData = ContextScraper.scrapeContextData(pageData);
 		} catch (JSONException e) {
 			// Notify the trade listener if we can't get our backpack data.
 			myAppContextData = new ArrayList<>();

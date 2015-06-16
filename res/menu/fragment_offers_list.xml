@@ -5,8 +5,8 @@
     <item
         android:id="@+id/menu_offerslist_create"
         android:icon="@drawable/ic_plus"
-        app:showAsAction="always"
-        android:title="@string/offer_fromurl">
+        android:title="@string/offer_fromurl"
+        app:showAsAction="always">
     </item>
 
 </menu>

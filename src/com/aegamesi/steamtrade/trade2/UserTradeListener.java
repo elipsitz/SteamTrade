@@ -25,6 +25,7 @@ package com.aegamesi.steamtrade.trade2;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.fragments.FragmentTrade;
+import com.aegamesi.steamtrade.steam.SteamChatManager;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.google.android.gms.analytics.HitBuilders;
 import com.nosoop.steamtrade.TradeListener;
@@ -49,10 +50,6 @@ public class UserTradeListener extends TradeListener {
 		}
 	}
 
-	public FragmentTrade fragment() {
-		return MainActivity.instance.getFragmentByClass(FragmentTrade.class);
-	}
-
 	private void updateFragmentUIInventory() {
 		MainActivity.instance.runOnUiThread(new Runnable() {
 			@Override
@@ -64,43 +61,20 @@ public class UserTradeListener extends TradeListener {
 		});
 	}
 
-	private void updateFragmentUIOffers() {
-		MainActivity.instance.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (fragment() == null)
-					return;
-				fragment().updateUIOffers();
-			}
-		});
+	public FragmentTrade fragment() {
+		return MainActivity.instance.getFragmentByClass(FragmentTrade.class);
 	}
 
-	// helper methods relating to item placement
-
-	private void updateFragmentUIChat(final String message) {
-		MainActivity.instance.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (fragment() == null)
-					return;
-				fragment().updateUIChat(new SteamID(fragment().trade().otherSteamId), message);
-			}
-		});
-	}
-
-	/**
-	 * Finds the first open slot in a trade.
-	 *
-	 * @return The position of the first "empty" slot in the trade, -1 if
-	 * there are no empty slots.
-	 */
-	private int getFirstFreeSlot() {
-		for (int i = 0; i < ourTradeSlotsFilled.length; i++) {
-			if (ourTradeSlotsFilled[i] == null) {
-				return i;
-			}
+	public boolean tradePutItem(TradeInternalItem item) {
+		// Make sure the item isn't in the trade already.
+		if (getSlotByItemID(item) == -1) {
+			int slotToFill = getFirstFreeSlot();
+			trade.getCmds().addItem(item, slotToFill);
+			ourTradeSlotsFilled[slotToFill] = item;
+			updateFragmentUIOffers();
+			return true;
 		}
-		return -1;
+		return false;
 	}
 
 	/**
@@ -119,16 +93,30 @@ public class UserTradeListener extends TradeListener {
 		return -1;
 	}
 
-	public boolean tradePutItem(TradeInternalItem item) {
-		// Make sure the item isn't in the trade already.
-		if (getSlotByItemID(item) == -1) {
-			int slotToFill = getFirstFreeSlot();
-			trade.getCmds().addItem(item, slotToFill);
-			ourTradeSlotsFilled[slotToFill] = item;
-			updateFragmentUIOffers();
-			return true;
+	/**
+	 * Finds the first open slot in a trade.
+	 *
+	 * @return The position of the first "empty" slot in the trade, -1 if
+	 * there are no empty slots.
+	 */
+	private int getFirstFreeSlot() {
+		for (int i = 0; i < ourTradeSlotsFilled.length; i++) {
+			if (ourTradeSlotsFilled[i] == null) {
+				return i;
+			}
 		}
-		return false;
+		return -1;
+	}
+
+	private void updateFragmentUIOffers() {
+		MainActivity.instance.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (fragment() == null)
+					return;
+				fragment().updateUIOffers();
+			}
+		});
 	}
 
 	public boolean tradeRemoveItem(TradeInternalItem item) {
@@ -263,8 +251,22 @@ public class UserTradeListener extends TradeListener {
 	 * @param msg The message text.
 	 */
 	@Override
-	public void onMessage(String msg) {
-		updateFragmentUIChat(msg);
+	public void onMessage(final String msg) {
+		MainActivity.instance.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				SteamService.singleton.chatManager.broadcastMessage(
+						System.currentTimeMillis(),
+						SteamService.singleton.steamClient.getSteamId(),
+						new SteamID(fragment().trade().otherSteamId),
+						false,
+						SteamChatManager.CHAT_TYPE_TRADE,
+						msg
+				);
+				if (fragment() != null)
+					fragment().updateUIChat();
+			}
+		});
 	}
 
 	/**

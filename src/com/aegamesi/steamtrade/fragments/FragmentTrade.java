@@ -2,7 +2,10 @@ package com.aegamesi.steamtrade.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,19 +22,22 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.aegamesi.lib.android.ExpandableHeightGridView;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.support.ChatAdapter;
 import com.aegamesi.steamtrade.fragments.support.ItemListAdapter;
-import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
+import com.aegamesi.steamtrade.fragments.support.ItemListView;
+import com.aegamesi.steamtrade.steam.DBHelper.ChatEntry;
+import com.aegamesi.steamtrade.steam.SteamChatManager;
+import com.aegamesi.steamtrade.steam.SteamItemUtil;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.trade2.Trade;
-import com.aegamesi.steamtrade.trade2.TradeUtil;
 import com.nosoop.steamtrade.TradeListener.TradeStatusCodes;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
@@ -42,7 +48,6 @@ import com.nosoop.steamtrade.inventory.TradeInternalItem;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
@@ -55,15 +60,14 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 
 	public Spinner tabInventorySelect;
 	public ArrayAdapter<AppContextPair> tabInventorySelectAdapter;
-	public GridView tabInventoryList;
 	public View tabInventoryLoading;
 	public EditText tabInventorySearch;
-	public ItemListAdapter tabInventoryListAdapter;
+	public ItemListView tabInventoryList;
 	//
 	public CheckBox tabOfferMeReady;
 	public CheckBox tabOfferOtherReady;
-	public GridView tabOfferMeOffer;
-	public GridView tabOfferOtherOffer;
+	public ExpandableHeightGridView tabOfferMeOffer;
+	public ExpandableHeightGridView tabOfferOtherOffer;
 	public Button tabOfferAccept;
 	public Button tabOfferCancel;
 	public ItemListAdapter tabOfferMeOfferAdapter;
@@ -71,9 +75,11 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	public ProgressBar tabOfferStatusCircle;
 	//
 	public ChatAdapter tabChatAdapter;
-	public ListView tabChatList;
+	public RecyclerView tabChatList;
 	public EditText tabChatInput;
-	public Button tabChatButton;
+	public ImageButton tabChatButton;
+	public Cursor tabChatCursor;
+	public LinearLayoutManager tabChatLayoutManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -84,57 +90,6 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tab_views = new View[3];
 		tab_buttons = new Button[3];
 
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (trade() == null)
-			return;
-		// etc.
-		String friendName = activity().steamFriends.getFriendPersonaName(new SteamID(SteamService.singleton.tradeManager.currentTrade.otherSteamId));
-		activity().getSupportActionBar().setTitle(String.format(activity().getString(R.string.trading_with), friendName));
-		SteamService.singleton.tradeManager.tradeStatus.setVisibility(View.GONE);
-		// update UI
-		updateUIInventory();
-		updateUIOffers();
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		SteamService.singleton.tradeManager.updateTradeStatus();
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.item_list, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.menu_inventory_toggle_view:
-				int new_list_mode = tabInventoryListAdapter.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID;
-				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
-
-				tabInventoryListAdapter.setListMode(new_list_mode);
-				tabOfferMeOfferAdapter.setListMode(new_list_mode);
-				tabOfferOtherOfferAdapter.setListMode(new_list_mode);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
-
-	public void updateUITabButton(int num) {
-		String text = activity().getResources().getStringArray(R.array.trade_tabs)[num];
-		if (tab_notifications[num] > 0)
-			text += " (" + tab_notifications[num] + ")";
-		if (tab_buttons[num] != null)
-			tab_buttons[num].setText(text);
 	}
 
 	@Override
@@ -162,8 +117,8 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tabInventorySelectAdapter = new ArrayAdapter<AppContextPair>(activity(), android.R.layout.simple_spinner_item);
 		tabInventorySelectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tabInventorySelect.setAdapter(tabInventorySelectAdapter);
-		tabInventoryList = (GridView) tab_views[0].findViewById(R.id.inventory_grid);
-		tabInventoryListAdapter = new ItemListAdapter(activity(), tabInventoryList, true, new ItemListAdapter.IItemListProvider() {
+		tabInventoryList = (ItemListView) tab_views[0].findViewById(R.id.itemlist);
+		tabInventoryList.setProvider(new ItemListView.IItemListProvider() {
 			@Override
 			public void onItemChecked(final TradeInternalAsset item, final boolean checked) {
 				final Trade trade = trade();
@@ -188,21 +143,20 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 				return trade().session.getSelf().getOffer().contains(item);
 			}
 		});
-		tabInventoryList.setAdapter(tabInventoryListAdapter);
 		tabInventoryLoading = tab_views[0].findViewById(R.id.inventory_loading);
 		tabInventorySearch = (EditText) tab_views[0].findViewById(R.id.inventory_search);
 		tabInventorySearch.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				tabInventoryListAdapter.filter(s.toString());
+				tabInventoryList.filter(s.toString());
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
 			}
 		});
 		// TAB 1: Offers
@@ -210,11 +164,13 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tabOfferMeReady.setOnClickListener(this);
 		tabOfferOtherReady = (CheckBox) tab_views[1].findViewById(R.id.trade_offer_otherready);
 
-		tabOfferMeOffer = (GridView) tab_views[1].findViewById(R.id.trade_offer_mylist);
+		tabOfferMeOffer = (ExpandableHeightGridView) tab_views[1].findViewById(R.id.trade_offer_mylist);
+		tabOfferMeOffer.setExpanded(true);
 		tabOfferMeOfferAdapter = new ItemListAdapter(activity(), tabOfferMeOffer, false, null);
 		tabOfferMeOffer.setAdapter(tabOfferMeOfferAdapter);
 
-		tabOfferOtherOffer = (GridView) tab_views[1].findViewById(R.id.trade_offer_otherlist);
+		tabOfferOtherOffer = (ExpandableHeightGridView) tab_views[1].findViewById(R.id.trade_offer_otherlist);
+		tabOfferOtherOffer.setExpanded(true);
 		tabOfferOtherOfferAdapter = new ItemListAdapter(activity(), tabOfferOtherOffer, false, null);
 		tabOfferOtherOffer.setAdapter(tabOfferOtherOfferAdapter);
 
@@ -224,17 +180,70 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tabOfferCancel.setOnClickListener(this);
 		tabOfferStatusCircle = (ProgressBar) tab_views[1].findViewById(R.id.trade_status_progress);
 		// TAB 2: Chat
-		tabChatList = (ListView) view.findViewById(R.id.chat);
+		tabChatList = (RecyclerView) view.findViewById(R.id.chat);
 		tabChatInput = (EditText) view.findViewById(R.id.chat_input);
-		tabChatButton = (Button) view.findViewById(R.id.chat_button);
+		tabChatButton = (ImageButton) view.findViewById(R.id.chat_button);
 		tabChatButton.setOnClickListener(this);
-		tabChatList.setAdapter(tabChatAdapter = new ChatAdapter());
-		ArrayList<ChatLine> tabChatBacklog = SteamService.singleton.chat.getChatHistory(new SteamID(trade().otherSteamId), "t", "Trade Started");
-		if (tabChatBacklog != null)
-			for (ChatLine line : tabChatBacklog)
-				tabChatAdapter.addChatLine(line);
-		tabChatList.setSelection(tabChatList.getCount() - 1);
+
+		view.findViewById(R.id.friend_chat_button).setVisibility(View.GONE);
+
+		tabChatAdapter = new ChatAdapter(tabChatCursor);
+		tabChatAdapter.time_last_read = 0;
+		tabChatList.setAdapter(tabChatAdapter);
+		tabChatLayoutManager = new LinearLayoutManager(activity());
+		tabChatLayoutManager.setStackFromEnd(true);
+		tabChatList.setHasFixedSize(true);
+		tabChatList.setLayoutManager(tabChatLayoutManager);
+		tabChatList.setAdapter(tabChatAdapter);
 		return view;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (trade() == null)
+			return;
+		// etc.
+		String friendName = activity().steamFriends.getFriendPersonaName(new SteamID(SteamService.singleton.tradeManager.currentTrade.otherSteamId));
+		setTitle(String.format(activity().getString(R.string.trading_with), friendName));
+		SteamService.singleton.tradeManager.tradeStatus.setVisibility(View.GONE);
+		// update UI
+		updateUIInventory();
+		updateUIOffers();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		if (SteamService.singleton != null && SteamService.singleton.tradeManager != null)
+			SteamService.singleton.tradeManager.updateTradeStatus();
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.item_list, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_inventory_toggle_view:
+				int new_list_mode = tabInventoryList.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID;
+				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
+
+				tabInventoryList.setListMode(new_list_mode);
+				tabOfferMeOfferAdapter.setListMode(new_list_mode);
+				tabOfferOtherOfferAdapter.setListMode(new_list_mode);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	public Trade trade() {
+		return SteamService.singleton.tradeManager.currentTrade;
 	}
 
 	public void updateUIInventory() {
@@ -264,7 +273,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 				} else {
 					tabInventoryLoading.setVisibility(View.GONE);
 					tabInventoryList.setVisibility(View.VISIBLE);
-					tabInventoryListAdapter.setItemList(currentInv.getItemList());
+					tabInventoryList.setItems(currentInv.getItemList());
 				}
 
 				if (first_load) {
@@ -297,61 +306,22 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		updateUITabButton(1);
 	}
 
-	public void updateUIChat(SteamID sender, String message) {
-		if (tabChatAdapter != null) {
-			ChatLine line = new ChatLine();
-			line.message = message;
-			line.steamId = sender;
-			line.time = (new Date()).getTime();
-			tabChatAdapter.addChatLine(line);
-			SteamService.singleton.chat.logLine(line, line.steamId, "t");
-		}
-		if (tab_selected != 2) {
-			tab_notifications[2]++;
-			updateUITabButton(2);
-		}
-	}
-
-	public void onError(int code, String message) {
-		if (activity() == null || getView() == null)
-			return;
-		((ViewGroup) getView()).removeAllViews();
-		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_error, null, false);
-		((ViewGroup) getView()).addView(result);
-		TextView errorTitle = (TextView) result.findViewById(R.id.trade_error_title);
-		TextView errorText = (TextView) result.findViewById(R.id.trade_error_text);
-		errorText.setText(message);
-
-		if (code == TradeStatusCodes.TRADE_REQUIRES_CONFIRMATION) {
-			// this isn't really an error-- just a sort of notification that the trade hasn't been completed *yet*
-			// as such, adjust the message
-			errorTitle.setText(R.string.trade_completed);
-		}
-	}
-
-	public void onCompleted(List<TradeInternalAsset> items) {
-		if (activity() == null || getView() == null)
-			return;
-		((ViewGroup) getView()).removeAllViews();
-		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_success, null, false);
-		((ViewGroup) getView()).addView(result);
-		TextView successText = (TextView) result.findViewById(R.id.trade_success_text);
-		successText.setText(String.format(activity().getString(R.string.trade_new_items), items.size()));
-		ListView itemList = (ListView) result.findViewById(R.id.trade_result_items);
-		itemList.setAdapter(new ResultsListAdapter(items));
-	}
-
-	public Trade trade() {
-		return SteamService.singleton.tradeManager.currentTrade;
+	public void updateUITabButton(int num) {
+		String text = activity().getResources().getStringArray(R.array.trade_tabs)[num];
+		if (tab_notifications[num] > 0)
+			text += " (" + tab_notifications[num] + ")";
+		if (tab_buttons[num] != null)
+			tab_buttons[num].setText(text);
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (v == tabOfferMeReady) {
+			final boolean meReady = tabOfferMeReady.isChecked(); // avoid race condition
 			trade().run(new Runnable() {
 				@Override
 				public void run() {
-					trade().session.getCmds().setReady(tabOfferMeReady.isChecked());
+					trade().session.getCmds().setReady(meReady);
 				}
 			});
 			tabOfferAccept.setEnabled(tabOfferMeReady.isChecked() && tabOfferOtherReady.isChecked());
@@ -386,12 +356,16 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 				}
 			});
 
-			ChatLine chatline = new ChatLine();
-			chatline.steamId = null;
-			chatline.message = message;
-			chatline.time = (new Date()).getTime();
-			SteamService.singleton.chat.logLine(chatline, new SteamID(trade().otherSteamId), "t");
-			tabChatAdapter.addChatLine(chatline);
+			// log line
+			SteamService.singleton.chatManager.broadcastMessage(
+					System.currentTimeMillis(),
+					SteamService.singleton.steamClient.getSteamId(),
+					new SteamID(trade().otherSteamId),
+					true,
+					SteamChatManager.CHAT_TYPE_TRADE,
+					message
+			);
+			updateUIChat();
 		}
 		for (int i = 0; i < tab_buttons.length; i++) {
 			if (v == tab_buttons[i]) {
@@ -411,6 +385,64 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 				break;
 			}
 		}
+	}
+
+	public void updateUIChat() {
+		// fetch a new cursor
+		if (tabChatAdapter != null) {
+			tabChatAdapter.changeCursor(tabChatCursor = fetchCursor());
+
+			// now scroll to bottom (if already near the bottom)
+			if (tabChatLayoutManager.findLastVisibleItemPosition() > tabChatCursor.getCount() - 3)
+				tabChatList.scrollToPosition(tabChatCursor.getCount() - 1);
+		}
+
+		// TODO redo this
+		if (tab_selected != 2) {
+			tab_notifications[2]++;
+			updateUITabButton(2);
+		}
+	}
+
+	private Cursor fetchCursor() {
+		return SteamService.singleton.db().query(
+				ChatEntry.TABLE,                    // The table to query
+				new String[]{ChatEntry._ID, ChatEntry.COLUMN_TIME, ChatEntry.COLUMN_MESSAGE, ChatEntry.COLUMN_SENDER},
+				ChatEntry.COLUMN_OUR_ID + " = ? AND " + ChatEntry.COLUMN_OTHER_ID + " = ? AND " + ChatEntry.COLUMN_TYPE + " = ? AND " + ChatEntry.COLUMN_TIME + " > ?",
+				new String[]{"" + SteamService.singleton.steamClient.getSteamId().convertToLong(), "" + trade().otherSteamId, "" + SteamChatManager.CHAT_TYPE_TRADE, "" + (trade().session.TIME_TRADE_START - 60000)},
+				null, // don't group the rows
+				null, // don't filter by row groups
+				ChatEntry.COLUMN_TIME + " ASC"
+		);
+	}
+
+	public void onError(int code, String message) {
+		if (activity() == null || getView() == null)
+			return;
+		((ViewGroup) getView()).removeAllViews();
+		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_error, null, false);
+		((ViewGroup) getView()).addView(result);
+		TextView errorTitle = (TextView) result.findViewById(R.id.trade_error_title);
+		TextView errorText = (TextView) result.findViewById(R.id.trade_error_text);
+		errorText.setText(message);
+
+		if (code == TradeStatusCodes.TRADE_REQUIRES_CONFIRMATION) {
+			// this isn't really an error-- just a sort of notification that the trade hasn't been completed *yet*
+			// as such, adjust the message
+			errorTitle.setText(R.string.trade_completed);
+		}
+	}
+
+	public void onCompleted(List<TradeInternalAsset> items) {
+		if (activity() == null || getView() == null)
+			return;
+		((ViewGroup) getView()).removeAllViews();
+		View result = activity().getLayoutInflater().inflate(R.layout.trade_result_success, null, false);
+		((ViewGroup) getView()).addView(result);
+		TextView successText = (TextView) result.findViewById(R.id.trade_success_text);
+		successText.setText(String.format(activity().getString(R.string.trade_new_items), items.size()));
+		ListView itemList = (ListView) result.findViewById(R.id.trade_result_items);
+		itemList.setAdapter(new ResultsListAdapter(items));
 	}
 
 	@Override
@@ -467,7 +499,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 				v = activity().getLayoutInflater().inflate(R.layout.view_item_info, null);
 
 			TradeInternalItem item = (TradeInternalItem) getItem(position);
-			TradeUtil.populateItemInfo(v, item, trade().session.myAppContextData);
+			SteamItemUtil.populateItemInfo(v, item, null);
 			return v;
 		}
 	}

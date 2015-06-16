@@ -2,7 +2,8 @@
 <resources>
 
     <string name="trade_sent_request">Sent a trade request to %1$s</string>
-    <string name="trade_got_request">%1$s has invited you to trade!</string>
+    <string name="trade_got_request">%1$s has requested to trade.</string>
+    <string name="trade_new_request">Trade Request</string>
     <string name="trade_currently_trading">Trading with %1$s.</string>
     <string name="trade_result_accepted">%1$s accepted your trade request!</string>
     <string name="trade_result_alreadytrading">%1$s is trading with someone else.</string>

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<TextView android:id="@android:id/text1"
+<TextView
+    android:id="@android:id/text1"
 
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:layout_width="match_parent"
-          android:layout_height="48dp"
-          android:gravity="center_vertical"
-          android:paddingLeft="32dp"
-          android:paddingRight="32dp"
-          android:textAppearance="@style/TextAppearance.AppCompat.Menu"
-          tools:text="Settings"
-          android:textColor="#D7D7D7"/>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:gravity="center_vertical"
+    android:paddingLeft="32dp"
+    android:paddingRight="32dp"
+    android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+    android:textColor="#D7D7D7"
+    tools:text="Settings"/>

@@ -18,17 +18,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.support.ItemListAdapter;
+import com.aegamesi.steamtrade.fragments.support.ItemListView;
+import com.aegamesi.steamtrade.fragments.support.ItemListView.IItemListProvider;
+import com.aegamesi.steamtrade.steam.SteamItemUtil;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamWeb;
-import com.aegamesi.steamtrade.trade2.TradeUtil;
+import com.nosoop.steamtrade.ContextScraper;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nosoop.steamtrade.inventory.TradeInternalInventories;
@@ -40,12 +43,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
 import uk.co.thomasc.steamkit.base.gc.tf2.ECraftingRecipe;
-import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver;
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
 import uk.co.thomasc.steamkit.steam3.handlers.steamgamecoordinator.callbacks.CraftResponseCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
+import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class FragmentInventory extends FragmentBase implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 	public SteamID steamId;
@@ -56,13 +58,16 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 	public Set<TradeInternalAsset> craftingItems = new HashSet<TradeInternalAsset>();
 	public long[] craftingResult = null;
 
-	public Spinner inventorySelect;
+	public Spinner selectInventory;
 	public ArrayAdapter<AppContextPair> inventorySelectAdapter;
-	public GridView inventoryGrid;
-	public View loading_view;
-	public ItemListAdapter adapter;
-	public View error_view;
+	public View viewLoading;
+	public View viewError;
 	public Button buttonCraft;
+	public CheckBox checkBoxEnableCrafting;
+	public View viewCraftingMenu;
+
+	public ItemListView itemList;
+	public IItemListProvider itemListProvider;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +75,6 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
 
-		// TODO support fetching the inventories (rather than hardcoded list)
 		appContextPairs = new ArrayList<AppContextPair>();
 		appContextPairs.add(new AppContextPair(440, 2, "Team Fortress 2"));
 		appContextPairs.add(new AppContextPair(570, 2, "Dota 2"));
@@ -91,21 +95,9 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			steamId = new SteamID(myID);
 		}
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// we need to be in tf2
-				int gameId = 440;
-
-				/* ewwww protobuuufs */
-				ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed> playGame;
-				playGame = new ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
-				SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed gamePlayed = new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed();
-				gamePlayed.gameId = gameId;
-				playGame.getBody().gamesPlayed = new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[]{gamePlayed};
-				SteamService.singleton.steamClient.send(playGame);
-			}
-		}).start();
+		// scrape the inventory page for fun and profit
+		// (and by fun and profit I mean, fetch app/context pairs, and clear item notifications)
+		new ScrapInventoryPage().execute();
 	}
 
 	@Override
@@ -115,20 +107,20 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		View view = inflater.inflate(R.layout.fragment_inventory, container, false);
 
 		// create inventory select spinner
-		inventorySelect = (Spinner) view.findViewById(R.id.inventory_select);
-		inventorySelect.setOnItemSelectedListener(this);
+		selectInventory = (Spinner) view.findViewById(R.id.inventory_select);
+		selectInventory.setOnItemSelectedListener(this);
 		inventorySelectAdapter = new ArrayAdapter<AppContextPair>(activity(), android.R.layout.simple_spinner_item);
 		inventorySelectAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 		for (AppContextPair pair : appContextPairs)
 			inventorySelectAdapter.add(pair);
 		inventorySelectAdapter.notifyDataSetChanged();
-		inventorySelect.setAdapter(inventorySelectAdapter);
+		selectInventory.setAdapter(inventorySelectAdapter);
 		//end
-		loading_view = view.findViewById(R.id.inventory_loading);
-		inventoryGrid = (GridView) view.findViewById(R.id.inventory_grid);
-		error_view = view.findViewById(R.id.inventory_error_view);
+		viewLoading = view.findViewById(R.id.inventory_loading);
+		viewError = view.findViewById(R.id.inventory_error_view);
 		// adapter setup
-		adapter = new ItemListAdapter(activity(), inventoryGrid, true, new ItemListAdapter.IItemListProvider() {
+		itemList = (ItemListView) view.findViewById(R.id.itemlist);
+		itemListProvider = new ItemListView.IItemListProvider() {
 			@Override
 			public void onItemChecked(TradeInternalAsset item, boolean checked) {
 				if (checked)
@@ -136,7 +128,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 				else
 					craftingItems.remove(item);
 
-				buttonCraft.setEnabled(craftingItems.size() > 0);
+				buttonCraft.setEnabled(craftingItems.size() > 0 && checkBoxEnableCrafting.isChecked());
 				buttonCraft.setText(String.format(getString(R.string.craft_x_items), craftingItems.size()));
 			}
 
@@ -144,15 +136,17 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			public boolean shouldItemBeChecked(TradeInternalAsset item) {
 				return craftingItems.contains(item);
 			}
-		});
-		inventoryGrid.setAdapter(adapter);
-		// inventory search
+		};
+		// inventory search (hide here, still used in trading)
 		EditText inventorySearch = (EditText) view.findViewById(R.id.inventory_search);
 		inventorySearch.setVisibility(View.GONE);
 		//
 		buttonCraft = (Button) view.findViewById(R.id.inventory_craft);
-		buttonCraft.setVisibility(View.GONE);
 		buttonCraft.setOnClickListener(this);
+		checkBoxEnableCrafting = (CheckBox) view.findViewById(R.id.inventory_craft_enable);
+		checkBoxEnableCrafting.setOnClickListener(this);
+		viewCraftingMenu = view.findViewById(R.id.inventory_menu_craft);
+		viewCraftingMenu.setVisibility(View.GONE);
 
 		// select last selected inventory
 		SharedPreferences prefs = activity().getPreferences(Context.MODE_PRIVATE);
@@ -163,12 +157,21 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			if (appContextPairs.get(i).getAppid() == pref_appid && appContextPairs.get(i).getContextid() == pref_context)
 				pref_index = i;
 		if (pref_index != -1)
-			inventorySelect.setSelection(pref_index);
+			selectInventory.setSelection(pref_index);
 		// end
 
 		return view;
 	}
 
+	@Override
+	public void onStop() {
+		super.onStop();
+
+		if (checkBoxEnableCrafting.isChecked()) {
+			activity().steamUser.setPlayingGame(0);
+			checkBoxEnableCrafting.setChecked(false);
+		}
+	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -185,34 +188,18 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
-				adapter.filter(newText);
+				itemList.filter(newText);
 				return true;
 			}
 		});
 	}
 
 	@Override
-	public void onStop() {
-		super.onStop();
-
-		/*new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// we need to be in tf2
-				ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed.Builder> playGame;
-				playGame = new ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed.Builder>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
-				playGame.getBody().addGamesPlayed(SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed.newBuilder().setGameId(0).build());
-				SteamService.singleton.steamClient.send(playGame);
-			}
-		}).start();*/
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_inventory_toggle_view:
-				adapter.setListMode(adapter.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID);
-				item.setIcon((adapter.getListMode() == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
+				itemList.setListMode(itemList.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID);
+				item.setIcon((itemList.getListMode() == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -221,8 +208,8 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-		if (parent == inventorySelect) {
-			AppContextPair pair = (AppContextPair) inventorySelect.getSelectedItem();
+		if (parent == selectInventory) {
+			AppContextPair pair = (AppContextPair) selectInventory.getSelectedItem();
 			new FetchInventoryTask().execute(pair);
 
 			// we only support tf2 crafting for now...
@@ -230,9 +217,13 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			boolean enableCrafting = (pair.getAppid() == 440) && steamId.equals(SteamService.singleton.steamClient.getSteamId());
 			craftingItems.clear();
 			craftingResult = null;
+			itemList.setProvider(null);
+			buttonCraft.setEnabled(false);
 			buttonCraft.setText(String.format(getString(R.string.craft_x_items), craftingItems.size()));
-			buttonCraft.setVisibility(enableCrafting ? View.VISIBLE : View.GONE);
-			adapter.hasCheckboxes = enableCrafting;
+			viewCraftingMenu.setVisibility(enableCrafting ? View.VISIBLE : View.GONE);
+			if (checkBoxEnableCrafting.isChecked())
+				activity().steamUser.setPlayingGame(0);
+			checkBoxEnableCrafting.setChecked(false);
 
 			SharedPreferences.Editor prefs = activity().getPreferences(Context.MODE_PRIVATE).edit();
 			prefs.putInt("inv_last_appid", pair.getAppid());
@@ -250,6 +241,12 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 	public void onClick(View view) {
 		if (view == buttonCraft && buttonCraft.isEnabled()) {
 			doCrafting(false);
+		}
+		if (view == checkBoxEnableCrafting) {
+			buttonCraft.setEnabled(craftingItems.size() > 0 && checkBoxEnableCrafting.isChecked());
+			itemList.setProvider(checkBoxEnableCrafting.isChecked() ? itemListProvider : null);
+
+			activity().steamUser.setPlayingGame(checkBoxEnableCrafting.isChecked() ? 440 : 0);
 		}
 	}
 
@@ -295,6 +292,17 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		return true;
 	}
 
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		// our crafting was completed (or failed)
+		msg.handle(CraftResponseCallback.class, new ActionT<CraftResponseCallback>() {
+			@Override
+			public void call(CraftResponseCallback obj) {
+				onCraftingCompleted(obj);
+			}
+		});
+	}
+
 	public void onCraftingCompleted(CraftResponseCallback obj) {
 		if (obj.getItems().size() > 0)
 			Toast.makeText(activity(), String.format(getString(R.string.craft_successful), obj.getItems().size()), Toast.LENGTH_LONG).show();
@@ -310,7 +318,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		// and reload the inventory
 		// XXX for some reason, you CANNOT get the new inventory (from steam) if you don't reload the activity().. FIND OUT WHY!
 		/*craftingItems.clear();
-		AppContextPair pair = (AppContextPair) inventorySelect.getSelectedItem();
+		AppContextPair pair = (AppContextPair) selectInventory.getSelectedItem();
 		new FetchInventoryTask().execute(pair);*/
 		Fragment fragment = new FragmentInventory();
 		Bundle bundle = new Bundle();
@@ -322,11 +330,6 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 
 	private class FetchInventoryTask extends AsyncTask<AppContextPair, Integer, JSONObject> {
 		public AppContextPair appContext;
-
-		@Override
-		protected void onPreExecute() {
-			loading_view.setVisibility(View.VISIBLE);
-		}
 
 		@Override
 		protected JSONObject doInBackground(AppContextPair... args) {
@@ -355,10 +358,20 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		}
 
 		@Override
+		protected void onPreExecute() {
+			viewLoading.setVisibility(View.VISIBLE);
+		}
+
+		@Override
 		protected void onPostExecute(JSONObject result) {
 			try {
 				if (result != null) {
 					inventories.addInventory(appContext, result);
+
+					if (!result.optBoolean("success", false) && result.has("Error")) {
+						String errorText = result.getString("Error");
+						Toast.makeText(activity(), errorText, Toast.LENGTH_LONG).show();
+					}
 
 					if (craftingResult != null && appContext.getAppid() == 440) {
 						// show the crafting results
@@ -369,7 +382,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 								items.add(asset);
 						}
 						if (activity() != null)
-							TradeUtil.showItemListModal(activity(), getString(R.string.craft_completed), items);
+							SteamItemUtil.showItemListModal(activity(), getString(R.string.craft_completed), items);
 
 						craftingResult = null;
 					}
@@ -377,14 +390,49 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 
 				// get rid of UI stuff,
 				if (activity() != null) {
-					loading_view.setVisibility(View.GONE);
-					adapter.setItemList(inventories.getInventory(appContext).getItemList());
+					viewLoading.setVisibility(View.GONE);
+					itemList.setItems(inventories.getInventory(appContext).getItemList());
 				}
 			} catch (Exception e) {
 				if (activity() != null) {
-					error_view.setVisibility(View.VISIBLE);
-					TextView error_text = (TextView) error_view.findViewById(R.id.inventory_error_text);
+					viewError.setVisibility(View.VISIBLE);
+					TextView error_text = (TextView) viewError.findViewById(R.id.inventory_error_text);
 					error_text.setText(e.getMessage() == null ? getString(R.string.inv_error_loading) : e.getMessage());
+				}
+			}
+		}
+	}
+
+	private class ScrapInventoryPage extends AsyncTask<Void, Void, List<AppContextPair>> {
+		@Override
+		protected List<AppContextPair> doInBackground(Void... voids) {
+			//g_rgAppContextData
+			//http://steamcommunity.com/profiles/76561197960422183/inventory/
+
+			final String url, response;
+
+			// TODO Add support for large inventories ourselves.
+			url = String.format("http://steamcommunity.com/profiles/%d/inventory/",
+					steamId.convertToLong());
+
+			response = SteamWeb.fetch(url, "GET", null, null);
+
+			try {
+				return ContextScraper.scrapeContextData(response);
+			} catch (Exception e) {
+				return null;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(List<AppContextPair> contexts) {
+			if (contexts != null && contexts.size() > 0) {
+				appContextPairs = contexts;
+
+				if (inventorySelectAdapter != null) {
+					inventorySelectAdapter.clear();
+					for (AppContextPair pair : appContextPairs)
+						inventorySelectAdapter.add(pair);
 				}
 			}
 		}

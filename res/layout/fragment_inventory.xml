@@ -48,7 +48,16 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/search_inventory"
-        android:inputType="textNoSuggestions|textVisiblePassword"/>
+        android:inputType="textNoSuggestions|textVisiblePassword"
+        android:visibility="visible"/>
+
+    <com.aegamesi.steamtrade.fragments.support.ItemListView
+        android:id="@+id/itemlist"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"/>
+    <!--
 
     <GridView
         android:id="@+id/inventory_grid"
@@ -60,13 +69,15 @@
         android:numColumns="5"
         android:stretchMode="columnWidth"
         android:verticalSpacing="5dp">
-    </GridView>
+    </GridView>-->
 
     <LinearLayout
+        android:id="@+id/inventory_menu_craft"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/inventory_craft"
@@ -76,7 +87,15 @@
             android:layout_weight="1"
             android:enabled="false"
             android:text="@string/craft_x_items"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
+
+        <CheckBox
+            android:id="@+id/inventory_craft_enable"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="12dp"
+            android:text="@string/craft_enable"/>
 
     </LinearLayout>
 

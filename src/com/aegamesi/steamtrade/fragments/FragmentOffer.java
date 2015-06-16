@@ -19,15 +19,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aegamesi.lib.ExpandableHeightGridView;
+import com.aegamesi.lib.android.ExpandableHeightGridView;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.support.ItemListAdapter;
+import com.aegamesi.steamtrade.fragments.support.ItemListView;
 import com.aegamesi.steamtrade.trade2.TradeOffer;
 import com.nosoop.steamtrade.inventory.AppContextPair;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
@@ -54,10 +54,9 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	public RadioButton tabInventoryRadioThem;
 	public Spinner tabInventorySelect;
 	public ArrayAdapter<AppContextPair> tabInventorySelectAdapter;
-	public GridView tabInventoryList;
 	public View tabInventoryLoading;
 	public EditText tabInventorySearch;
-	public ItemListAdapter tabInventoryListAdapter;
+	public ItemListView tabInventoryList;
 	//
 	public ExpandableHeightGridView tabOfferMeOffer;
 	public ExpandableHeightGridView tabOfferOtherOffer;
@@ -83,64 +82,6 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		tab_views = new View[3];
 		tab_buttons = new Button[3];
 
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.item_list, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.menu_inventory_toggle_view:
-				int new_list_mode = tabInventoryListAdapter.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID;
-				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
-
-				tabInventoryListAdapter.setListMode(new_list_mode);
-				tabOfferMeOfferAdapter.setListMode(new_list_mode);
-				tabOfferOtherOfferAdapter.setListMode(new_list_mode);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
-		if (offer == null)
-			(new LoadOfferTask()).execute();
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (offer == null)
-			return;
-		// etc.
-		activity().getSupportActionBar().setTitle(String.format(activity().getString(R.string.offer_with), offer.partnerName));
-		// update UI
-		updateUIInventory();
-		updateUIOffers();
-		updateUIReview();
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		// TODO save offer temporarily
-	}
-
-	public void updateUITabButton(int num) {
-		String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
-		if (tab_notifications[num] > 0)
-			text += " (" + tab_notifications[num] + ")";
-		if (tab_buttons[num] != null)
-			tab_buttons[num].setText(text);
 	}
 
 	@Override
@@ -176,8 +117,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		tabInventorySelectAdapter = new ArrayAdapter<AppContextPair>(activity(), android.R.layout.simple_spinner_item);
 		tabInventorySelectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tabInventorySelect.setAdapter(tabInventorySelectAdapter);
-		tabInventoryList = (GridView) tab_views[0].findViewById(R.id.inventory_grid);
-		tabInventoryListAdapter = new ItemListAdapter(activity(), tabInventoryList, true, new ItemListAdapter.IItemListProvider() {
+		tabInventoryList = (ItemListView) tab_views[0].findViewById(R.id.itemlist);
+		tabInventoryList.setProvider(new ItemListView.IItemListProvider() {
 			@Override
 			public void onItemChecked(TradeInternalAsset item, boolean checked) {
 				boolean isUs = tabInventoryRadioUs.isChecked();
@@ -194,21 +135,20 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 				return (isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().contains(item);
 			}
 		});
-		tabInventoryList.setAdapter(tabInventoryListAdapter);
 		tabInventoryLoading = tab_views[0].findViewById(R.id.inventory_loading);
 		tabInventorySearch = (EditText) tab_views[0].findViewById(R.id.inventory_search);
 		tabInventorySearch.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				tabInventoryListAdapter.filter(s.toString());
+				tabInventoryList.filter(s.toString());
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
 			}
 		});
 		// TAB 1: Offers
@@ -244,6 +184,48 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		updateUIReview();
 
 		return view;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (offer == null)
+			return;
+		// etc.
+		setTitle(String.format(activity().getString(R.string.offer_with), offer.partnerName));
+		// update UI
+		updateUIInventory();
+		updateUIOffers();
+		updateUIReview();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		// TODO save offer temporarily
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.item_list, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_inventory_toggle_view:
+				int new_list_mode = tabInventoryList.getListMode() == ItemListAdapter.MODE_GRID ? ItemListAdapter.MODE_LIST : ItemListAdapter.MODE_GRID;
+				item.setIcon((new_list_mode == ItemListAdapter.MODE_GRID) ? R.drawable.ic_view_list : R.drawable.ic_view_module);
+
+				tabInventoryList.setListMode(new_list_mode);
+				tabOfferMeOfferAdapter.setListMode(new_list_mode);
+				tabOfferOtherOfferAdapter.setListMode(new_list_mode);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	public void updateUIInventory() {
@@ -291,7 +273,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 				} else {
 					tabInventoryLoading.setVisibility(View.GONE);
 					tabInventoryList.setVisibility(View.VISIBLE);
-					tabInventoryListAdapter.setItemList(currentInv.getItemList());
+					tabInventoryList.setItems(currentInv.getItemList());
 				}
 			}
 		});
@@ -311,7 +293,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			return;
 
 		tabReviewHeading.setText(String.format(getString(R.string.offer_with), offer.partnerName));
-		activity().getSupportActionBar().setTitle(tabReviewHeading.getText());
+		setTitle(tabReviewHeading.getText());
 		tabReviewMessage.setVisibility(offer.newOffer ? View.GONE : View.VISIBLE);
 		tabReviewMessageInput.setVisibility(offer.newOffer || offer.counterOffer ? View.VISIBLE : View.GONE);
 		if (offer.message != null && offer.message.trim().length() > 0)
@@ -332,6 +314,22 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			tabReviewSend.setVisibility(View.GONE);
 			tabReviewCancel.setVisibility(View.GONE);
 		}
+	}
+
+	public void updateUITabButton(int num) {
+		String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
+		if (tab_notifications[num] > 0)
+			text += " (" + tab_notifications[num] + ")";
+		if (tab_buttons[num] != null)
+			tab_buttons[num].setText(text);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		if (offer == null)
+			(new LoadOfferTask()).execute();
 	}
 
 	@Override
@@ -471,18 +469,6 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		private Bundle bundle;
 		private ProgressDialog dialog;
 
-		protected void onPreExecute() {
-			if (loadingView != null)
-				loadingView.setVisibility(View.VISIBLE);
-
-			dialog = new ProgressDialog(activity());
-			dialog.setIndeterminate(true);
-			dialog.setMessage(getString(R.string.offer_loading));
-			dialog.show();
-
-			bundle = getArguments();
-		}
-
 		protected TradeOffer doInBackground(Void... voids) { // the fuck
 			TradeOffer offer = null;
 
@@ -505,6 +491,19 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			return offer;
 		}
 
+		protected void onPreExecute() {
+			if (loadingView != null)
+				loadingView.setVisibility(View.VISIBLE);
+
+			dialog = new ProgressDialog(activity());
+			dialog.setIndeterminate(true);
+			dialog.setMessage(getString(R.string.offer_loading));
+			dialog.show();
+
+			bundle = getArguments();
+		}
+
+
 		protected void onPostExecute(TradeOffer result) {
 			offer = result;
 
@@ -512,7 +511,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			updateUIOffers();
 			updateUIReview();
 
-			dialog.dismiss();
+			if (dialog != null && dialog.isShowing())
+				dialog.dismiss();
 			if (offer == null) {
 				if (loadingStatusView != null)
 					loadingStatusView.setText(R.string.offer_error_loading);
@@ -544,7 +544,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		@Override
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
-			dialog.dismiss();
+			if (dialog != null && dialog.isShowing())
+				dialog.dismiss();
 			after.run();
 		}
 

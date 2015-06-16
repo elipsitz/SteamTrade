@@ -33,6 +33,11 @@ public abstract class TradeInternalAsset {
 	 */
 	String marketName;
 	/**
+	 * The name it would be grouped under in the Steam Community Market. Is an
+	 * empty string if not in the Market.
+	 */
+	String marketHashName;
+	/**
 	 * The item's type.
 	 */
 	String type;
@@ -69,6 +74,10 @@ public abstract class TradeInternalAsset {
 	 * Background color
 	 */
 	String background_color;
+	/**
+	 * Whether or not it's marketable
+	 */
+	boolean marketable;
 
 
 	/**
@@ -90,6 +99,7 @@ public abstract class TradeInternalAsset {
 
 		this.name = rgDescriptionItem.getString("name");
 		this.marketName = rgDescriptionItem.getString("market_name");
+		this.marketHashName = rgDescriptionItem.optString("market_hash_name", null);
 		this.type = rgDescriptionItem.getString("type");
 		this.icon_url = rgDescriptionItem.getString("icon_url");
 
@@ -102,6 +112,7 @@ public abstract class TradeInternalAsset {
 		this.amount = Integer.parseInt(rgInventoryItem.optString("amount", "1"));
 		this.pos = rgInventoryItem.optInt("pos", -1);
 
+		this.marketable = rgDescriptionItem.optInt("marketable", 0) != 0;
 
 		if(rgInventoryItem.has("id"))
 			this.assetid = Long.parseLong(rgInventoryItem.getString("id"));
@@ -164,6 +175,25 @@ public abstract class TradeInternalAsset {
 	 */
 	public final String getMarketName() {
 		return marketName;
+	}
+
+	/**
+	 * Returns the market hash name of this asset.
+	 *
+	 * @return The market hash name of this asset. If it does not have a market hash name,
+	 * it returns an empty string.
+	 */
+	public final String getMarketHashName() {
+		return marketHashName;
+	}
+
+	/**
+	 * Returns the marketability of this asset.
+	 *
+	 * @return The marketability of this asset
+	 */
+	public final boolean isMarketable() {
+		return marketable;
 	}
 
 	/**

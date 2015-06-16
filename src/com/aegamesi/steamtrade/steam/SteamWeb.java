@@ -27,21 +27,6 @@ public class SteamWeb {
                 + "Chrome/18.0.1025.166 Safari/535.19";*/
 
 	/**
-	 * Requests a String representation of an online file (for Steam).
-	 *
-	 * @param url    Location to fetch.
-	 * @param method "GET" or "POST"
-	 * @param data   The data to be added to the data stream or request
-	 *               params.
-	 * @return The server's String response to the request.
-	 */
-	public static String fetch(String url, String method, Map<String, String> data, String referrer) {
-
-		String cookies = SteamService.generateSteamWebCookies();
-		return SteamWeb.request(url, method, data, cookies, referrer == null ? "http://steamcommunity.com/trade/1" : referrer);
-	}
-
-	/**
 	 * Fetches an api key from /dev/registerkey.
 	 *
 	 * @param domain "Domain" to send to Steam.
@@ -61,6 +46,21 @@ public class SteamWeb {
 		data.put("sessionid", SteamService.singleton.sessionID); // new as of 5/12/2015
 		page = fetch("https://steamcommunity.com/dev/registerkey", "POST", data, "https://steamcommunity.com/dev/apikey");
 		return parseWebAPIKey(page);
+	}
+
+	/**
+	 * Requests a String representation of an online file (for Steam).
+	 *
+	 * @param url    Location to fetch.
+	 * @param method "GET" or "POST"
+	 * @param data   The data to be added to the data stream or request
+	 *               params.
+	 * @return The server's String response to the request.
+	 */
+	public static String fetch(String url, String method, Map<String, String> data, String referrer) {
+
+		String cookies = SteamService.generateSteamWebCookies();
+		return SteamWeb.request(url, method, data, cookies, referrer == null ? "http://steamcommunity.com/trade/1" : referrer);
 	}
 
 	private static String parseWebAPIKey(String page) {

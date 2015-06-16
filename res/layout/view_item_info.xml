@@ -26,9 +26,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        tools:text="Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        tools:text="Name"/>
 
     <TextView
         android:id="@+id/item_type"
@@ -36,8 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        tools:text="Type"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="Type"
         />
 
     <TextView
@@ -46,6 +46,51 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dip"
         android:gravity="center"
-        tools:text="Description"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:text="Description"/>
+
+    <LinearLayout
+        android:id="@+id/item_market_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:background="#444"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/item_market_lowprice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/market_info_loading"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+
+            <TextView
+                android:id="@+id/item_market_volume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/item_market_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_cart"
+            android:visibility="gone"/>
+    </LinearLayout>
 </LinearLayout>

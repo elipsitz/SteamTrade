@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@+id/item_image_container"
-             xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="72dip"
-             android:layout_height="72dip"
-             android:background="@color/color_trade_white"
-             android:padding="2dip">
+<com.aegamesi.lib.android.SquareFrameLayout
+    android:id="@+id/itemlist_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="72dip"
+    android:layout_height="72dip"
+    android:layout_margin="2dp"
+    android:background="@color/color_trade_white"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="2dip">
 
-    <com.aegamesi.lib.SquareImageView
+    <ImageView
         android:id="@+id/itemlist_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/background_dark"
         android:contentDescription="@string/inv_item_image"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:src="@drawable/default_avatar"/>
 
     <CheckBox
@@ -24,4 +27,4 @@
         android:focusableInTouchMode="false"
         android:textSize="0sp"/>
 
-</FrameLayout>
+</com.aegamesi.lib.android.SquareFrameLayout>

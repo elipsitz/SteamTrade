@@ -24,18 +24,18 @@ public class Installation {
 		return sID;
 	}
 
+	private static void writeInstallationFile(File installation) throws IOException {
+		FileOutputStream out = new FileOutputStream(installation);
+		String id = UUID.randomUUID().toString();
+		out.write(id.getBytes());
+		out.close();
+	}
+
 	private static String readInstallationFile(File installation) throws IOException {
 		RandomAccessFile f = new RandomAccessFile(installation, "r");
 		byte[] bytes = new byte[(int) f.length()];
 		f.readFully(bytes);
 		f.close();
 		return new String(bytes);
-	}
-
-	private static void writeInstallationFile(File installation) throws IOException {
-		FileOutputStream out = new FileOutputStream(installation);
-		String id = UUID.randomUUID().toString();
-		out.write(id.getBytes());
-		out.close();
 	}
 }

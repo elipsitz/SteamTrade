@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.trade2.TradeUtil;
+import com.aegamesi.steamtrade.steam.SteamItemUtil;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -49,6 +49,21 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 	public void setItemList(List<? extends TradeInternalAsset> list) {
 		this.rawList = (List<TradeInternalAsset>) list;
 		filter("");
+		notifyDataSetChanged();
+	}
+
+	public void filter(String by) {
+		filteredList.clear();
+		if (rawList == null)
+			return;
+		if (by == null || by.trim().length() == 0) {
+			filteredList.addAll(rawList);
+		} else {
+			List<TradeInternalAsset> items = rawList;
+			for (TradeInternalAsset item : items)
+				if (item.getDisplayName().toLowerCase(Locale.ENGLISH).contains(by.toLowerCase(Locale.ENGLISH)))
+					filteredList.add(item);
+		}
 		notifyDataSetChanged();
 	}
 
@@ -123,21 +138,6 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 		return v;
 	}
 
-	public void filter(String by) {
-		filteredList.clear();
-		if (rawList == null)
-			return;
-		if (by == null || by.trim().length() == 0) {
-			filteredList.addAll(rawList);
-		} else {
-			List<TradeInternalAsset> items = rawList;
-			for (TradeInternalAsset item : items)
-				if (item.getDisplayName().toLowerCase(Locale.ENGLISH).contains(by.toLowerCase(Locale.ENGLISH)))
-					filteredList.add(item);
-		}
-		notifyDataSetChanged();
-	}
-
 	@Override
 	public void onClick(View view) {
 		TradeInternalAsset item = (TradeInternalAsset) view.getTag();
@@ -149,7 +149,7 @@ public class ItemListAdapter extends BaseAdapter implements View.OnClickListener
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		TradeInternalAsset item = (TradeInternalAsset) getItem(position);
-		TradeUtil.showItemInfo(context, item, null);
+		SteamItemUtil.showItemInfo(context, item, null);
 	}
 
 	public interface IItemListProvider {

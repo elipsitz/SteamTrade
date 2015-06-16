@@ -12,13 +12,13 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ice_feature"
-            android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:cropToPadding="false"
             android:layout_gravity="center_horizontal|top"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/app_name"
+            android:cropToPadding="false"
             android:padding="-16dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ice_feature"
             />
 
         <TextView
@@ -26,10 +26,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/ice_thanks"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"/>
+            android:text="@string/ice_thanks"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <TextView
             android:id="@+id/ice_text_about"
@@ -37,10 +37,10 @@
             android:layout_height="0dip"
             android:layout_gravity="center_horizontal"
             android:layout_margin="8dp"
+            android:layout_weight="1"
             android:text="@string/ice_about"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textIsSelectable="true"
-            android:layout_weight="1"/>
+            android:textIsSelectable="true"/>
 
     </LinearLayout>
 </ScrollView>

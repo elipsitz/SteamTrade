@@ -2,6 +2,7 @@ package com.aegamesi.steamtrade.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -26,6 +27,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.callbacks.NotificationUpdateCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.types.NotificationType;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
+import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class FragmentMe extends FragmentBase implements OnClickListener, OnItemSelectedListener {
 	public ImageView avatarView;
@@ -33,6 +38,11 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	public Spinner statusSpinner;
 	public Button changeNameButton;
 	public Button changeGameButton;
+
+	public TextView notifyComments;
+	public TextView notifyItems;
+	public TextView notifyChat;
+	public TextView notifyTrade;
 
 	public int[] states = new int[]{1, 3, 2, 4, 5, 6}; // online, away, busy, snooze, lookingtotrade, lookingtoplay
 
@@ -53,6 +63,15 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		changeNameButton = (Button) view.findViewById(R.id.me_set_name);
 		changeGameButton = (Button) view.findViewById(R.id.me_set_game);
 
+		notifyChat = (TextView) view.findViewById(R.id.me_notify_chat);
+		notifyComments = (TextView) view.findViewById(R.id.me_notify_comments);
+		notifyItems = (TextView) view.findViewById(R.id.me_notify_items);
+		notifyTrade = (TextView) view.findViewById(R.id.me_notify_trade);
+		notifyChat.setOnClickListener(this);
+		notifyComments.setOnClickListener(this);
+		notifyItems.setOnClickListener(this);
+		notifyTrade.setOnClickListener(this);
+
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity(), R.array.allowed_states, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 		statusSpinner.setAdapter(adapter);
@@ -66,12 +85,11 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	}
 
 	public void updateView() {
-		activity().getSupportActionBar().setTitle(activity().steamFriends.getPersonaName());
 		EPersonaState state = activity().steamFriends.getPersonaState();
 		String name = activity().steamFriends.getPersonaName();
 		String avatar = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(SteamService.singleton.steamClient.getSteamId())).toLowerCase(Locale.US);
 
-		activity().getSupportActionBar().setTitle(name);
+		setTitle(name);
 		nameView.setText(name);
 		statusSpinner.setSelection(stateToIndex(state));
 
@@ -80,6 +98,18 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg", avatarView);
 
 		nameView.setTextColor(SteamUtil.colorOnline);
+
+		updateNotification(notifyChat, R.plurals.notification_messages, NotificationType.OFFLINE_MSGS);
+		updateNotification(notifyComments, R.plurals.notification_comments, NotificationType.COMMENTS);
+		updateNotification(notifyItems, R.plurals.notification_items, NotificationType.ITEMS);
+		updateNotification(notifyTrade, R.plurals.notification_trades, NotificationType.TRADE_OFFERS);
+	}
+
+	private void updateNotification(TextView textView, int plural, NotificationType type) {
+		int num = activity().steamNotifications.getNotificationCounts().get(type);
+		String text = getResources().getQuantityString(plural, num, num);
+		textView.setText(text);
+		textView.setTextColor(getResources().getColor(num == 0 ? R.color.notification_text_off : R.color.notification_text_on));
 	}
 
 	public int stateToIndex(EPersonaState state) {
@@ -131,5 +161,32 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		if (v == changeGameButton) {
 			Toast.makeText(activity(), R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
 		}
+		if (v == notifyChat) {
+			activity().browseToFragment(new FragmentFriends(), false);
+		}
+		if (v == notifyItems) {
+			activity().browseToFragment(new FragmentInventory(), false);
+		}
+		if (v == notifyTrade) {
+			activity().browseToFragment(new FragmentOffersList(), false);
+		}
+		if (v == notifyComments) {
+			long my_id = SteamService.singleton.steamClient.getSteamId().convertToLong();
+			Fragment fragment = new FragmentWeb();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", "http://steamcommunity.com/profiles/" + my_id + "/commentnotifications");
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
+		}
+	}
+
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(NotificationUpdateCallback.class, new ActionT<NotificationUpdateCallback>() {
+			@Override
+			public void call(NotificationUpdateCallback obj) {
+				updateView();
+			}
+		});
 	}
 }

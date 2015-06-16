@@ -1,46 +1,54 @@
 package com.aegamesi.steamtrade.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.support.ChatAdapter;
-import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
-import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatReceiver;
+import com.aegamesi.steamtrade.steam.DBHelper.ChatEntry;
+import com.aegamesi.steamtrade.steam.SteamChatManager;
+import com.aegamesi.steamtrade.steam.SteamChatManager.ChatReceiver;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EChatEntryType;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgHistoryCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
+import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class FragmentChat extends FragmentBase implements ChatReceiver {
-	public SteamID id;
+	public SteamID ourID;
+	public SteamID otherID;
 	public ChatAdapter adapter;
-	public ListView chatList;
+	public RecyclerView chatList;
+	public LinearLayoutManager layoutManager;
+	public Cursor cursor = null;
+
 	public EditText chatInput;
-	public Button chatButton;
+	public ImageButton chatButton;
 	public CircleImageView avatar;
 	public TextView name;
 	public TextView status;
@@ -48,23 +56,23 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	public View friendInfoView;
 	public Handler typingHandler;
 	public Runnable typingRunnable = null;
-	public boolean visible = false;
 	public boolean fromProfile = false;
-	private long last_read;
+	private long time_last_read;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 
-		id = new SteamID(getArguments().getLong("steamId"));
+		ourID = SteamService.singleton.steamClient.getSteamId();
+		otherID = new SteamID(getArguments().getLong("steamId"));
 		fromProfile = getArguments().getBoolean("fromProfile", false);
-		SteamService.singleton.chat.receivers.add(0, this);
-		last_read = activity().getPreferences(Context.MODE_PRIVATE).getLong("chat_read_" + SteamService.singleton.steamClient.getSteamId().convertToLong() + "_" + id.convertToLong(), -1);
+		//time_last_read = System.currentTimeMillis();
+		time_last_read = activity().getPreferences(Context.MODE_PRIVATE).getLong("chat_read_" + ourID.convertToLong() + "_" + otherID.convertToLong(), 0);
 
-		if (SteamService.singleton.chat.unreadMessages.containsKey(id)) {
-			SteamService.singleton.chat.unreadMessages.remove(id);
-			SteamService.singleton.chat.updateNotification();
+		if (SteamService.singleton.chatManager.unreadMessages.contains(otherID)) {
+			SteamService.singleton.chatManager.unreadMessages.remove(otherID);
+			SteamService.singleton.chatManager.updateNotification();
 
 			if (activity().getFragmentByClass(FragmentFriends.class) != null)
 				activity().getFragmentByClass(FragmentFriends.class).adapter.notifyDataSetChanged();
@@ -80,6 +88,8 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 			}
 		};
 
+		// get message history from steam
+		activity().steamFriends.requestFriendMessageHistory(otherID);
 	}
 
 	@Override
@@ -87,15 +97,15 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
-		chatList = (ListView) view.findViewById(R.id.chat);
+		chatList = (RecyclerView) view.findViewById(R.id.chat);
 		chatInput = (EditText) view.findViewById(R.id.chat_input);
-		chatButton = (Button) view.findViewById(R.id.chat_button);
+		chatButton = (ImageButton) view.findViewById(R.id.chat_button);
 		avatar = (CircleImageView) view.findViewById(R.id.friend_avatar_left);
 		name = (TextView) view.findViewById(R.id.friend_name);
 		status = (TextView) view.findViewById(R.id.friend_status);
 		chat_typing = (TextView) view.findViewById(R.id.chat_typing);
 		friendInfoView = view.findViewById(R.id.friend_info);
-		view.findViewById(R.id.friend_profile_button).setVisibility(View.GONE);
+		view.findViewById(R.id.friend_chat_button).setVisibility(View.GONE);
 
 		chatInput.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
@@ -107,7 +117,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 					if ((message = chatInput.getText().toString().trim()).length() == 0)
 						return false;
 					chatInput.setText("");
-					SteamService.singleton.chat.sendMessage(id, message);
+					SteamService.singleton.chatManager.sendMessage(otherID, message);
 					return true;
 				}
 				return false;
@@ -120,7 +130,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 				if ((message = chatInput.getText().toString().trim()).length() == 0)
 					return;
 				chatInput.setText("");
-				SteamService.singleton.chat.sendMessage(id, message);
+				SteamService.singleton.chatManager.sendMessage(otherID, message);
 			}
 		});
 		friendInfoView.setOnClickListener(new OnClickListener() {
@@ -129,7 +139,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 				if (!fromProfile) {
 					Fragment fragment = new FragmentProfile();
 					Bundle bundle = new Bundle();
-					bundle.putLong("steamId", id.convertToLong());
+					bundle.putLong("steamId", otherID.convertToLong());
 					fragment.setArguments(bundle);
 					activity().browseToFragment(fragment, true);
 				} else {
@@ -137,30 +147,16 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 				}
 			}
 		});
-		chatList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
-				// copy to clipboard
-				ChatLine chatLine = (ChatLine) view.getTag();
-				if (chatLine != null) {
-					String message = chatLine.message;
-					SteamUtil.copyToClipboard(activity(), message);
-					Toast.makeText(activity(), R.string.copied_to_clipboard, Toast.LENGTH_LONG).show();
-				}
-				return true;
-			}
-		});
 
-		adapter = new ChatAdapter();
-		adapter.last_read = last_read;
+		adapter = new ChatAdapter(cursor);
+		adapter.time_last_read = time_last_read;
+		layoutManager = new LinearLayoutManager(activity());
+		layoutManager.setStackFromEnd(true);
+		chatList.setHasFixedSize(true);
+		chatList.setLayoutManager(layoutManager);
 		chatList.setAdapter(adapter);
-		ArrayList<ChatLine> backlog = SteamService.singleton.chat.getChatHistory(id, "c", null);
-		if (backlog != null)
-			for (ChatLine line : backlog)
-				adapter.addChatLine(line);
-		chatList.setSelection(chatList.getCount() - 1);
 
-		activity().getSupportActionBar().setTitle(R.string.chat);
+		setTitle(getString(R.string.chat));
 		updateView();
 		return view;
 	}
@@ -168,30 +164,53 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	@Override
 	public void onResume() {
 		super.onResume();
-		visible = true;
+
+		// set up the cursor
+		adapter.changeCursor(cursor = fetchCursor());
+
+		activity().getPreferences(Context.MODE_PRIVATE).edit().putLong("chat_read_" + ourID.convertToLong() + "_" + otherID.convertToLong(), System.currentTimeMillis()).apply();
+
+		if (SteamService.singleton != null && SteamService.singleton.chatManager != null && SteamService.singleton.chatManager.receivers != null)
+			SteamService.singleton.chatManager.receivers.add(0, this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		visible = false;
 
-		// commit last read date
-		SharedPreferences.Editor prefs = activity().getPreferences(Context.MODE_PRIVATE).edit();
-		prefs.putLong("chat_read_" + SteamService.singleton.steamClient.getSteamId().convertToLong() + "_" + id.convertToLong(), ((new Date()).getTime()));
-		prefs.apply();
+		adapter.changeCursor(null);
+
+		if (SteamService.singleton != null && SteamService.singleton.chatManager != null && SteamService.singleton.chatManager.receivers != null)
+			SteamService.singleton.chatManager.receivers.remove(this);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+	}
+
+	private Cursor fetchCursor() {
+		return SteamService.singleton.db().query(
+				ChatEntry.TABLE,                    // The table to query
+				new String[]{ChatEntry._ID, ChatEntry.COLUMN_TIME, ChatEntry.COLUMN_MESSAGE, ChatEntry.COLUMN_SENDER},
+				ChatEntry.COLUMN_OUR_ID + " = ? AND " + ChatEntry.COLUMN_OTHER_ID + " = ? AND " + ChatEntry.COLUMN_TYPE + " = ?",
+				new String[]{"" + ourID.convertToLong(), "" + otherID.convertToLong(), "" + SteamChatManager.CHAT_TYPE_CHAT},
+				null, // don't group the rows
+				null, // don't filter by row groups
+				ChatEntry.COLUMN_TIME + " ASC"
+		);
 	}
 
 	public void updateView() {
 		if (activity() == null || activity().steamFriends == null)
 			return;
-		String game = activity().steamFriends.getFriendGamePlayedName(id);
-		EPersonaState state = activity().steamFriends.getFriendPersonaState(id);
-		String nickname = activity().steamFriends.getFriendNickname(id);
+		String game = activity().steamFriends.getFriendGamePlayedName(otherID);
+		EPersonaState state = activity().steamFriends.getFriendPersonaState(otherID);
+		String nickname = activity().steamFriends.getFriendNickname(otherID);
 		if (nickname == null)
-			name.setText(activity().steamFriends.getFriendPersonaName(id));
+			name.setText(activity().steamFriends.getFriendPersonaName(otherID));
 		else
-			name.setText(activity().steamFriends.getFriendPersonaName(id) + " (" + nickname + ")");
+			name.setText(activity().steamFriends.getFriendPersonaName(otherID) + " (" + nickname + ")");
 
 		if (game != null && game.length() != 0)
 			status.setText(getString(R.string.playing) + " " + game);
@@ -213,47 +232,66 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		avatar.setBorderColor(color);
 		adapter.color_default = color;
 
-		String imgHash = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(id)).toLowerCase(Locale.US);
+		String imgHash = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(otherID)).toLowerCase(Locale.US);
 		avatar.setImageResource(R.drawable.default_avatar);
 		if (!imgHash.equals("0000000000000000000000000000000000000000") && imgHash.length() == 40)
 			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg", avatar);
 	}
 
-	public void onUserTyping(SteamID user) {
-		if (user.equals(id)) {
-			// set a timer for the thing
-			Log.d("SteamKit", "User is typing a message...");
-			if (chat_typing != null)
-				chat_typing.setVisibility(View.VISIBLE);
-			if (typingHandler != null) {
-				typingHandler.removeCallbacks(typingRunnable);
-				typingHandler.postDelayed(typingRunnable, 15 * 1000L);
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(FriendMsgCallback.class, new ActionT<FriendMsgCallback>() {
+			@Override
+			public void call(FriendMsgCallback callback) {
+				final EChatEntryType type = callback.getEntryType();
+
+				if (type == EChatEntryType.Typing && callback.getSender().equals(otherID)) {
+					// set a timer for the thing
+					Log.d("SteamKit", "User is typing a message...");
+					if (chat_typing != null)
+						chat_typing.setVisibility(View.VISIBLE);
+					if (typingHandler != null) {
+						typingHandler.removeCallbacks(typingRunnable);
+						typingHandler.postDelayed(typingRunnable, 15 * 1000L);
+					}
+				}
 			}
-		}
+		});
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				if (otherID != null && otherID.equals(obj.getFriendID()))
+					updateView();
+			}
+		});
+		msg.handle(FriendMsgHistoryCallback.class, new ActionT<FriendMsgHistoryCallback>() {
+			@Override
+			public void call(FriendMsgHistoryCallback obj) {
+				if (obj.getSteamId().equals(otherID)) {
+					// updated list (already received...)
+					// scroll to bottom
+					chatList.scrollToPosition(cursor.getCount() - 1);
+				}
+			}
+		});
 	}
 
-
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-
-		if (SteamService.singleton != null && SteamService.singleton.chat != null && SteamService.singleton.chat.receivers != null)
-			SteamService.singleton.chat.receivers.remove(this);
-	}
-
-	@Override
-	public boolean receiveChatLine(final ChatLine line, boolean delivered) {
-		if (line.steamId == null || line.steamId.equals(id) && activity() != null) {
+	public boolean receiveChatLine(long time, SteamID id_us, SteamID id_them, final boolean sent_by_us, int type, String message) {
+		if (id_them.equals(otherID)) {
 			activity().runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					adapter.addChatLine(line);
-					if (line.steamId != null && chat_typing != null)
+					adapter.changeCursor(cursor = fetchCursor());
+					// now scroll to bottom (if already near the bottom)
+					if (layoutManager.findLastVisibleItemPosition() > cursor.getCount() - 3)
+						chatList.scrollToPosition(cursor.getCount() - 1);
+
+					if (!sent_by_us && chat_typing != null)
 						chat_typing.setVisibility(View.INVISIBLE);
 				}
 			});
-			if (isVisible() && visible)
-				return true;
+			return true;
 		}
 		return false;
 	}

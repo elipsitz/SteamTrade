@@ -21,6 +21,15 @@ import com.aegamesi.steamtrade.R;
 public class FragmentEula extends DialogFragment {
 	private String EULA_PREFIX = "eula__ae-ice__";
 
+	public boolean shouldCreateDialog(Context context) {
+		PackageInfo versionInfo = getPackageInfo(context);
+		// the eulaKey changes every time you increment the version number in
+		// the AndroidManifest.xml
+		final String eulaKey = EULA_PREFIX + versionInfo.versionCode;
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		return !prefs.getBoolean(eulaKey, false);
+	}
+
 	private PackageInfo getPackageInfo(Context context) {
 		PackageInfo pi = null;
 		try {
@@ -29,15 +38,6 @@ public class FragmentEula extends DialogFragment {
 			e.printStackTrace();
 		}
 		return pi;
-	}
-
-	public boolean shouldCreateDialog(Context context) {
-		PackageInfo versionInfo = getPackageInfo(context);
-		// the eulaKey changes every time you increment the version number in
-		// the AndroidManifest.xml
-		final String eulaKey = EULA_PREFIX + versionInfo.versionCode;
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		return !prefs.getBoolean(eulaKey, false);
 	}
 
 	@Override

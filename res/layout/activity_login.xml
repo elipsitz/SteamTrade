@@ -16,7 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="144dp"
             android:layout_marginBottom="10dip"
+            android:layout_weight="1"
             android:contentDescription="@string/description_logo"
+            android:maxHeight="144dp"
             android:src="@drawable/ice_logo"/>
 
         <TextView
@@ -36,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="50dip"
+            android:layout_marginBottom="24dp"
             android:linksClickable="false"
             android:text="@string/developed_by_aegamesi"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -85,7 +87,8 @@
             android:imeOptions="actionUnspecified"
             android:inputType="textCapCharacters|textNoSuggestions"
             android:maxLines="1"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            />
 
         <CheckBox
             android:id="@+id/remember"

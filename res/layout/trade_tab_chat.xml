@@ -4,36 +4,9 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/chat"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:divider="@null"
-        android:dividerHeight="10dip"
-        android:transcriptMode="normal">
-    </ListView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/chat_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/chat_hint"
-            android:imeOptions="actionSend"
-            android:inputType="text"/>
-
-        <Button
-            android:id="@+id/chat_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="@string/send_button"/>
-    </LinearLayout>
-
+    <include
+        layout="@layout/fragment_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
 </LinearLayout>

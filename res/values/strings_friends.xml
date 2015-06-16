@@ -14,11 +14,16 @@
     <string name="friend_view_steam">View on Steam</string>
     <string name="friend_view_steamrep">View on SteamRep</string>
     <string name="friend_is_typing">Other user is typing…</string>
+    <string name="profile_view">View Profile</string>
     <string name="profile_summary">Summary</string>
     <string name="profile_loading_summary">Loading summary…</string>
+    <string name="friend_request">Friend Request</string>
+    <string name="friend_request_text">%1$s has added you.</string>
 
     <color name="color_chat_left">#B3E5FC</color>
     <color name="color_chat_right">#607D8B</color>
+    <dimen name="chat_margin_minor">4dp</dimen>
+    <dimen name="chat_margin_major">48dp</dimen>
 
     <color name="steam_online">#9CC6FF</color>
     <color name="steam_game">#AED04E</color>

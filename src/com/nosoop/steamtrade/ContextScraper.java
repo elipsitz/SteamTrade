@@ -40,7 +40,7 @@ public class ContextScraper {
 	 * @return A list of named AppContextPair objects representing the known
 	 * inventories, or an empty list if not found.
 	 */
-	static List<AppContextPair> scrapeContextData(String pageResult)
+	public static List<AppContextPair> scrapeContextData(String pageResult)
 			throws JSONException {
 		try {
 			BufferedReader read;

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.aegamesi.steamtrade.steam.SteamLogcatDebugListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -17,6 +18,7 @@ import org.acra.annotation.ReportsCrashes;
 import java.io.File;
 
 import uk.co.thomasc.steamkit.steam3.CMClient;
+import uk.co.thomasc.steamkit.util.logging.DebugLog;
 
 @ReportsCrashes(
 		formUri = "https://pickleman.cloudant.com/acra-steamtrade/_design/acra-storage/_update/report",
@@ -39,10 +41,12 @@ public class SteamTrade extends Application {
 		getTracker().enableAdvertisingIdCollection(true);
 		filesDir = getFilesDir();
 
+		DebugLog.addListener(new SteamLogcatDebugListener());
+
 		/*Random r = new Random();
 		r.setSeed(System.currentTimeMillis());
 		String[] keys = getResources().getStringArray(R.array.steam_apikey);
-		//SteamUtil.apikey = keys[r.nextInt(keys.length)];*/
+		//SteamUtil.webApiKey = keys[r.nextInt(keys.length)];*/
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.contains("cm_server_list")) {
@@ -65,16 +69,16 @@ public class SteamTrade extends Application {
 		ImageLoader.getInstance().init(imageLoaderConfiguration);
 	}
 
-	public Tracker getTracker() {
-		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-		return analytics.newTracker(R.xml.tracker);
-	}
-
 	private void FixNoClassDefFoundError81083() {
 		try {
 			Class.forName("android.os.AsyncTask");
 		} catch (Throwable ignore) {
 		}
+	}
+
+	public Tracker getTracker() {
+		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+		return analytics.newTracker(R.xml.tracker);
 	}
 
 }

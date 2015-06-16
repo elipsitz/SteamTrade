@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -21,36 +20,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aegamesi.steamtrade.fragments.FragmentEula;
-import com.aegamesi.steamtrade.steam.SteamMessageHandler;
+import com.aegamesi.steamtrade.steam.SteamConnectionListener;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.aegamesi.steamtrade.steam.SteamWeb;
 
 import java.util.Locale;
 
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EUniverse;
-import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
-import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
-import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
-import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
-import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
-import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
-import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class LoginActivity extends AppCompatActivity {
 	// Values for email and password at the time of the login attempt.
 	public static String username;
 	public static String password;
-	public static EResult result = null;
-	public boolean attemptReconnect = false;
-	private UserLoginTask mAuthTask = null;
-	private String steamGuard;
+	private EResult lastResult = null;
 	// UI references.
 	private EditText textUsername;
 	private EditText textPassword;
 	private EditText textSteamguard;
+	//
+	private ConnectionListener connectionListener = null;
+	private ProgressDialog progressDialog = null;
+	private boolean active = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 		if (eula.shouldCreateDialog(this))
 			eula.show(getSupportFragmentManager(), "tag");
 
-		// go to main activity if already logged in
-		if (SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getConnectedUniverse() != null && SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid) {
-			Intent intent = new Intent(this, MainActivity.class);
-			if (getIntent() != null) {
-				// forward our intent (there may be a better way to do this)
-				intent.setAction(getIntent().getAction());
-				intent.setData(getIntent().getData());
-			}
-			startActivity(intent);
-			finish();
-			return;
-		}
-
-		if (getIntent().getExtras() != null) {
-			attemptReconnect = getIntent().getExtras().getBoolean("attemptReconnect");
-		}
+		connectionListener = new ConnectionListener();
 
 		// prepare login form
 		textSteamguard = (EditText) findViewById(R.id.steamguard);
@@ -111,34 +87,9 @@ public class LoginActivity extends AppCompatActivity {
 		});
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		// show any potential warnings...
-		int show_warning = -1;
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		if (activeNetwork == null || !activeNetwork.isConnected())
-			show_warning = R.string.not_connected_to_internet;
-		else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
-			show_warning = R.string.connected_via_mobiledata;
-		if (show_warning != -1) {
-			findViewById(R.id.login_warning).setVisibility(View.VISIBLE);
-			((TextView) findViewById(R.id.login_warning_text)).setText(show_warning);
-		} else {
-			findViewById(R.id.login_warning).setVisibility(View.INVISIBLE);
-		}
-
-		// attempt to reconnect if disconnected
-		if (attemptReconnect) {
-			Log.d("Login", "Attempting to reconnect");
-			attemptLogin();
-		}
-	}
-
 	public void attemptLogin() {
-		if (mAuthTask != null)
+		// TODO do not do this if we're already trying to connect-- fix this
+		if (progressDialog != null)
 			return;
 
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -153,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
 		// Store values at the time of the login attempt.
 		username = textUsername.getText().toString();
 		password = textPassword.getText().toString();
-		steamGuard = textSteamguard.getText().toString();
+		String steamGuard = textSteamguard.getText().toString();
 		steamGuard = steamGuard.trim().toUpperCase(Locale.US);
 
 		boolean cancel = false;
@@ -184,164 +135,137 @@ public class LoginActivity extends AppCompatActivity {
 				editor.apply();
 			}
 
-			mAuthTask = new UserLoginTask();
-			mAuthTask.execute();
-		}
-	}
+			// log in
+			if (progressDialog != null)
+				progressDialog.dismiss();
 
-	// asynchronous login
-	public class UserLoginTask extends AsyncTask<Void, String, EResult> implements SteamMessageHandler {
-		private ProgressDialog dialog;
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			dialog = new ProgressDialog(LoginActivity.this);
-			dialog.setCancelable(false);
-			dialog.show();
-
-			// start the steam service (stop if it's already started)
-			Intent intent = new Intent(getApplicationContext(), SteamService.class);
-			stopService(intent);
-			SteamService.singleton = null;
-			startService(intent);
-		}
-
-		@Override
-		protected EResult doInBackground(Void... params) {
-			// busy-wait for the service to start...
-			publishProgress(getString(R.string.initializing));
-			while (SteamService.singleton == null) {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					return EResult.Fail;
-				}
-			}
-
-			SteamService.singleton.messageHandler = this;
+			// start the logging in progess
 			Bundle bundle = new Bundle();
 			bundle.putString("username", username);
 			bundle.putString("password", password);
 			bundle.putString("steamguard", steamGuard);
-			publishProgress(getString(R.string.connecting));
-			SteamService.singleton.attemptLogon(bundle);
-			SteamUtil.apikey = null; // reset apikey
+			bundle.putBoolean("twofactor", lastResult == EResult.AccountLoginDeniedNeedTwoFactor || lastResult == EResult.TwoFactorCodeMismatch);
+			SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
+		}
+	}
 
-			// busy-waiting
-			result = null;
-			while (true) {
-				String message = "";
+	@Override
+	protected void onPause() {
+		super.onPause();
+		active = false;
+	}
 
-				if (result != null && (result != EResult.OK || (result == EResult.OK && SteamService.singleton.token != null && SteamUtil.apikey != null)))
-					return result;
-				if (SteamService.singleton.steamClient.getConnectedUniverse() != null && SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid)
-					message = getString(R.string.logging_on);
-				if (result == EResult.OK && SteamService.singleton.token == null)
-					message = getString(R.string.authenticating);
-				if (SteamService.singleton.token != null && SteamUtil.apikey == null) {
-					publishProgress(message = getString(R.string.fetching_key));
-					// now let's fetch the api key.
-					String apikey = SteamWeb.requestWebAPIKey("localhost"); // hopefully this keeps working
-					SteamUtil.apikey = apikey == null ? "" : apikey;
-					Log.d("Steam", "Fetched api key: " + SteamUtil.apikey);
-					if (apikey == null) {
-						LoginActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								Toast.makeText(LoginActivity.this, R.string.error_getting_key, Toast.LENGTH_LONG).show();
-							}
-						});
+	@Override
+	protected void onResume() {
+		super.onResume();
+		active = true;
+
+		// go to main activity if already logged in
+		if (SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getConnectedUniverse() != null && SteamService.singleton.steamClient.getConnectedUniverse() != EUniverse.Invalid) {
+			Intent intent = new Intent(this, MainActivity.class);
+			if (getIntent() != null) {
+				// forward our intent (there may be a better way to do this)
+				intent.setAction(getIntent().getAction());
+				intent.setData(getIntent().getData());
+			}
+			startActivity(intent);
+			finish();
+			active = false;
+			return;
+		}
+
+		// show any potential warnings...
+		int show_warning = -1;
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		if (activeNetwork == null || !activeNetwork.isConnected()) {
+			show_warning = R.string.not_connected_to_internet;
+		}
+		// if (activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+		//	show_warning = R.string.connected_via_mobiledata;
+
+		TextView textLoginWarning = (TextView) findViewById(R.id.login_warning_text);
+		if (show_warning != -1) {
+			textLoginWarning.setVisibility(View.VISIBLE);
+			textLoginWarning.setText(show_warning);
+		} else {
+			textLoginWarning.setVisibility(View.GONE);
+		}
+
+		// set self as the steam connection listener
+		SteamService.connectionListener = connectionListener;
+	}
+
+	private class ConnectionListener implements SteamConnectionListener {
+		@Override
+		public void onConnectionResult(final EResult result) {
+			Log.i("ConnectionListener", "Connection result: " + result);
+
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (!active)
+						return;
+
+					if (progressDialog != null && progressDialog.isShowing())
+						progressDialog.dismiss();
+					progressDialog = null;
+
+					lastResult = result;
+					if (result == EResult.InvalidPassword) {
+						textPassword.setError(getString(R.string.error_incorrect_password));
+						textPassword.requestFocus();
+					} else if (result == EResult.ConnectFailed) {
+						Toast.makeText(LoginActivity.this, R.string.cannot_connect_to_steam, Toast.LENGTH_LONG).show();
+					} else if (result == EResult.ServiceUnavailable) {
+						Toast.makeText(LoginActivity.this, R.string.cannot_auth_with_steamweb, Toast.LENGTH_LONG).show();
+					} else if (result == EResult.AccountLogonDenied || result == EResult.AccountLogonDeniedNoMail || result == EResult.AccountLogonDeniedVerifiedEmailRequired || result == EResult.AccountLoginDeniedNeedTwoFactor) {
+						textSteamguard.setVisibility(View.VISIBLE);
+						textSteamguard.setError(getString(R.string.error_steamguard_required));
+						textSteamguard.requestFocus();
+						Toast.makeText(LoginActivity.this, "SteamGuard: " + result.name(), Toast.LENGTH_LONG).show();
+					} else if (result == EResult.InvalidLoginAuthCode || result == EResult.TwoFactorCodeMismatch) {
+						textSteamguard.setVisibility(View.VISIBLE);
+						textSteamguard.setError(getString(R.string.error_incorrect_steamguard));
+						textSteamguard.requestFocus();
+					} else if (result != EResult.OK) {
+						// who knows what this is. perhaps a bug report will reveal
+						Toast.makeText(LoginActivity.this, "Cannot Login: " + result.toString(), Toast.LENGTH_LONG).show();
+					} else {
+						if (SteamUtil.webApiKey.length() == 0) {
+							Toast.makeText(LoginActivity.this, R.string.error_getting_key, Toast.LENGTH_LONG).show();
+						}
+
+						Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+						intent.putExtra("isLoggingIn", true);
+						LoginActivity.this.startActivity(intent);
+						finish();
 					}
 				}
-
-				if (message.length() > 0)
-					publishProgress(message);
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		@Override
-		protected void onProgressUpdate(String... progress) {
-			dialog.setMessage(progress[0]);
-		}
-
-		@Override
-		protected void onPostExecute(final EResult status) {
-			mAuthTask = null;
-			if (dialog != null)
-				dialog.dismiss();
-
-			if (status == EResult.InvalidPassword) {
-				textPassword.setError(getString(R.string.error_incorrect_password));
-				textPassword.requestFocus();
-			} else if (status == EResult.ConnectFailed) {
-				Toast.makeText(LoginActivity.this, R.string.cannot_connect_to_steam, Toast.LENGTH_LONG).show();
-			} else if (status == EResult.ServiceUnavailable) {
-				Toast.makeText(LoginActivity.this, R.string.cannot_auth_with_steamweb, Toast.LENGTH_LONG).show();
-			} else if (status == EResult.AccountLogonDenied || status == EResult.AccountLogonDeniedNoMailSent || status == EResult.AccountLogonDeniedVerifiedEmailRequired) {
-				textSteamguard.setVisibility(View.VISIBLE);
-				textSteamguard.setError(getString(R.string.error_steamguard_required));
-				textSteamguard.requestFocus();
-				Toast.makeText(LoginActivity.this, "SteamGuard: " + status.name(), Toast.LENGTH_LONG).show();
-			} else if (status == EResult.InvalidLoginAuthCode) {
-				textSteamguard.setVisibility(View.VISIBLE);
-				textSteamguard.setError(getString(R.string.error_incorrect_steamguard));
-				textSteamguard.requestFocus();
-			} else if (status != EResult.OK) {
-				// who knows what this is. perhaps a bug report will reveal
-				Toast.makeText(LoginActivity.this, "Cannot Login: " + status.toString(), Toast.LENGTH_LONG).show();
-			} else {
-				SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
-				if (steamFriends != null)
-					steamFriends.setPersonaState(EPersonaState.Online);
-
-				Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-				intent.putExtra("isLoggingIn", true);
-				LoginActivity.this.startActivity(intent);
-				finish();
-			}
-		}
-
-		@Override
-		protected void onCancelled() {
-			mAuthTask = null;
-		}
-
-		@Override
-		public void handleSteamMessage(CallbackMsg msg) {
-			msg.handle(LoggedOnCallback.class, new ActionT<LoggedOnCallback>() {
-				@Override
-				public void call(LoggedOnCallback callback) {
-					result = callback.getResult();
-					if (result == EResult.OK)
-						SteamService.singleton.webapiKey = callback.getWebAPIUserNonce();
-					Log.d("Steam", "WebAPI Nonce: " + SteamService.singleton.webapiKey);
-				}
 			});
-			msg.handle(ConnectedCallback.class, new ActionT<ConnectedCallback>() {
+		}
+
+		@Override
+		public void onConnectionStatusUpdate(final int status) {
+			Log.i("ConnectionListener", "Status update: " + status);
+
+			runOnUiThread(new Runnable() {
 				@Override
-				public void call(ConnectedCallback callback) {
-					if (callback.getResult() != EResult.OK)
-						result = EResult.ConnectFailed;
-				}
-			});
-			msg.handle(DisconnectedCallback.class, new ActionT<DisconnectedCallback>() {
-				@Override
-				public void call(DisconnectedCallback callback) {
-					if (result == null)
-						result = EResult.ConnectFailed;
-				}
-			});
-			msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
-				@Override
-				public void call(LoginKeyCallback callback) {
-					SteamService.singleton.authenticate(callback);
+				public void run() {
+					if (!active)
+						return;
+
+					if (status != STATUS_CONNECTED && status != STATUS_FAILURE) {
+						if (progressDialog == null || !progressDialog.isShowing()) {
+							progressDialog = new ProgressDialog(LoginActivity.this);
+							progressDialog.setCancelable(false);
+							progressDialog.show();
+						}
+					}
+
+					String[] statuses = getResources().getStringArray(R.array.connection_status);
+					if (progressDialog != null)
+						progressDialog.setMessage(statuses[status]);
 				}
 			});
 		}

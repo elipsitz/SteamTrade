@@ -21,21 +21,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aegamesi.lib.SimpleSectionedRecyclerViewAdapter;
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.fragments.support.NewFriendsListAdapter;
-import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatLine;
-import com.aegamesi.steamtrade.steam.SteamChatHandler.ChatReceiver;
+import com.aegamesi.steamtrade.fragments.support.FriendsListAdapter;
+import com.aegamesi.steamtrade.steam.SteamChatManager;
+import com.aegamesi.steamtrade.steam.SteamChatManager.ChatReceiver;
 import com.aegamesi.steamtrade.steam.SteamService;
-import com.aegamesi.steamtrade.steam.SteamUtil;
 
 import java.util.List;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EFriendRelationship;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendAddedCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
+import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class FragmentFriends extends FragmentBase implements OnClickListener, ChatReceiver, SearchView.OnQueryTextListener {
-	public NewFriendsListAdapter adapter;
+	public final static long recentChatThreshold = 7 * 24 * 60 * 60 * 1000; // 7 days
+	public FriendsListAdapter adapter;
 	public RecyclerView recyclerView;
 
 	@Override
@@ -43,8 +46,42 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
+	}
 
-		SteamService.singleton.chat.receivers.add(this);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		inflater = activity().getLayoutInflater();
+		View view = inflater.inflate(R.layout.fragment_friends, container, false);
+
+		// set up the recycler view
+		recyclerView = (RecyclerView) view.findViewById(R.id.friends_list);
+		recyclerView.setHasFixedSize(true);
+		recyclerView.setLayoutManager(new LinearLayoutManager(activity()));
+
+		adapter = new FriendsListAdapter(this);
+		recyclerView.setAdapter(adapter);
+
+		return view;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// update list of recent chats
+		List<SteamID> recentChats = SteamService.singleton.chatManager.getRecentChats(recentChatThreshold);
+		adapter.updateRecentChats(recentChats);
+
+		adapter.notifyDataSetChanged(); // just to make sure
+		SteamService.singleton.chatManager.receivers.add(this);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		if (SteamService.singleton != null && SteamService.singleton.chatManager != null)
+			SteamService.singleton.chatManager.receivers.remove(this);
 	}
 
 	@Override
@@ -89,47 +126,42 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		inflater = activity().getLayoutInflater();
-		View view = inflater.inflate(R.layout.fragment_friends_new, container, false);
-
-		// set up the recycler view
-		recyclerView = (RecyclerView) view.findViewById(R.id.friends_list);
-		recyclerView.setHasFixedSize(true);
-		recyclerView.setLayoutManager(new LinearLayoutManager(activity()));
-
-		SimpleSectionedRecyclerViewAdapter.Section[] sections = new SimpleSectionedRecyclerViewAdapter.Section[NewFriendsListAdapter.FriendListCategory.values().length];
-		for (int i = 0; i < sections.length; i++)
-			sections[i] = new SimpleSectionedRecyclerViewAdapter.Section(0, NewFriendsListAdapter.FriendListCategory.f(i).toString());
-
-		List<SteamID> recentChats = SteamService.singleton.chat.getRecentChats(SteamUtil.recentChatThreshold);
-		adapter = new NewFriendsListAdapter(this, recentChats);
-		recyclerView.setAdapter(adapter);
-
-		return view;
-	}
-
-	public void onPersonaStateUpdate(SteamID id) {
-		if (adapter.hasUserID(id))
-			adapter.update(id);
-		else
-			adapter.add(id);
+	public void onStart() {
+		super.onStart();
+		setTitle(getString(R.string.friends));
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		activity().getSupportActionBar().setTitle(R.string.friends);
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(FriendAddedCallback.class, new ActionT<FriendAddedCallback>() {
+			@Override
+			public void call(FriendAddedCallback obj) {
+				adapter.add(obj.getSteamID());
+			}
+		});
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				SteamID id = obj.getFriendID();
+				if (adapter.hasUserID(id))
+					adapter.update(id);
+				else
+					adapter.add(id);
+			}
+		});
 	}
 
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.friend_profile_button) {
-			Fragment fragment = new FragmentProfile();
-			Bundle bundle = new Bundle();
-			bundle.putLong("steamId", ((SteamID) v.getTag()).convertToLong());
-			fragment.setArguments(bundle);
-			activity().browseToFragment(fragment, true);
+		if (v.getId() == R.id.friend_chat_button) {
+			SteamID id = (SteamID) v.getTag();
+			if (activity().steamFriends.getFriendRelationship(id) == EFriendRelationship.Friend) {
+				Fragment fragment = new FragmentChat();
+				Bundle bundle = new Bundle();
+				bundle.putLong("steamId", id.convertToLong());
+				fragment.setArguments(bundle);
+				activity().browseToFragment(fragment, true);
+			}
 		}
 		if (v.getId() == R.id.friend_request_accept) {
 			SteamID id = (SteamID) v.getTag();
@@ -145,27 +177,32 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 		}
 		if (v.getId() == R.id.friends_list_item) {
 			SteamID id = (SteamID) v.getTag();
-			if (activity().steamFriends.getFriendRelationship(id) == EFriendRelationship.Friend) {
-				Fragment fragment = new FragmentChat();
-				Bundle bundle = new Bundle();
-				bundle.putLong("steamId", id.convertToLong());
-				fragment.setArguments(bundle);
-				activity().browseToFragment(fragment, true);
-			}
+			Fragment fragment = new FragmentProfile();
+			Bundle bundle = new Bundle();
+			bundle.putLong("steamId", id.convertToLong());
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
 		}
 	}
 
 	@Override
-	public boolean receiveChatLine(ChatLine line, final boolean delivered) {
-		if (activity() == null)
-			return false;
-		activity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (!delivered)
-					adapter.notifyDataSetChanged();
+	public boolean receiveChatLine(long time, SteamID id_us, final SteamID id_them, boolean sent_by_us, int type, String message) {
+		if (activity() != null) {
+			if (!sent_by_us && type == SteamChatManager.CHAT_TYPE_CHAT) {
+				activity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if (adapter != null) {
+							if (adapter.recentChats != null) {
+								adapter.recentChats.remove(id_them);
+								adapter.recentChats.add(0, id_them);
+							}
+							adapter.update(id_them);
+						}
+					}
+				});
 			}
-		});
+		}
 		return false;
 	}
 

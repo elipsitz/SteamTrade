@@ -1,83 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dip"
-        android:background="@android:color/darker_gray"/>
-
-    <TextView
-        style="?android:attr/listSeparatorTextViewStyle"
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/trade_your_offerings"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <GridView
-        android:id="@+id/trade_offer_mylist"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:horizontalSpacing="5dp"
-        android:numColumns="5"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="5dp">
-    </GridView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <CheckBox
-        android:id="@+id/trade_offer_myready"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/trade_ready"/>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-2dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                card_view:cardBackgroundColor="@color/cardview_dark_background"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp"
+                card_view:cardUseCompatPadding="true"
+                card_view:contentPadding="0dp">
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dip"
-        android:layout_marginTop="0dip"
-        android:background="@android:color/darker_gray"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-    <TextView
-        style="?android:attr/listSeparatorTextViewStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/trade_their_offerings"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="@string/trade_your_offerings"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
-    <GridView
-        android:id="@+id/trade_offer_otherlist"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:horizontalSpacing="5dp"
-        android:numColumns="5"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="5dp">
-    </GridView>
+                    <com.aegamesi.lib.android.ExpandableHeightGridView
+                        android:id="@+id/trade_offer_mylist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:horizontalSpacing="5dp"
+                        android:numColumns="5"
+                        android:stretchMode="columnWidth"
+                        android:verticalSpacing="5dp"/>
 
-    <CheckBox
-        android:id="@+id/trade_offer_otherready"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        tools:text="Ready"/>
+                    <CheckBox
+                        android:id="@+id/trade_offer_myready"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/trade_ready"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dip"
-        android:background="@android:color/darker_gray"/>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="-2dp"
+                card_view:cardBackgroundColor="@color/cardview_dark_background"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp"
+                card_view:cardUseCompatPadding="true"
+                card_view:contentPadding="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="@string/trade_their_offerings"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+
+                    <com.aegamesi.lib.android.ExpandableHeightGridView
+                        android:id="@+id/trade_offer_otherlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:horizontalSpacing="5dp"
+                        android:numColumns="5"
+                        android:stretchMode="columnWidth"
+                        android:verticalSpacing="5dp">
+                    </com.aegamesi.lib.android.ExpandableHeightGridView>
+
+                    <CheckBox
+                        android:id="@+id/trade_offer_otherready"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        tools:text="Ready"/>
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/trade_offer_cancel"
@@ -100,8 +142,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:indeterminate="true"
-            android:scaleX="0.75"
-            android:scaleY="0.75"
             android:visibility="gone"/>
     </LinearLayout>
 

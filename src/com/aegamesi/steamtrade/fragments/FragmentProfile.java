@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aegamesi.lib.UILImageGetter;
+import com.aegamesi.lib.android.UILImageGetter;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
@@ -35,7 +35,10 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EFriendRelationship;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.ProfileInfoCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.SteamLevelCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.types.steamid.SteamID;
+import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class FragmentProfile extends FragmentBase implements View.OnClickListener {
 	public SteamID id;
@@ -113,6 +116,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		tradeOfferButton.setOnClickListener(this);
 		inventoryButton.setOnClickListener(this);
 		removeFriendButton.setOnClickListener(this);
+		addFriendButton.setOnClickListener(this);
 		viewSteamButton.setOnClickListener(this);
 		viewSteamRepButton.setOnClickListener(this);
 
@@ -124,6 +128,78 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		return view;
 	}
 
+	public void updateView() {
+		if (activity() == null || activity().steamFriends == null)
+			return;
+
+		relationship = activity().steamFriends.getFriendRelationship(id);
+		if (relationship == EFriendRelationship.Friend || persona_info == null) {
+			state = activity().steamFriends.getFriendPersonaState(id);
+			relationship = activity().steamFriends.getFriendRelationship(id);
+			name = activity().steamFriends.getFriendPersonaName(id);
+			game = activity().steamFriends.getFriendGamePlayedName(id);
+			avatar = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(id)).toLowerCase(Locale.US);
+		} else {
+			// use the found persona info stuff
+			state = persona_info.getState();
+			relationship = activity().steamFriends.getFriendRelationship(id);
+			name = persona_info.getName();
+			game = persona_info.getGameName();
+			avatar = SteamUtil.bytesToHex(persona_info.getAvatarHash()).toLowerCase(Locale.US);
+		}
+
+		if (profile_info != null) {
+			String summary_raw = profile_info.getSummary();
+			String summary = SteamUtil.parseBBCode(summary_raw);
+			Html.ImageGetter imageGetter = new UILImageGetter(summaryView, summaryView.getContext());
+			summaryView.setText(Html.fromHtml(summary, imageGetter, null));
+			summaryView.setMovementMethod(new LinkMovementMethod());
+		}
+
+		if (steam_level == -1) {
+			levelView.setText(R.string.unknown);
+		} else {
+			levelView.setText(steam_level + "");
+		}
+
+		setTitle(name);
+		nameView.setText(name);
+
+		avatarView.setImageResource(R.drawable.default_avatar);
+		if (avatar != null && avatar.length() == 40 && !avatar.equals("0000000000000000000000000000000000000000"))
+			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg", avatarView);
+
+		if (game != null && game.length() > 0)
+			statusView.setText("Playing " + game);
+		else
+			statusView.setText(state.toString());
+
+		int color = SteamUtil.colorOnline;
+		if (relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend)
+			color = SteamUtil.colorBlocked;
+		else if (game != null && game.length() > 0)
+			color = SteamUtil.colorGame;
+		else if (state == EPersonaState.Offline || state == null)
+			color = SteamUtil.colorOffline;
+		nameView.setTextColor(color);
+		statusView.setTextColor(color);
+		avatarView.setBorderColor(color);
+
+		// things to do if we are not friends
+		boolean isFriend = relationship == EFriendRelationship.Friend;
+		if (!isFriend) {
+			statusView.setText(relationship.toString());
+			addFriendButton.setEnabled(id != null);
+		}
+
+		// visibility of buttons and stuff
+		addFriendButton.setVisibility(!isFriend ? View.VISIBLE : View.GONE);
+		removeFriendButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
+		chatButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
+		tradeButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
+		tradeOfferButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
+	}
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -131,6 +207,48 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		requestInfo();
 		// fetch the data
 		//(new ProfileFetchTask()).execute();
+	}
+
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(SteamLevelCallback.class, new ActionT<SteamLevelCallback>() {
+			@Override
+			public void call(SteamLevelCallback obj) {
+				if (id != null && obj.getLevelMap().containsKey(id)) {
+					steam_level = obj.getLevelMap().get(id);
+					updateView();
+				}
+			}
+		});
+		msg.handle(ProfileInfoCallback.class, new ActionT<ProfileInfoCallback>() {
+			@Override
+			public void call(ProfileInfoCallback obj) {
+				profile_info = obj;
+				updateView();
+			}
+		});
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				if (id != null && id.equals(obj.getFriendID())) {
+					persona_info = obj;
+					updateView();
+				}
+			}
+		});
+	}
+
+	private void requestInfo() {
+		if (id != null) {
+			if (profile_info == null)
+				activity().steamFriends.requestProfileInfo(id);
+			int request_flags = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024;
+			relationship = activity().steamFriends.getFriendRelationship(id);
+			if (relationship != EFriendRelationship.Friend && persona_info == null)
+				activity().steamFriends.requestFriendInfo(id, request_flags);
+			if (steam_level == -1)
+				activity().steamFriends.requestSteamLevel(id);
+		}
 	}
 
 	@Override
@@ -184,7 +302,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 			activity().browseToFragment(fragment, true);
 		}
 		if (view == viewSteamButton) {
-			Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(SteamUtil.generateCommunityURL(id)));
+			Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse("http://steamcommunity.com/profiles/" + id.convertToLong()));
 			startActivity(browse);
 		}
 		if (view == viewSteamRepButton) {
@@ -194,112 +312,12 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		}
 	}
 
-	public void updateView() {
-		if (activity() == null || activity().steamFriends == null)
-			return;
-
-		relationship = activity().steamFriends.getFriendRelationship(id);
-		if (relationship == EFriendRelationship.Friend || persona_info == null) {
-			state = activity().steamFriends.getFriendPersonaState(id);
-			relationship = activity().steamFriends.getFriendRelationship(id);
-			name = activity().steamFriends.getFriendPersonaName(id);
-			game = activity().steamFriends.getFriendGamePlayedName(id);
-			avatar = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(id)).toLowerCase(Locale.US);
-		} else {
-			// use the found persona info stuff
-			state = persona_info.getState();
-			relationship = activity().steamFriends.getFriendRelationship(id);
-			name = persona_info.getName();
-			game = persona_info.getGameName();
-			avatar = SteamUtil.bytesToHex(persona_info.getAvatarHash()).toLowerCase(Locale.US);
-		}
-
-		if (profile_info != null) {
-			String summary = profile_info.getSummary();
-			summary = SteamUtil.parseBBCode(summary);
-			Html.ImageGetter imageGetter = new UILImageGetter(summaryView, summaryView.getContext());
-			summaryView.setText(Html.fromHtml(summary, imageGetter, null));
-			//Linkify.addLinks(summaryView, Linkify.WEB_URLS);
-		}
-
-		if (steam_level == -1) {
-			levelView.setText(R.string.unknown);
-		} else {
-			levelView.setText(steam_level + "");
-		}
-
-		activity().getSupportActionBar().setTitle(name);
-		nameView.setText(name);
-
-		avatarView.setImageResource(R.drawable.default_avatar);
-		if (avatar != null && avatar.length() == 40 && !avatar.equals("0000000000000000000000000000000000000000"))
-			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg", avatarView);
-
-		if (game != null && game.length() > 0)
-			statusView.setText("Playing " + game);
-		else
-			statusView.setText(state.toString());
-
-		int color = SteamUtil.colorOnline;
-		if (relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend)
-			color = SteamUtil.colorBlocked;
-		else if (game != null && game.length() > 0)
-			color = SteamUtil.colorGame;
-		else if (state == EPersonaState.Offline || state == null)
-			color = SteamUtil.colorOffline;
-		nameView.setTextColor(color);
-		statusView.setTextColor(color);
-		avatarView.setBorderColor(color);
-
-		// things to do if we are not friends
-		boolean isFriend = relationship == EFriendRelationship.Friend;
-		if (!isFriend) {
-			statusView.setText(relationship.toString());
-			addFriendButton.setEnabled(id != null);
-		}
-
-		// visibility of buttons and stuff
-		addFriendButton.setVisibility(!isFriend ? View.VISIBLE : View.GONE);
-		removeFriendButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-		chatButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-		tradeButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-		tradeOfferButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-	}
-
-	public void updateProfile(ProfileInfoCallback obj) {
-		profile_info = obj;
-		updateView();
-	}
-
-	public void updatePersona(PersonaStateCallback obj) {
-		persona_info = obj;
-		updateView();
-	}
-
-	public void updateLevel(int level) {
-		steam_level = level;
-		updateView();
-	}
-
-	private void requestInfo() {
-		if (id != null) {
-			if (profile_info == null)
-				activity().steamFriends.requestProfileInfo(id);
-			int request_flags = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024;
-			relationship = activity().steamFriends.getFriendRelationship(id);
-			if (relationship != EFriendRelationship.Friend && persona_info == null)
-				activity().steamFriends.requestFriendInfo(id, request_flags);
-			if (steam_level == -1)
-				activity().steamFriends.requestSteamLevel(id);
-		}
-	}
-
 	private class ResolveVanityURLTask extends AsyncTask<String, Void, SteamID> {
 		@Override
 		protected SteamID doInBackground(String... args) {
 			String vanity = args[0];
 
-			String api_url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=" + SteamUtil.apikey + "&format=json&vanityurl=" + vanity;
+			String api_url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=" + SteamUtil.webApiKey + "&format=json&vanityurl=" + vanity;
 			String response = SteamWeb.fetch(api_url, "GET", null, "");
 			if (response.length() == 0)
 				return null;

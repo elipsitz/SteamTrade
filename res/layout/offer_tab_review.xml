@@ -1,77 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/offer_tab_review_heading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        tools:text="Offer with Friend"/>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
-    <TextView
-        android:id="@+id/offer_message"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="16sp"
-        android:textStyle="italic"
-        tools:text="Message"/>
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/offer_message_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:hint="@string/offer_send_message"
-        android:textStyle="italic"/>
+        <TextView
+            android:id="@+id/offer_tab_review_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="Offer with Friend"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/offer_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            tools:text="Message"/>
 
-    <Button
-        android:id="@+id/offer_tab_review_accept"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/offer_accept"/>
+        <EditText
+            android:id="@+id/offer_message_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:hint="@string/offer_send_message"
+            android:textStyle="italic"/>
 
-    <Button
-        android:id="@+id/offer_tab_review_decline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/offer_decline"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="64dp"
+            android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/offer_tab_review_counter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/offer_counter"/>
+        <Button
+            android:id="@+id/offer_tab_review_accept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/offer_accept"/>
 
-    <Button
-        android:id="@+id/offer_tab_review_send"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/offer_send"/>
+        <Button
+            android:id="@+id/offer_tab_review_decline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/offer_decline"/>
 
-    <Button
-        android:id="@+id/offer_tab_review_cancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/offer_cancel"/>
+        <Button
+            android:id="@+id/offer_tab_review_counter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/offer_counter"/>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/offer_tab_review_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/offer_send"/>
+
+        <Button
+            android:id="@+id/offer_tab_review_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/offer_cancel"/>
+
+    </LinearLayout>
+</ScrollView>

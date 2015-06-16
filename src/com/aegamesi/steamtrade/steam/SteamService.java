@@ -1,20 +1,27 @@
 package com.aegamesi.steamtrade.steam;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Base64;
 import android.util.Log;
 
 import com.aegamesi.steamtrade.LoginActivity;
+import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.TradeManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,9 +31,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EChatEntryType;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EFriendRelationship;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EUniverse;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgEchoCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgHistoryCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.FriendMsgHistoryCallback.FriendMsg;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.SteamNotifications;
+import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.callbacks.NotificationOfflineMsgCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.callbacks.NotificationUpdateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOffCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
@@ -42,63 +59,157 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
 import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import uk.co.thomasc.steamkit.util.KeyDictionary;
 import uk.co.thomasc.steamkit.util.WebHelpers;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
 import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
-import uk.co.thomasc.steamkit.util.logging.DebugLog;
 
+
+// This is the backbone of the app. Stores SteamClient connection, message, chat, and trade handlers, schemas...
 public class SteamService extends Service {
-	// This is the backbone of the app. Stores SteamClient connection, message, chat, and trade handlers, schemas...
+	public static final int NOTIFICATION_ID = 49716;
+
+	public static boolean attemptReconnect = false;
 	public static boolean running = false;
 	public static SteamService singleton = null;
-
+	public static Bundle extras = null;
+	public static SteamConnectionListener connectionListener = null;
 	public SteamClient steamClient = null;
-	public Bundle extras = null;
-
-	public TradeManager tradeManager = null;
-	public SteamChatHandler chat = null;
+	public SteamTradeManager tradeManager = null;
+	public SteamChatManager chatManager = null;
 	public SteamMessageHandler messageHandler = null;
-	public SteamLogcatDebugListener debugListener = null;
-
 	public String sessionID = null;
 	public String token = null;
 	public String tokenSecure = null;
 	public String webapiKey = null;
 	public String sentryHash = null;
+	public long timeLogin = 0L;
 	Timer myTimer;
+	private DBHelper db_helper = null;
+	private SQLiteDatabase _db = null;
 	private Handler handler;
 	private boolean timerRunning = false;
-	private long POLL_TIME = 1000; // 500 ms = 0.5 sec
 
 	public static String generateSteamWebCookies() {
 		String cookies = "";
-		cookies += "sessionid=" + singleton.sessionID + ";";
-		cookies += "steamLogin=" + singleton.token + ";";
-		cookies += "steamLoginSecure=" + singleton.tokenSecure + ";";
-		cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
-		cookies += "steamMachineAuth" + singleton.steamClient.getSteamId().convertToLong() + "=" + singleton.sentryHash + "";
+		if (singleton != null) {
+			cookies += "sessionid=" + singleton.sessionID + ";";
+			cookies += "steamLogin=" + singleton.token + ";";
+			cookies += "steamLoginSecure=" + singleton.tokenSecure + ";";
+			cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
+			cookies += "steamMachineAuth" + singleton.steamClient.getSteamId().convertToLong() + "=" + singleton.sentryHash + "";
+		}
 		return cookies;
+	}
+
+	public static void attemptLogon(Context context, final SteamConnectionListener listener, Bundle bundle, boolean start_service) {
+		extras = bundle;
+
+		if (start_service) {
+			// start the steam service (stop if it's already started)
+			Intent intent = new Intent(context, SteamService.class);
+			context.stopService(intent);
+			SteamService.singleton = null;
+			context.startService(intent);
+		}
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				if (listener != null)
+					listener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_INITIALIZING);
+
+				// busy-wait for the service to start...
+				while (SteamService.singleton == null) {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						if (listener != null) {
+							listener.onConnectionResult(EResult.Fail);
+							listener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_FAILURE);
+						}
+					}
+				}
+
+				SteamService.singleton.processLogon(listener);
+			}
+		}).start();
+	}
+
+	private void buildNotification(int code, boolean update) {
+		// then, update our notification
+		boolean persist_notification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_persist_notification", true);
+		if (persist_notification) {
+			Intent notificationIntent = new Intent(this, LoginActivity.class);
+			notificationIntent.setAction(Intent.ACTION_MAIN);
+			notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+			builder.setSmallIcon(R.drawable.ic_notify_online);
+			builder.setContentTitle(getString(R.string.app_name));
+			builder.setContentText(getResources().getStringArray(R.array.connection_status)[code]);
+			builder.setContentIntent(contentIntent);
+			builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+			builder.setOnlyAlertOnce(true);
+			//builder.setOngoing(true);
+
+			if (steamClient != null) {
+				SteamNotifications steamNotifications = steamClient.getHandler(SteamNotifications.class);
+				if (steamNotifications != null)
+					builder.setContentInfo(steamNotifications.getTotalNotificationCount() + "");
+			}
+
+			if (update) {
+				NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				notificationManager.notify(NOTIFICATION_ID, builder.build());
+			} else {
+				startForeground(NOTIFICATION_ID, builder.build());
+			}
+		}
+	}
+
+	// this needs to take place in a non-main thread
+	private void processLogon(SteamConnectionListener listener) {
+		// now we wait.
+		if (listener != null)
+			listener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_CONNECTING);
+		buildNotification(SteamConnectionListener.STATUS_CONNECTING, false);
+		attemptReconnect = false;
+
+		if (listener != null)
+			connectionListener = listener;
+		db();
+		SteamUtil.webApiKey = null; // reset webApiKey
+		steamClient.connect(true);
+	}
+
+	public SQLiteDatabase db() {
+		if (_db == null)
+			_db = db_helper.getWritableDatabase();
+		return _db;
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		DebugLog.addListener(debugListener = new SteamLogcatDebugListener());
 		handler = new Handler();
+		db_helper = new DBHelper(this);
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		steamClient = new SteamClient();
-		chat = new SteamChatHandler(this);
-		tradeManager = new TradeManager();
+		chatManager = new SteamChatManager();
+		tradeManager = new SteamTradeManager();
 
 		if (!timerRunning) {
 			myTimer = new Timer();
-			myTimer.scheduleAtFixedRate(new CheckCallbacksTask(), 0, POLL_TIME);
+			myTimer.scheduleAtFixedRate(new CheckCallbacksTask(), 0, 1000);
 			timerRunning = true;
 		}
 
@@ -115,32 +226,18 @@ public class SteamService extends Service {
 		running = false;
 		singleton = null;
 
-		if (debugListener != null)
-			DebugLog.removeListener(debugListener);
+		if (_db != null)
+			_db.close();
+		_db = null;
+
 		if (myTimer != null)
 			myTimer.cancel();
 		timerRunning = false;
 	}
 
-	public void attemptLogon(Bundle bundle) {
-		extras = bundle;
-		steamClient.connect(true);
-
-		// this is only required if we want an ongoing notificiation and more resilience
-		boolean persist_notification = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).getBoolean("pref_persist_notification", true);
-		if (persist_notification) {
-			NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_notify_base).setContentTitle("Ice").setContentText("Connected");
-			Intent notificationIntent = new Intent(this, LoginActivity.class);
-			notificationIntent.setAction(Intent.ACTION_MAIN);
-			notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-			builder.setContentIntent(contentIntent);
-			startForeground(49716, builder.build());
-		}
-	}
-
-	public void disconnect() {
-		stopSelf();
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -148,6 +245,34 @@ public class SteamService extends Service {
 		msg.handle(DisconnectedCallback.class, new ActionT<DisconnectedCallback>() {
 			@Override
 			public void call(DisconnectedCallback obj) {
+				if (connectionListener != null) {
+					connectionListener.onConnectionResult(EResult.ConnectFailed);
+					connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_FAILURE);
+				}
+				buildNotification(SteamConnectionListener.STATUS_FAILURE, true);
+
+				// now, attempt reconnect?
+				ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+				NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+				boolean connected = activeNetwork != null && activeNetwork.isConnected();
+				if (attemptReconnect && connected) {
+					boolean pref_reconnect = PreferenceManager.getDefaultSharedPreferences(SteamService.this).getBoolean("pref_reconnect", true);
+					if (pref_reconnect) {
+						// first make sure that we are connected to the internet
+						// and the last failure was not "connectfailed"
+
+						// do the reconnection process
+						if (extras != null) {
+							// steam guard key will no longer be valid-- and, provided we had a successful login, we shouldn't need it anyway
+							if (extras.containsKey("steamguard"))
+								extras.remove("steamguard");
+
+							// this might not work using the own service that will be stopped as the context
+							SteamService.attemptLogon(SteamService.this, null, extras, true);
+						}
+					}
+				}
+
 				Log.i("Steam", "Disconnected from Steam Network, new connection: " + obj.isNewconnection());
 				disconnect();
 			}
@@ -164,10 +289,21 @@ public class SteamService extends Service {
 			public void call(ConnectedCallback callback) {
 				Log.i("Steam", "Connection Status " + callback.getResult());
 				if (callback.getResult() == EResult.OK) {
+					//  notify listener
+					if (connectionListener != null) {
+						connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_LOGON);
+					}
+					buildNotification(SteamConnectionListener.STATUS_LOGON, true);
+
 					// log in
 					LogOnDetails details = new LogOnDetails().username(extras.getString("username")).password(extras.getString("password"));
-					if (extras.getString("steamguard") != null)
-						details.authCode(extras.getString("steamguard"));
+					if (extras.getString("steamguard") != null) {
+						//details.authCode(extras.getString("steamguard"));
+						if (extras.getBoolean("twofactor", false))
+							details.twoFactorCode(extras.getString("steamguard"));
+						else
+							details.authCode(extras.getString("steamguard"));
+					}
 
 					// sentry files
 					String prefSentry = PreferenceManager.getDefaultSharedPreferences(SteamService.this).getString("pref_machineauth", "");
@@ -197,6 +333,13 @@ public class SteamService extends Service {
 					if (steamUser != null)
 						steamUser.logOn(details, com.aegamesi.steamtrade.Installation.id());
 				} else {
+					if (connectionListener != null) {
+						connectionListener.onConnectionResult(EResult.ConnectFailed);
+						connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_FAILURE);
+					}
+					buildNotification(SteamConnectionListener.STATUS_FAILURE, true);
+					attemptReconnect = false;
+
 					disconnect();
 				}
 			}
@@ -205,8 +348,17 @@ public class SteamService extends Service {
 			@Override
 			public void call(LoggedOnCallback callback) {
 				if (callback.getResult() != EResult.OK) {
+					if (connectionListener != null) {
+						connectionListener.onConnectionResult(callback.getResult());
+						connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_FAILURE);
+					}
+					buildNotification(SteamConnectionListener.STATUS_FAILURE, true);
+					attemptReconnect = false;
 					Log.i("Steam", "Login Failure: " + callback.getResult());
 					disconnect();
+				} else {
+					// okay! :)
+					webapiKey = callback.getWebAPIUserNonce();
 				}
 			}
 		});
@@ -241,7 +393,9 @@ public class SteamService extends Service {
 
 					sentryHash = SteamUtil.bytesToHex(auth.sentryFileHash);
 
-					steamClient.getHandler(SteamUser.class).sendMachineAuthResponse(auth);
+					SteamUser steamUser = steamClient.getHandler(SteamUser.class);
+					if (steamUser != null)
+						steamUser.sendMachineAuthResponse(auth);
 				}
 			}
 		});
@@ -252,11 +406,59 @@ public class SteamService extends Service {
 
 				if (!callback.getSender().equals(steamClient.getSteamId())) {
 					if (type == EChatEntryType.ChatMsg) {
-						chat.receiveMessage(callback.getSender(), callback.getMessage());
+						chatManager.receiveMessage(callback.getSender(), callback.getMessage(), System.currentTimeMillis());
 					}
 				}
 			}
 		});
+		// echoed message from another instance
+		msg.handle(FriendMsgEchoCallback.class, new ActionT<FriendMsgEchoCallback>() {
+			@Override
+			public void call(FriendMsgEchoCallback obj) {
+				// we log it:
+				if (obj.getEntryType() == EChatEntryType.ChatMsg) {
+					chatManager.broadcastMessage(
+							System.currentTimeMillis(),
+							steamClient.getSteamId(),
+							obj.getRecipient(),
+							true,
+							SteamChatManager.CHAT_TYPE_CHAT,
+							obj.getMessage()
+					);
+				}
+			}
+		});
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				// handle notifications for friend requests
+				SteamFriends steamFriends = steamClient.getHandler(SteamFriends.class);
+				if (steamFriends != null) {
+					if (steamFriends.getFriendRelationship(obj.getFriendID()) == EFriendRelationship.RequestRecipient) {
+						// create a notification
+						String partnerName = obj.getName();
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
+						NotificationCompat.Builder builder = new NotificationCompat.Builder(SteamService.this);
+						builder.setSmallIcon(R.drawable.ic_notify_friend);
+						builder.setContentTitle(getString(R.string.friend_request));
+						builder.setContentText(String.format(getString(R.string.friend_request_text), partnerName));
+						builder.setPriority(NotificationCompat.PRIORITY_MAX);
+						builder.setVibrate(prefs.getBoolean("pref_vibrate", true) ? new long[]{0, 500, 200, 500, 1000} : new long[]{0});
+						builder.setSound(Uri.parse(prefs.getString("pref_notification_sound", "DEFAULT_SOUND")));
+						Intent intent = new Intent(SteamService.singleton, MainActivity.class);
+						intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentFriends");
+						TaskStackBuilder stackBuilder = TaskStackBuilder.create(SteamService.singleton);
+						stackBuilder.addParentStack(MainActivity.class);
+						stackBuilder.addNextIntent(intent);
+						PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+						builder.setContentIntent(resultPendingIntent);
+						NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+						mNotificationManager.notify(2995, builder.build());
+					}
+				}
+			}
+		});
+
 		msg.handle(CMListCallback.class, new ActionT<CMListCallback>() {
 			@Override
 			public void call(CMListCallback obj) {
@@ -270,15 +472,74 @@ public class SteamService extends Service {
 
 					SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).edit();
 					prefs.putString("cm_server_list", serverString);
-					prefs.commit();
+					prefs.apply();
 				}
+			}
+		});
+		msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
+			@Override
+			public void call(LoginKeyCallback callback) {
+				if (connectionListener != null)
+					connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_AUTH);
+				buildNotification(SteamConnectionListener.STATUS_AUTH, true);
+
+				SteamService.singleton.authenticate(callback);
+			}
+		});
+		msg.handle(FriendMsgHistoryCallback.class, new ActionT<FriendMsgHistoryCallback>() {
+			@Override
+			public void call(FriendMsgHistoryCallback obj) {
+				// add all messages that are "unread" to our internal database
+				// problem though... Steam send us *all messages* as unread since we last
+				// requested history... perhaps we should request history
+				// when we get a message. that way we confirm we read the message
+				// SOLUTION: record the time that we log in. If this time is after that, ignore it
+				if (obj.getSuccess() > 0) {
+					SteamID otherId = obj.getSteamId();
+					SteamID ourId = steamClient.getSteamId();
+					for (FriendMsg msg : obj.getMessages()) {
+						if (!msg.isUnread())
+							continue;
+						if ((msg.getTimestamp() * 1000L) > timeLogin)
+							continue;
+						boolean sent_by_us = !msg.getSender().equals(otherId);
+						// potentially check for if it's been read already
+						chatManager.broadcastMessage(
+								msg.getTimestamp() * 1000, // seconds --> millis
+								ourId,
+								otherId,
+								sent_by_us,
+								SteamChatManager.CHAT_TYPE_CHAT,
+								msg.getMessage()
+						);
+					}
+				}
+			}
+		});
+		msg.handle(NotificationOfflineMsgCallback.class, new ActionT<NotificationOfflineMsgCallback>() {
+			@Override
+			public void call(NotificationOfflineMsgCallback callback) {
+				Log.d("SteamService", "Notification offline msg: " + callback.getOfflineMessages());
+
+				chatManager.unreadMessages.addAll(callback.getFriendsWithOfflineMessages());
+			}
+		});
+		msg.handle(NotificationUpdateCallback.class, new ActionT<NotificationUpdateCallback>() {
+			@Override
+			public void call(NotificationUpdateCallback obj) {
+				buildNotification(SteamConnectionListener.STATUS_CONNECTED, true);
 			}
 		});
 	}
 
-	public boolean authenticate(LoginKeyCallback callback) {
+	public void disconnect() {
+		stopSelf();
+		steamClient.disconnect();
+	}
+
+	private boolean authenticate(LoginKeyCallback callback) {
 		sessionID = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT).trim();
-		final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);//SteamUtil.apikey); // this shouldn't require an api key
+		final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);//SteamUtil.webApiKey); // this shouldn't require an api key
 		// generate an AES session key
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
 		// rsa encrypt it with the public key for the universe we're on
@@ -294,20 +555,41 @@ public class SteamService extends Service {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				int tries = 5;
+				int tries = 3;
 				while (true) {
 					try {
 						Log.i("Steam", "Sending auth request...");
 						KeyValue authResult = userAuth.authenticateUser(String.valueOf(steamClient.getSteamId().convertToLong()), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST", "true");
 						token = authResult.get("token").asString();
 						tokenSecure = authResult.get("tokensecure").asString();
-
 						Log.i("Steam", "Successfully authenticated: " + token + " secure: " + tokenSecure);
+
+						// tell our listener and start fetching the webapi key
+						if (connectionListener != null)
+							connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_APIKEY);
+						buildNotification(SteamConnectionListener.STATUS_APIKEY, true);
+
+						fetchAPIKey();
+
+						// now we're done! tell our listener
+						if (connectionListener != null) {
+							connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_CONNECTED);
+							connectionListener.onConnectionResult(EResult.OK);
+						}
+						buildNotification(SteamConnectionListener.STATUS_CONNECTED, true);
+
+						finalizeConnection();
+
 						break;
 					} catch (final Exception e) {
 						if (--tries == 0) {
 							Log.e("Steam", "FATAL(ish): Unable to authenticate with SteamWeb. Tried several times");
-							LoginActivity.result = EResult.ServiceUnavailable;
+							if (connectionListener != null) {
+								connectionListener.onConnectionResult(EResult.ServiceUnavailable);
+								connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_FAILURE);
+							}
+							buildNotification(SteamConnectionListener.STATUS_FAILURE, true);
+							attemptReconnect = false;
 							break;
 						}
 						Log.e("Steam", "Error authenticating! Retrying...");
@@ -318,12 +600,32 @@ public class SteamService extends Service {
 		return true;
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
+	private void fetchAPIKey() {
+		// fetch api key
+		String apikey = SteamWeb.requestWebAPIKey("localhost"); // hopefully this keeps working
+		SteamUtil.webApiKey = apikey == null ? "" : apikey;
+		Log.d("Steam", "Fetched api key: " + SteamUtil.webApiKey);
 	}
 
-	public class CheckCallbacksTask extends TimerTask {
+	private void finalizeConnection() {
+		timeLogin = System.currentTimeMillis();
+		attemptReconnect = true;
+
+		SteamFriends steamFriends = steamClient.getHandler(SteamFriends.class);
+		if (steamFriends != null) {
+			steamFriends.setPersonaState(EPersonaState.Online);
+		}
+
+		SteamNotifications steamNotifications = steamClient.getHandler(SteamNotifications.class);
+		if (steamNotifications != null) {
+			steamNotifications.requestNotificationItem();
+			steamNotifications.requestNotificationComments();
+			steamNotifications.requestNotificationOfflineMessages();
+			steamNotifications.requestNotificationGeneric();
+		}
+	}
+
+	private class CheckCallbacksTask extends TimerTask {
 		@Override
 		public void run() {
 			if (steamClient == null)
@@ -332,6 +634,7 @@ public class SteamService extends Service {
 				final CallbackMsg msg = steamClient.getCallback(true);
 				if (msg == null)
 					break;
+				handleSteamMessage(msg);
 				if (messageHandler != null) {
 					// gotta run this on the ui thread
 					handler.post(new Runnable() {
@@ -341,7 +644,6 @@ public class SteamService extends Service {
 						}
 					});
 				}
-				handleSteamMessage(msg);
 			}
 		}
 	}

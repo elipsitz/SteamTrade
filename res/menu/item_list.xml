@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:ae="http://schemas.android.com/apk/res-auto">
+<menu xmlns:ae="http://schemas.android.com/apk/res-auto"
+      xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/menu_inventory_toggle_view"
         android:icon="@drawable/ic_view_list"
-        ae:showAsAction="always"
-        android:title="@string/toggle_view_mode">
+        android:title="@string/toggle_view_mode"
+        ae:showAsAction="always">
     </item>
 
 </menu>

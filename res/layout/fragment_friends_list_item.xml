@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/friends_list_item"
-              xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/friends_list_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
 
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?attr/selectableItemBackground"
-              android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal"
     >
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -19,15 +20,15 @@
         />
 
     <LinearLayout
+        android:id="@+id/friend_bg"
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center_vertical"
+        android:orientation="vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:id="@+id/friend_bg"
         >
 
         <TextView
@@ -53,12 +54,12 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/friend_profile_button"
+        android:id="@+id/friend_chat_button"
         android:layout_width="40dip"
         android:layout_height="40dip"
         android:layout_margin="8dip"
         android:background="?attr/selectableItemBackground"
-        android:src="@drawable/ic_account"/>
+        android:src="@drawable/ic_comment"/>
 
     <ImageButton
         android:id="@+id/friend_request_accept"
