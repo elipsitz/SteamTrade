@@ -21,5 +21,8 @@
     <string name="connecting">Connecting…</string>
     <string name="fetching_key">Fetching API Key…</string>
     <string name="cannot_connect_to_steam">Cannot connect to Steam!</string>
+    <string name="login_saved">Log in with a saved account</string>
+    <string name="login_different">Log in with another account</string>
+    <string name="login_confirm_delete_account">Are you sure you want to remove the account \'%1$s\'?</string>
 
 </resources>

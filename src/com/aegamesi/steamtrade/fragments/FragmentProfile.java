@@ -2,6 +2,7 @@ package com.aegamesi.steamtrade.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -93,6 +94,35 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 	}
 
 	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(SteamLevelCallback.class, new ActionT<SteamLevelCallback>() {
+			@Override
+			public void call(SteamLevelCallback obj) {
+				if (id != null && obj.getLevelMap().containsKey(id)) {
+					steam_level = obj.getLevelMap().get(id);
+					updateView();
+				}
+			}
+		});
+		msg.handle(ProfileInfoCallback.class, new ActionT<ProfileInfoCallback>() {
+			@Override
+			public void call(ProfileInfoCallback obj) {
+				profile_info = obj;
+				updateView();
+			}
+		});
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				if (id != null && id.equals(obj.getFriendID())) {
+					persona_info = obj;
+					updateView();
+				}
+			}
+		});
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -128,6 +158,15 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		return view;
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		requestInfo();
+		// fetch the data
+		//(new ProfileFetchTask()).execute();
+	}
+
 	public void updateView() {
 		if (activity() == null || activity().steamFriends == null)
 			return;
@@ -147,6 +186,8 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 			game = persona_info.getGameName();
 			avatar = SteamUtil.bytesToHex(persona_info.getAvatarHash()).toLowerCase(Locale.US);
 		}
+
+		addFriendButton.setText((relationship == EFriendRelationship.RequestRecipient) ? R.string.friend_accept : R.string.friend_add);
 
 		if (profile_info != null) {
 			String summary_raw = profile_info.getSummary();
@@ -174,13 +215,15 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		else
 			statusView.setText(state.toString());
 
-		int color = SteamUtil.colorOnline;
+		Resources resources = getResources();
+		int color = resources.getColor(R.color.steam_online);
 		if (relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend)
-			color = SteamUtil.colorBlocked;
+			color = resources.getColor(R.color.steam_blocked);
 		else if (game != null && game.length() > 0)
-			color = SteamUtil.colorGame;
+			color = resources.getColor(R.color.steam_game);
 		else if (state == EPersonaState.Offline || state == null)
-			color = SteamUtil.colorOffline;
+			color = resources.getColor(R.color.steam_offline);
+
 		nameView.setTextColor(color);
 		statusView.setTextColor(color);
 		avatarView.setBorderColor(color);
@@ -198,44 +241,6 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		chatButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
 		tradeButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
 		tradeOfferButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
-		requestInfo();
-		// fetch the data
-		//(new ProfileFetchTask()).execute();
-	}
-
-	@Override
-	public void handleSteamMessage(CallbackMsg msg) {
-		msg.handle(SteamLevelCallback.class, new ActionT<SteamLevelCallback>() {
-			@Override
-			public void call(SteamLevelCallback obj) {
-				if (id != null && obj.getLevelMap().containsKey(id)) {
-					steam_level = obj.getLevelMap().get(id);
-					updateView();
-				}
-			}
-		});
-		msg.handle(ProfileInfoCallback.class, new ActionT<ProfileInfoCallback>() {
-			@Override
-			public void call(ProfileInfoCallback obj) {
-				profile_info = obj;
-				updateView();
-			}
-		});
-		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
-			@Override
-			public void call(PersonaStateCallback obj) {
-				if (id != null && id.equals(obj.getFriendID())) {
-					persona_info = obj;
-					updateView();
-				}
-			}
-		});
 	}
 
 	private void requestInfo() {
@@ -261,7 +266,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 				public void onClick(DialogInterface dialog, int id) {
 					activity().steamFriends.removeFriend(FragmentProfile.this.id);
 					Toast.makeText(activity(), String.format(getString(R.string.friend_removed), activity().steamFriends.getFriendPersonaName(FragmentProfile.this.id)), Toast.LENGTH_LONG).show();
-					activity().browseToFragment(new FragmentFriends(), false);
+					activity().browseToFragment(new FragmentFriends(), true);
 				}
 			});
 			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

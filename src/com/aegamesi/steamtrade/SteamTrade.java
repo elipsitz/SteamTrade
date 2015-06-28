@@ -43,19 +43,12 @@ public class SteamTrade extends Application {
 
 		DebugLog.addListener(new SteamLogcatDebugListener());
 
-		/*Random r = new Random();
-		r.setSeed(System.currentTimeMillis());
-		String[] keys = getResources().getStringArray(R.array.steam_apikey);
-		//SteamUtil.webApiKey = keys[r.nextInt(keys.length)];*/
-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.contains("cm_server_list")) {
 			String serverString = prefs.getString("cm_server_list", "");
-			if (serverString != null) {
-				String[] servers = serverString.split(",");
-				if (servers.length > 0)
-					CMClient.updateCMServers(servers);
-			}
+			String[] servers = serverString.split(",");
+			if (servers.length > 0)
+				CMClient.updateCMServers(servers);
 		}
 
 		// setup universal image loader

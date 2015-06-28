@@ -24,6 +24,20 @@
         android:title="@string/pref_notification_sound"
         />
     <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_chat_compact"
+        android:title="@string/pref_chat_compact"
+        android:summary="@string/pref_chat_compact_summ"
+        />
+    <ListPreference
+        android:key="pref_recent_chats"
+        android:title="@string/pref_recent_chats"
+        android:summary="@string/pref_recent_chats_summ"
+        android:entries="@array/pref_recent_chats_entries"
+        android:entryValues="@array/pref_recent_chats_values"
+        android:defaultValue="48"
+        />
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="pref_reconnect"
         android:summary="@string/pref_reconnect_summ"

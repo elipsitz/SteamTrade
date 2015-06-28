@@ -1,6 +1,5 @@
 package com.aegamesi.steamtrade.steam;
 
-import android.graphics.Color;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -16,10 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SteamUtil {
-	public final static int colorGame = Color.parseColor("#AED04E");
-	public final static int colorOnline = Color.parseColor("#9CC6FF");
-	public final static int colorOffline = Color.parseColor("#CFD2D3");
-	public final static int colorBlocked = Color.parseColor("#F26C4F");
 	final protected static char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	private final static HashMap<String, String> bbCodeMap = new HashMap<String, String>();
 	public static String webApiKey = null; // kept in secret.xml
@@ -93,6 +88,6 @@ public class SteamUtil {
 	}
 
 	public static String parseEmoticons(String source) {
-		return source.replaceAll("\u02D0([a-zA-Z]+)\u02D0", "<img src=\"http://steamcommunity-a.akamaihd.net/economy/emoticon/$1\">").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>");
+		return source.replaceAll("\u02D0([a-zA-Z_]+)\u02D0", "<img src=\"http://steamcommunity-a.akamaihd.net/economy/emoticon/$1\">").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>");
 	}
 }

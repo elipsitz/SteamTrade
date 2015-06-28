@@ -45,6 +45,14 @@ public class FragmentSettings extends PreferenceFragment {
 		pref_notification_sound = (RingtonePreference) findPreference("pref_notification_sound");
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (getActivity() != null && getActivity() instanceof MainActivity) {
+			((MainActivity) getActivity()).toolbar.setTitle(getString(R.string.nav_settings));
+		}
+	}
+
 
 	public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
 		// workaround for Ringtone Fragment not saving data

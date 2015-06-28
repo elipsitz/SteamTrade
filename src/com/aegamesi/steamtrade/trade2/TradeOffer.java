@@ -153,6 +153,9 @@ public class TradeOffer {
 		if (TRADE_USER_PARTNER.getInventories().hasInventory(appContext))
 			return;
 
+		if (appContext == null)
+			return;
+
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("sessionid", SteamService.singleton.sessionID);
 		data.put("partner", Long.toString(partnerID.convertToLong()));

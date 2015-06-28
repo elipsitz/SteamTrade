@@ -31,9 +31,9 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:text="@string/friend_is_typing"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textStyle="italic"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"

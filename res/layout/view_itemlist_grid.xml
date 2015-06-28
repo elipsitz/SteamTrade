@@ -25,6 +25,7 @@
         android:layout_gravity="left|top"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:textSize="0sp"/>
+        android:textSize="0sp"
+        />
 
 </com.aegamesi.lib.android.SquareFrameLayout>

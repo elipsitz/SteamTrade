@@ -118,7 +118,7 @@ public class SteamItemUtil {
 		populateItemInfo(view, asset, appContextPairs);
 
 		View marketView = view.findViewById(R.id.item_market_view);
-		if (asset.isMarketable()) {
+		if (asset.isMarketable() && asset.getMarketHashName() != null) {
 			fetchMarketInfo(context, asset, marketView);
 		} else {
 			marketView.setVisibility(View.GONE);

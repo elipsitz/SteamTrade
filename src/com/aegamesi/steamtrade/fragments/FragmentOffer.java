@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.design.widget.TabLayout.OnTabSelectedListener;
+import android.support.design.widget.TabLayout.Tab;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -41,9 +44,8 @@ import java.util.List;
 
 public class FragmentOffer extends FragmentBase implements OnClickListener, AdapterView.OnItemSelectedListener {
 	public static int[] tab_notifications = new int[]{0, 0, 0};
-	public Button[] tab_buttons;
+	public TabLayout tab_layout;
 	public View[] tab_views;
-	public int tab_selected;
 	public TradeOffer offer = null;
 	public JSONObject jsonResult = null;
 
@@ -80,8 +82,19 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		setHasOptionsMenu(true);
 
 		tab_views = new View[3];
-		tab_buttons = new Button[3];
+	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (offer == null)
+			return;
+		// etc.
+		setTitle(String.format(activity().getString(R.string.offer_with), offer.partnerName));
+		// update UI
+		updateUIInventory();
+		updateUIOffers();
+		updateUIReview();
 	}
 
 	@Override
@@ -96,14 +109,40 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		tab_views[0] = view.findViewById(R.id.offer_tab_inventories);
 		tab_views[1] = view.findViewById(R.id.offer_tab_offerings);
 		tab_views[2] = view.findViewById(R.id.offer_tab_review);
-		tab_buttons[0] = (Button) view.findViewById(R.id.offer_button_inventories);
-		tab_buttons[1] = (Button) view.findViewById(R.id.offer_button_offerings);
-		tab_buttons[2] = (Button) view.findViewById(R.id.offer_button_review);
-		for (int i = 0; i < tab_buttons.length; i++) {
-			tab_buttons[i].setOnClickListener(this);
+		tab_layout = (TabLayout) view.findViewById(R.id.tabs);
+		tab_layout.setOnTabSelectedListener(new OnTabSelectedListener() {
+			@Override
+			public void onTabSelected(Tab tab) {
+				int i = tab.getPosition();
+				View tabView = tab_views[i];
+				tabView.setVisibility(View.VISIBLE);
+				tabView.bringToFront();
+				tabView.invalidate();
+
+				tab_notifications[i] = 0;
+				updateUITabButton(i);
+				if (i == 0)
+					updateUIInventory();
+				if (i == 1)
+					updateUIOffers();
+				if (i == 2)
+					updateUIReview();
+			}
+
+			@Override
+			public void onTabUnselected(Tab tab) {
+				tab_views[tab.getPosition()].setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onTabReselected(Tab tab) {
+				onTabSelected(tab);
+			}
+		});
+		for (int i = 0; i < tab_views.length; i++) {
+			tab_layout.addTab(tab_layout.newTab(), i == 0);
 			updateUITabButton(i);
 		}
-		onClick(tab_buttons[0]); // just to show the tab #0
 		//if (offer == null)
 		//	return view;
 
@@ -187,16 +226,11 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
+	public void onStart() {
+		super.onStart();
+
 		if (offer == null)
-			return;
-		// etc.
-		setTitle(String.format(activity().getString(R.string.offer_with), offer.partnerName));
-		// update UI
-		updateUIInventory();
-		updateUIOffers();
-		updateUIReview();
+			(new LoadOfferTask()).execute();
 	}
 
 	@Override
@@ -317,19 +351,13 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	}
 
 	public void updateUITabButton(int num) {
-		String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
-		if (tab_notifications[num] > 0)
-			text += " (" + tab_notifications[num] + ")";
-		if (tab_buttons[num] != null)
-			tab_buttons[num].setText(text);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
-		if (offer == null)
-			(new LoadOfferTask()).execute();
+		if (tab_layout != null) {
+			Tab tab = tab_layout.getTabAt(num);
+			String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
+			if (tab_notifications[num] > 0)
+				text += " (" + tab_notifications[num] + ")";
+			tab.setText(text);
+		}
 	}
 
 	@Override
@@ -393,45 +421,36 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 				}
 			});
 		}
-		// tabs
-		for (int i = 0; i < tab_buttons.length; i++) {
-			if (v == tab_buttons[i]) {
-				for (int j = 0; j < tab_buttons.length; j++) { // first switch to that tab
-					tab_views[j].setVisibility((i == j) ? View.VISIBLE : View.GONE);
-					if (i == j) {
-						tab_views[j].getParent().bringChildToFront(tab_views[i]);
-					}
-				}
-				tab_views[i].getParent().requestLayout();
-				tab_notifications[i] = 0;
-				updateUITabButton(i);
-				if (i == 0)
-					updateUIInventory();
-				if (i == 1)
-					updateUIOffers();
-				if (i == 2)
-					updateUIReview();
-				break;
-			}
-		}
 	}
 
 	public void onCompleted() {
 		if (activity() == null || getView() == null)
 			return;
 		((ViewGroup) getView()).removeAllViews();
-		View result = activity().getLayoutInflater().inflate(R.layout.offer_result_success, null, false);
+		View result = activity().getLayoutInflater().inflate(R.layout.offer_result, null, false);
 		((ViewGroup) getView()).addView(result);
-		TextView successText = (TextView) result.findViewById(R.id.trade_success_text);
+		TextView resultHeader = (TextView) result.findViewById(R.id.trade_result_header);
+		TextView resultText = (TextView) result.findViewById(R.id.trade_result_text);
 
+		//strError
 		if (jsonResult != null) {
-			boolean trade_confirm_email = jsonResult.optBoolean("needs_email_confirmation", false);
-			if (trade_confirm_email) {
-				String email_domain = jsonResult.optString("email_domain", "unknown");
-				successText.setText(String.format(getString(R.string.offer_confirm_email), email_domain));
+			if (jsonResult.has("strError")) {
+				// this was not a successful offer
+				resultHeader.setText(R.string.trade_error);
+				resultText.setText(jsonResult.optString("strError", ""));
 			} else {
-				successText.setText(R.string.offer_successful);
+				resultHeader.setText(R.string.trade_completed);
+				boolean trade_confirm_email = jsonResult.optBoolean("needs_email_confirmation", false);
+				if (trade_confirm_email) {
+					String email_domain = jsonResult.optString("email_domain", "unknown");
+					resultText.setText(String.format(getString(R.string.offer_confirm_email), email_domain));
+				} else {
+					resultText.setText(R.string.offer_successful);
+				}
 			}
+		} else {
+			resultHeader.setText(R.string.trade_error);
+			resultText.setText(R.string.trade_status_unknown);
 		}
 	}
 
@@ -470,7 +489,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		private ProgressDialog dialog;
 
 		protected TradeOffer doInBackground(Void... voids) { // the fuck
-			TradeOffer offer = null;
+			TradeOffer offer;
 
 			try {
 				if (!bundle.getBoolean("from_existing", false)) {

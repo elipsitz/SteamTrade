@@ -66,6 +66,30 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		setTitle(getString(R.string.nav_offers));
+	}
+
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				if (offers == null)
+					return;
+				for (int i = 0; i < offers.size(); i++) {
+					TradeOfferInfo offer = adapterOffers.offers.get(i);
+					SteamID steamID = new SteamID((int) offer.getAccountid_other(), EUniverse.Public, EAccountType.Individual);
+					if (steamID.equals(obj.getFriendID())) {
+						adapterOffers.notifyItemChanged(i);
+					}
+				}
+			}
+		});
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_offerslist, container, false);
@@ -94,6 +118,15 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 		}
 
 		return view;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		if (offers == null)
+			new FetchOffersTask().execute();
+		//activity().getSupportActionBar().setTitle(R.string.trade_offer);
 	}
 
 	@Override
@@ -165,33 +198,6 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-
-		if (offers == null)
-			new FetchOffersTask().execute();
-		//activity().getSupportActionBar().setTitle(R.string.trade_offer);
-	}
-
-	@Override
-	public void handleSteamMessage(CallbackMsg msg) {
-		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
-			@Override
-			public void call(PersonaStateCallback obj) {
-				if (offers == null)
-					return;
-				for (int i = 0; i < offers.size(); i++) {
-					TradeOfferInfo offer = adapterOffers.offers.get(i);
-					SteamID steamID = new SteamID((int) offer.getAccountid_other(), EUniverse.Public, EAccountType.Individual);
-					if (steamID.equals(obj.getFriendID())) {
-						adapterOffers.notifyItemChanged(i);
-					}
-				}
-			}
-		});
-	}
-
-	@Override
 	public void onClick(View view) {
 		if (view == radio_incoming || view == radio_sent) {
 			new FetchOffersTask().execute();
@@ -258,6 +264,8 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 
 	private class FetchOffersTask extends AsyncTask<Void, Void, List<TradeOfferInfo>> {
 		public AppContextPair appContext;
+		public boolean fetchIncoming = false;
+		public boolean fetchSent = false;
 
 		@Override
 		protected List<TradeOfferInfo> doInBackground(Void... args) {
@@ -270,14 +278,17 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 				queued_cancel = 0;
 			}
 
-			List<TradeOfferInfo>[] offers = fetchTradeOffers(radio_sent.isChecked(), radio_incoming.isChecked(), true);
-			return offers[radio_sent.isChecked() ? 0 : 1];
+			List<TradeOfferInfo>[] offers = fetchTradeOffers(fetchSent, fetchIncoming, true);
+			return offers[fetchSent ? 0 : 1];
 		}
 
 		@Override
 		protected void onPreExecute() {
 			loading_view.setVisibility(View.VISIBLE);
 			offers_status.setVisibility(View.GONE);
+
+			fetchIncoming = radio_incoming.isChecked();
+			fetchSent = radio_sent.isChecked();
 		}
 
 		@Override
@@ -290,7 +301,7 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 			adapterOffers.notifyDataSetChanged();
 			if (result == null) {
 				// an error has occurred!
-				offers_status.setText(R.string.offer_error_loading);
+				offers_status.setText(R.string.offers_error_loading);
 			} else {
 				offers_status.setText(String.format(getString(R.string.offer_count), offers.size()));
 

@@ -61,7 +61,7 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
 
 	@Override
 	public long getItemId(int position) {
-		if (hasStableIds() && mDataValid && mCursor != null) {
+		if (hasStableIds() && mDataValid && mCursor != null && !mCursor.isClosed()) {
 			if (mCursor.moveToPosition(position)) {
 				return mCursor.getLong(mRowIDColumn);
 			} else {

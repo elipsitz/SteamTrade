@@ -323,7 +323,7 @@ public class TradeSession implements Runnable {
 				? TRADE_USER_SELF : TRADE_USER_PARTNER).getInventories();
 
 		final TradeInternalItem item =
-				inv.getInventory(evt.appid, evt.contextid).getItem(evt.assetid);
+				inv.getInventory(evt.appid, evt.contextid).getItem(evt.assetid); // risk of NPE here-- if getInventory returns null... but why?
 
 		(isBot ? TRADE_USER_SELF : TRADE_USER_PARTNER).getOffer().add(item);
 	}

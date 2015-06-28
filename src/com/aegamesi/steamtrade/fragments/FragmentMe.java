@@ -54,6 +54,16 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	}
 
 	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(NotificationUpdateCallback.class, new ActionT<NotificationUpdateCallback>() {
+			@Override
+			public void call(NotificationUpdateCallback obj) {
+				updateView();
+			}
+		});
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_me, container, false);
@@ -97,7 +107,7 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		if (!avatar.equals("0000000000000000000000000000000000000000"))
 			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg", avatarView);
 
-		nameView.setTextColor(SteamUtil.colorOnline);
+		nameView.setTextColor(getResources().getColor(R.color.steam_online));
 
 		updateNotification(notifyChat, R.plurals.notification_messages, NotificationType.OFFLINE_MSGS);
 		updateNotification(notifyComments, R.plurals.notification_comments, NotificationType.COMMENTS);
@@ -162,13 +172,13 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 			Toast.makeText(activity(), R.string.feature_not_implemented, Toast.LENGTH_LONG).show();
 		}
 		if (v == notifyChat) {
-			activity().browseToFragment(new FragmentFriends(), false);
+			activity().browseToFragment(new FragmentFriends(), true);
 		}
 		if (v == notifyItems) {
-			activity().browseToFragment(new FragmentInventory(), false);
+			activity().browseToFragment(new FragmentInventory(), true);
 		}
 		if (v == notifyTrade) {
-			activity().browseToFragment(new FragmentOffersList(), false);
+			activity().browseToFragment(new FragmentOffersList(), true);
 		}
 		if (v == notifyComments) {
 			long my_id = SteamService.singleton.steamClient.getSteamId().convertToLong();
@@ -178,15 +188,5 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 			fragment.setArguments(bundle);
 			activity().browseToFragment(fragment, true);
 		}
-	}
-
-	@Override
-	public void handleSteamMessage(CallbackMsg msg) {
-		msg.handle(NotificationUpdateCallback.class, new ActionT<NotificationUpdateCallback>() {
-			@Override
-			public void call(NotificationUpdateCallback obj) {
-				updateView();
-			}
-		});
 	}
 }

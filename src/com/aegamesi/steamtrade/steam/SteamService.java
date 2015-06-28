@@ -83,7 +83,7 @@ public class SteamService extends Service {
 	public String sessionID = null;
 	public String token = null;
 	public String tokenSecure = null;
-	public String webapiKey = null;
+	public String webapiUserNonce = null;
 	public String sentryHash = null;
 	public long timeLogin = 0L;
 	Timer myTimer;
@@ -98,7 +98,8 @@ public class SteamService extends Service {
 			cookies += "sessionid=" + singleton.sessionID + ";";
 			cookies += "steamLogin=" + singleton.token + ";";
 			cookies += "steamLoginSecure=" + singleton.tokenSecure + ";";
-			cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
+			//cookies += "webTradeEligibility=%7B%22allowed%22%3A0%2C%22reason%22%3A0%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
+			cookies += "webTradeEligibility=%7B%22allowed%22%3A1%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A-1%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D;";
 			cookies += "steamMachineAuth" + singleton.steamClient.getSteamId().convertToLong() + "=" + singleton.sentryHash + "";
 		}
 		return cookies;
@@ -155,6 +156,7 @@ public class SteamService extends Service {
 			builder.setContentIntent(contentIntent);
 			builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 			builder.setOnlyAlertOnce(true);
+			builder.setPriority(NotificationCompat.PRIORITY_MIN);
 			//builder.setOngoing(true);
 
 			if (steamClient != null) {
@@ -296,7 +298,17 @@ public class SteamService extends Service {
 					buildNotification(SteamConnectionListener.STATUS_LOGON, true);
 
 					// log in
-					LogOnDetails details = new LogOnDetails().username(extras.getString("username")).password(extras.getString("password"));
+					LogOnDetails details = new LogOnDetails();
+					details.username(extras.getString("username"));
+					if (extras.getBoolean("loginkey", false)) {
+						// login key
+						String loginkey = PreferenceManager.getDefaultSharedPreferences(SteamService.this).getString("loginkey_" + extras.getString("username"), "");
+						if (loginkey.length() > 0)
+							details.loginkey = loginkey;
+					} else {
+						details.password(extras.getString("password"));
+					}
+					details.shouldRememberPassword = extras.getBoolean("remember", false);
 					if (extras.getString("steamguard") != null) {
 						//details.authCode(extras.getString("steamguard"));
 						if (extras.getBoolean("twofactor", false))
@@ -305,9 +317,10 @@ public class SteamService extends Service {
 							details.authCode(extras.getString("steamguard"));
 					}
 
+
 					// sentry files
 					String prefSentry = PreferenceManager.getDefaultSharedPreferences(SteamService.this).getString("pref_machineauth", "");
-					if (prefSentry != null && prefSentry.trim().length() > 0) {
+					if (prefSentry.trim().length() > 0) {
 						sentryHash = prefSentry.trim();
 					} else {
 						File file = new File(getFilesDir(), "sentry");
@@ -358,7 +371,13 @@ public class SteamService extends Service {
 					disconnect();
 				} else {
 					// okay! :)
-					webapiKey = callback.getWebAPIUserNonce();
+					webapiUserNonce = callback.getWebAPIUserNonce();
+
+					if (connectionListener != null)
+						connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_AUTH);
+					buildNotification(SteamConnectionListener.STATUS_AUTH, true);
+
+					doSteamWebAuthentication();
 				}
 			}
 		});
@@ -437,7 +456,7 @@ public class SteamService extends Service {
 					if (steamFriends.getFriendRelationship(obj.getFriendID()) == EFriendRelationship.RequestRecipient) {
 						// create a notification
 						String partnerName = obj.getName();
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this);
 						NotificationCompat.Builder builder = new NotificationCompat.Builder(SteamService.this);
 						builder.setSmallIcon(R.drawable.ic_notify_friend);
 						builder.setContentTitle(getString(R.string.friend_request));
@@ -445,9 +464,16 @@ public class SteamService extends Service {
 						builder.setPriority(NotificationCompat.PRIORITY_MAX);
 						builder.setVibrate(prefs.getBoolean("pref_vibrate", true) ? new long[]{0, 500, 200, 500, 1000} : new long[]{0});
 						builder.setSound(Uri.parse(prefs.getString("pref_notification_sound", "DEFAULT_SOUND")));
-						Intent intent = new Intent(SteamService.singleton, MainActivity.class);
-						intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentFriends");
-						TaskStackBuilder stackBuilder = TaskStackBuilder.create(SteamService.singleton);
+						builder.setOnlyAlertOnce(true);
+						builder.setAutoCancel(true);
+
+						Bundle bundle = new Bundle();
+						bundle.putLong("steamId", obj.getFriendID().convertToLong());
+						Intent intent = new Intent(SteamService.this, MainActivity.class);
+						intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentProfile");
+						intent.putExtra("arguments", bundle);
+
+						TaskStackBuilder stackBuilder = TaskStackBuilder.create(SteamService.this);
 						stackBuilder.addParentStack(MainActivity.class);
 						stackBuilder.addNextIntent(intent);
 						PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -470,7 +496,7 @@ public class SteamService extends Service {
 						serverString += entry;
 					}
 
-					SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton).edit();
+					SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
 					prefs.putString("cm_server_list", serverString);
 					prefs.apply();
 				}
@@ -479,11 +505,14 @@ public class SteamService extends Service {
 		msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
 			@Override
 			public void call(LoginKeyCallback callback) {
-				if (connectionListener != null)
-					connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_AUTH);
-				buildNotification(SteamConnectionListener.STATUS_AUTH, true);
-
-				SteamService.singleton.authenticate(callback);
+				Log.d("SteamService", "Got loginkey " + callback.getLoginKey() + ", uniqueid: " + callback.getUniqueId());
+				if (extras != null && extras.getBoolean("remember", false)) {
+					Log.d("SteamService", "Saving loginkey.");
+					SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
+					prefs.putString("loginkey_" + extras.getString("username"), callback.getLoginKey());
+					prefs.putInt("uniqueid_" + extras.getString("username"), callback.getUniqueId());
+					prefs.commit();
+				}
 			}
 		});
 		msg.handle(FriendMsgHistoryCallback.class, new ActionT<FriendMsgHistoryCallback>() {
@@ -537,8 +566,8 @@ public class SteamService extends Service {
 		steamClient.disconnect();
 	}
 
-	private boolean authenticate(LoginKeyCallback callback) {
-		sessionID = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT).trim();
+	private boolean doSteamWebAuthentication() {
+		sessionID = Base64.encodeToString(CryptoHelper.GenerateRandomBlock(16), Base64.DEFAULT).trim();
 		final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);//SteamUtil.webApiKey); // this shouldn't require an api key
 		// generate an AES session key
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
@@ -548,7 +577,7 @@ public class SteamService extends Service {
 		final RSACrypto rsa = new RSACrypto(KeyDictionary.getPublicKey((universe == null || universe == EUniverse.Invalid) ? EUniverse.Public : universe));
 		cryptedSessionKey = rsa.encrypt(sessionKey);
 		final byte[] loginKey = new byte[20];
-		System.arraycopy(webapiKey.getBytes(), 0, loginKey, 0, webapiKey.length());
+		System.arraycopy(webapiUserNonce.getBytes(), 0, loginKey, 0, webapiUserNonce.length());
 		// aes encrypt the loginkey with our session key
 		final byte[] cryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
 
@@ -604,7 +633,7 @@ public class SteamService extends Service {
 		// fetch api key
 		String apikey = SteamWeb.requestWebAPIKey("localhost"); // hopefully this keeps working
 		SteamUtil.webApiKey = apikey == null ? "" : apikey;
-		Log.d("Steam", "Fetched api key: " + SteamUtil.webApiKey);
+		Log.d("Steam", "Fetched api key:  " + SteamUtil.webApiKey);
 	}
 
 	private void finalizeConnection() {

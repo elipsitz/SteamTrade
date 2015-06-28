@@ -2,6 +2,7 @@ package com.aegamesi.steamtrade.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -37,7 +38,7 @@ import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class FragmentFriends extends FragmentBase implements OnClickListener, ChatReceiver, SearchView.OnQueryTextListener {
-	public final static long recentChatThreshold = 7 * 24 * 60 * 60 * 1000; // 7 days
+	public long recentChatThreshold = 2 * 24 * 60 * 60 * 1000; // 2 days
 	public FriendsListAdapter adapter;
 	public RecyclerView recyclerView;
 
@@ -46,6 +47,41 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		setTitle(getString(R.string.nav_friends));
+
+		// update list of recent chats
+		recentChatThreshold = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity()).getString("pref_recent_chats", "48"));
+		recentChatThreshold *= 60 * 60 * 1000; // hours -> millis
+		List<SteamID> recentChats = SteamService.singleton.chatManager.getRecentChats(recentChatThreshold);
+		adapter.updateRecentChats(recentChats);
+
+		adapter.notifyDataSetChanged(); // just to make sure
+		SteamService.singleton.chatManager.receivers.add(this);
+	}
+
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(FriendAddedCallback.class, new ActionT<FriendAddedCallback>() {
+			@Override
+			public void call(FriendAddedCallback obj) {
+				adapter.add(obj.getSteamID());
+			}
+		});
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				SteamID id = obj.getFriendID();
+				if (adapter.hasUserID(id))
+					adapter.update(id);
+				else
+					adapter.add(id);
+			}
+		});
 	}
 
 	@Override
@@ -65,15 +101,9 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-
-		// update list of recent chats
-		List<SteamID> recentChats = SteamService.singleton.chatManager.getRecentChats(recentChatThreshold);
-		adapter.updateRecentChats(recentChats);
-
-		adapter.notifyDataSetChanged(); // just to make sure
-		SteamService.singleton.chatManager.receivers.add(this);
+	public void onStart() {
+		super.onStart();
+		setTitle(getString(R.string.friends));
 	}
 
 	@Override
@@ -123,32 +153,6 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		setTitle(getString(R.string.friends));
-	}
-
-	@Override
-	public void handleSteamMessage(CallbackMsg msg) {
-		msg.handle(FriendAddedCallback.class, new ActionT<FriendAddedCallback>() {
-			@Override
-			public void call(FriendAddedCallback obj) {
-				adapter.add(obj.getSteamID());
-			}
-		});
-		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
-			@Override
-			public void call(PersonaStateCallback obj) {
-				SteamID id = obj.getFriendID();
-				if (adapter.hasUserID(id))
-					adapter.update(id);
-				else
-					adapter.add(id);
-			}
-		});
 	}
 
 	@Override

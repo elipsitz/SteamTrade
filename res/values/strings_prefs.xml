@@ -11,6 +11,25 @@
     <string name="pref_machineauth">Override machineAuth</string>
     <string name="pref_machineauth_prompt">Input machineAuth:</string>
     <string name="pref_remove_ads">Remove Advertisements</string>
-    <string name="pref_remove_ads_summ">Support the development of Ice by donating!</string>
+    <string name="pref_remove_ads_summ">Support Ice by donating! &lt;3</string>
     <string name="pref_notification_sound">Notification Sound</string>
+    <string name="pref_recent_chats">Recent Chats</string>
+    <string name="pref_recent_chats_summ">Adjust the cut-off for recent chats.</string>
+    <string name="pref_chat_compact">Compact Chat Display</string>
+    <string name="pref_chat_compact_summ">Display compact lines instead of large bubbles.</string>
+
+    <string-array name="pref_recent_chats_entries">
+        <item>Within 7 days</item>
+        <item>Within 2 days</item>
+        <item>Within 24 hours</item>
+        <item>Within 1 hour</item>
+        <item>Do not show recent chats</item>
+    </string-array>
+    <string-array name="pref_recent_chats_values">
+        <item>168</item>
+        <item>48</item>
+        <item>24</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
 </resources>

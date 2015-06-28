@@ -1,7 +1,7 @@
 package com.aegamesi.steamtrade.fragments;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.steam.SteamMessageHandler;
@@ -12,10 +12,20 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 public class FragmentBase extends Fragment implements SteamMessageHandler {
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// make sure we're actually connected to steam...
+		activity().assertSteamConnection();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
 
 		setAnalyticsScreen(getClass().getName());
+		// make sure we're actually connected to steam...
+		activity().assertSteamConnection();
 	}
 
 	public void setAnalyticsScreen(String name) {
@@ -39,9 +49,7 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 
 	public void setTitle(CharSequence title) {
 		if (activity() != null) {
-			ActionBar actionBar = activity().getSupportActionBar();
-			if (actionBar != null)
-				actionBar.setTitle(title);
+			activity().toolbar.setTitle(title);
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.aegamesi.steamtrade.fragments.support;
 
+import android.content.res.Resources;
 import android.graphics.PorterDuff.Mode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -252,13 +253,14 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				holder.buttonReject.setVisibility(View.GONE);
 			}
 
-			int color = SteamUtil.colorOnline;
+			Resources resources = fragment.getResources();
+			int color = resources.getColor(R.color.steam_online);
 			if (p.category == FriendListCategory.BLOCKED)
-				color = SteamUtil.colorBlocked;
+				color = resources.getColor(R.color.steam_blocked);
 			else if (p.game != null && p.game.length() > 0)
-				color = SteamUtil.colorGame;
+				color = resources.getColor(R.color.steam_game);
 			else if (p.state == EPersonaState.Offline || p.state == null)
-				color = SteamUtil.colorOffline;
+				color = resources.getColor(R.color.steam_offline);
 
 			holder.textName.setTextColor(color);
 			holder.textStatus.setTextColor(color);
@@ -266,10 +268,10 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 			holder.buttonChat.setVisibility((p.relationship == EFriendRelationship.Friend) ? View.VISIBLE : View.GONE);
 			if (SteamService.singleton.chatManager.unreadMessages.contains(p.steamid)) {
-				holder.buttonChat.setColorFilter(SteamUtil.colorOnline, Mode.MULTIPLY);
+				holder.buttonChat.setColorFilter(resources.getColor(R.color.steam_online), Mode.MULTIPLY);
 				holder.buttonChat.setImageResource(R.drawable.ic_comment_processing);
 			} else {
-				holder.buttonChat.setColorFilter(SteamUtil.colorOffline, Mode.MULTIPLY);
+				holder.buttonChat.setColorFilter(resources.getColor(R.color.steam_offline), Mode.MULTIPLY);
 				holder.buttonChat.setImageResource(R.drawable.ic_comment);
 			}
 
@@ -387,7 +389,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		}
 
 		private FriendListCategory findCategory() {
-			if (recentChats != null && recentChats.contains(steamid))
+			if ((recentChats != null && recentChats.contains(steamid)) || SteamService.singleton.chatManager.unreadMessages.contains(steamid))
 				return FriendListCategory.RECENTCHAT;
 			if (relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend)
 				return FriendListCategory.BLOCKED;
@@ -416,7 +418,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				return 1;
 
 			// next, sort recent chats by time, not alphabetically
-			if (category == FriendListCategory.RECENTCHAT) {
+			if (category == FriendListCategory.RECENTCHAT && recentChats != null) {
 				int aPosition = recentChats.indexOf(steamid);
 				int bPosition = recentChats.indexOf(other.steamid);
 				return AndroidUtil.intCompare(aPosition, bPosition);
@@ -429,7 +431,6 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	class ViewHolderFriend extends RecyclerView.ViewHolder {
 		public CircleImageView imageAvatar;
-		public View viewBg;
 		public TextView textName;
 		public TextView textStatus;
 		public ImageButton buttonChat;
@@ -440,7 +441,6 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			super(LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_friends_list_item, parent, false));
 			itemView.setOnClickListener(fragment);
 
-			viewBg = itemView.findViewById(R.id.friend_bg);
 			imageAvatar = (CircleImageView) itemView.findViewById(R.id.friend_avatar_left);
 			textName = (TextView) itemView.findViewById(R.id.friend_name);
 			textStatus = (TextView) itemView.findViewById(R.id.friend_status);

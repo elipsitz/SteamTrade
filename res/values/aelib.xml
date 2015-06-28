@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time_now">Now</string>
+    <string name="time_just_now">Just now</string>
+    <string name="time_in_future">In the future</string>
+
+    <plurals name="time_mins">
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d mins</item>
+    </plurals>
+</resources>

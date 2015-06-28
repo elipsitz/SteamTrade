@@ -12,17 +12,13 @@
     <string name="no">No</string>
     <string name="unknown">\?</string>
 
-    <string-array name="app_sections">
-        <item>Friends</item>
-        <item>Inventory</item>
-        <item>Trade Offers</item>
-        <item>Steam Browser</item>
-        <item>---</item>
-        <item>Settings</item>
-        <item>About Ice</item>
-        <item>---</item>
-        <item>Sign Out</item>
-    </string-array>
+    <string name="nav_friends">Friends</string>
+    <string name="nav_inventory">Inventory</string>
+    <string name="nav_offers">Trade Offers</string>
+    <string name="nav_browser">Steam Browser</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_about">About Ice</string>
+    <string name="nav_signout">Sign Out</string>
 
     <string name="purchase_pending">Purchase pending…</string>
     <string name="purchase_complete">Purchase successful! Thank you!</string>
@@ -86,6 +82,7 @@
     <string name="web_reload">Reload Page</string>
     <string name="web_community">Steam Community</string>
     <string name="web_store">Steam Store</string>
+    <string name="web_toggle_view">Desktop view</string>
 
     <color name="notification_on">#5C7E10</color>
     <color name="notification_off">#777</color>

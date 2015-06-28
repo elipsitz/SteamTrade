@@ -258,7 +258,7 @@ public class UserTradeListener extends TradeListener {
 				SteamService.singleton.chatManager.broadcastMessage(
 						System.currentTimeMillis(),
 						SteamService.singleton.steamClient.getSteamId(),
-						new SteamID(fragment().trade().otherSteamId),
+						new SteamID(SteamService.singleton.tradeManager.currentTrade.otherSteamId),
 						false,
 						SteamChatManager.CHAT_TYPE_TRADE,
 						msg

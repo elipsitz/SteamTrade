@@ -182,7 +182,7 @@ public class AdFragment extends Fragment implements View.OnClickListener {
 		// don't show ads on the first day of use.
 		Date installTime = AndroidUtil.getInstallTime(getActivity().getPackageManager(), "com.aegamesi.steamtrade");
 		long installTimeAgo = (new Date()).getTime() - installTime.getTime();
-		if (installTimeAgo < 1)//1000 * 60 * 60 * 24)
+		if (installTimeAgo < 1000 * 60 * 60 * 24)
 			return false;
 
 		return true;

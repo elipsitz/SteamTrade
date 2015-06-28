@@ -42,8 +42,10 @@
     <string name="trade_new_items">%1$d new items acquired</string>
     <string name="trade_cancel">Cancel</string>
     <string name="trade_confirm_email">You and/or your partner may need to confirm this trade via email.</string>
+    <string name="trade_status_unknown">Status unknown.</string>
 
     <!-- offers -->
+    <string name="trade_offers">Trade Offers</string>
     <string name="trade_offer">Trade Offer</string>
     <string name="offer_trade">Offer Trade</string>
     <string-array name="offer_tabs">
@@ -82,7 +84,8 @@
     <string name="offer_will_receive">You will receive:</string>
     <string name="offer_no_message">[No message]</string>
     <string name="offer_count">Showing %1$d active trade offers.</string>
-    <string name="offer_error_loading">Error loading trade offers.</string>
+    <string name="offer_error_loading">Error loading offer details.</string>
+    <string name="offers_error_loading">Error loading trade offers.</string>
     <string name="offer_with">Offer with %1$s</string>
     <string name="offer_received_heading">%1$s offered you a trade:</string>
     <string name="offer_sent_heading">You sent %1$s a trade:</string>
@@ -102,7 +105,7 @@
     <string name="offer_invalid_url">Invalid trade offer URL.</string>
     <string name="offer_confirm_decline">Are you sure you want to decline this trade offer?</string>
     <string name="offer_confirm_cancel">Are you sure you want to cancel this trade offer?</string>
-    <string name="offer_successful">The trade offer was sent successfully.</string>
+    <string name="offer_successful">The trade offer was successful.</string>
     <string name="offer_confirm_email">In order to complete this trade offer, you must complete an additional verification step. An email has been sent to your address (ending in "%1$s") with additional instructions.</string>
 
 </resources>

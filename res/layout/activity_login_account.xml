@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/account"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clickable="true"
+    android:focusable="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/account_avatar"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_margin="8dip"
+        app:border_width="2dip"
+        app:border_color="@color/steam_offline"
+        />
+
+    <TextView
+        android:id="@+id/account_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textStyle="bold"
+        tools:text="Name"/>
+
+    <ImageButton
+        android:id="@+id/account_delete"
+        android:contentDescription="@string/steam_avatar"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_margin="8dip"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_delete"/>
+
+</LinearLayout>

@@ -11,10 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginBottom="4dp"
         android:layout_marginLeft="@dimen/chat_margin_minor"
         android:layout_marginRight="@dimen/chat_margin_major"
-        android:layout_marginTop="4dp"
         android:background="@drawable/chat_bubble_left"
         android:orientation="vertical">
 
@@ -30,19 +28,20 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#DE000000"
             android:textColorLink="#DE0099FF"
-            tools:text="Message"/>
+            tools:text="Message"
+            android:paddingBottom="4dp"/>
 
         <TextView
             android:id="@+id/chat_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginTop="4dp"
             android:paddingBottom="4dp"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="#86000000"
-            tools:text="Timestamp"/>
+            tools:text="Timestamp"
+            />
     </LinearLayout>
 </FrameLayout>

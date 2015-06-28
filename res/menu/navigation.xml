@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none" android:id="@+id/navgroup_1">
+        <item
+            android:id="@+id/nav_friends"
+            android:title="@string/nav_friends" />
+        <item
+            android:id="@+id/nav_inventory"
+            android:title="@string/nav_inventory" />
+        <item
+            android:id="@+id/nav_offers"
+            android:title="@string/nav_offers" />
+        <item
+            android:id="@+id/nav_browser"
+            android:title="@string/nav_browser" />
+    </group>
+
+    <group android:checkableBehavior="none" android:id="@+id/navgroup_2">
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/nav_settings" />
+        <item
+            android:id="@+id/nav_about"
+            android:title="@string/nav_about" />
+    </group>
+
+    <group android:checkableBehavior="none" android:id="@+id/navgroup_3">
+        <item
+            android:id="@+id/nav_signout"
+            android:title="@string/nav_signout" />
+    </group>
+</menu>

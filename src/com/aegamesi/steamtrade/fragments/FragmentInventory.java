@@ -65,6 +65,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 	public Button buttonCraft;
 	public CheckBox checkBoxEnableCrafting;
 	public View viewCraftingMenu;
+	public TextView viewSearchResult;
 
 	public ItemListView itemList;
 	public IItemListProvider itemListProvider;
@@ -98,6 +99,23 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		// scrape the inventory page for fun and profit
 		// (and by fun and profit I mean, fetch app/context pairs, and clear item notifications)
 		new ScrapInventoryPage().execute();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		setTitle(getString(R.string.nav_inventory));
+	}
+
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		// our crafting was completed (or failed)
+		msg.handle(CraftResponseCallback.class, new ActionT<CraftResponseCallback>() {
+			@Override
+			public void call(CraftResponseCallback obj) {
+				onCraftingCompleted(obj);
+			}
+		});
 	}
 
 	@Override
@@ -140,6 +158,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		// inventory search (hide here, still used in trading)
 		EditText inventorySearch = (EditText) view.findViewById(R.id.inventory_search);
 		inventorySearch.setVisibility(View.GONE);
+		viewSearchResult = (TextView) view.findViewById(R.id.inventory_search_result);
 		//
 		buttonCraft = (Button) view.findViewById(R.id.inventory_craft);
 		buttonCraft.setOnClickListener(this);
@@ -189,6 +208,14 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				itemList.filter(newText);
+
+				boolean filtering = newText != null && newText.trim().length() > 0;
+				if (filtering) {
+					viewSearchResult.setVisibility(View.VISIBLE);
+					viewSearchResult.setText(String.format(getString(R.string.search_result_count), itemList.getFilteredItemCount(), itemList.getTotalItemCount()));
+				} else {
+					viewSearchResult.setVisibility(View.GONE);
+				}
 				return true;
 			}
 		});
@@ -272,6 +299,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 								}
 							})
 							.show();
+					return false;
 				}
 			}
 		}
@@ -290,17 +318,6 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			}
 		}).start();
 		return true;
-	}
-
-	@Override
-	public void handleSteamMessage(CallbackMsg msg) {
-		// our crafting was completed (or failed)
-		msg.handle(CraftResponseCallback.class, new ActionT<CraftResponseCallback>() {
-			@Override
-			public void call(CraftResponseCallback obj) {
-				onCraftingCompleted(obj);
-			}
-		});
 	}
 
 	public void onCraftingCompleted(CraftResponseCallback obj) {
@@ -367,24 +384,36 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			try {
 				if (result != null) {
 					inventories.addInventory(appContext, result);
+					boolean success = result.optBoolean("success", false);
 
-					if (!result.optBoolean("success", false) && result.has("Error")) {
+					if (success) {
+						if (craftingResult != null && appContext.getAppid() == 440) {
+							// show the crafting results
+							List<TradeInternalAsset> items = new ArrayList<TradeInternalAsset>();
+							for (long item : craftingResult) {
+								TradeInternalAsset asset = inventories.getInventory(appContext).getItem(item);
+								if (asset != null)
+									items.add(asset);
+							}
+							if (activity() != null)
+								SteamItemUtil.showItemListModal(activity(), getString(R.string.craft_completed), items);
+
+							craftingResult = null;
+						}
+
+						// select the proper inventory
+						int pos = -1;
+						for (int i = 0; i < appContextPairs.size(); i++) {
+							if (appContextPairs.get(i).equals(appContext)) {
+								pos = i;
+								break;
+							}
+						}
+						if (pos != -1)
+							selectInventory.setSelection(pos);
+					} else if (result.has("Error")) {
 						String errorText = result.getString("Error");
 						Toast.makeText(activity(), errorText, Toast.LENGTH_LONG).show();
-					}
-
-					if (craftingResult != null && appContext.getAppid() == 440) {
-						// show the crafting results
-						List<TradeInternalAsset> items = new ArrayList<TradeInternalAsset>();
-						for (long item : craftingResult) {
-							TradeInternalAsset asset = inventories.getInventory(appContext).getItem(item);
-							if (asset != null)
-								items.add(asset);
-						}
-						if (activity() != null)
-							SteamItemUtil.showItemListModal(activity(), getString(R.string.craft_completed), items);
-
-						craftingResult = null;
 					}
 				}
 

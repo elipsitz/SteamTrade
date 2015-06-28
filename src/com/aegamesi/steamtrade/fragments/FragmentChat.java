@@ -1,9 +1,11 @@
 package com.aegamesi.steamtrade.fragments;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -84,12 +86,64 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 			@Override
 			public void run() {
 				if (chat_typing != null)
-					chat_typing.setVisibility(View.INVISIBLE);
+					chat_typing.setVisibility(View.GONE);
 			}
 		};
 
 		// get message history from steam
 		activity().steamFriends.requestFriendMessageHistory(otherID);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// set up the cursor
+		adapter.changeCursor(cursor = fetchCursor());
+
+		activity().getPreferences(Context.MODE_PRIVATE).edit().putLong("chat_read_" + ourID.convertToLong() + "_" + otherID.convertToLong(), System.currentTimeMillis()).apply();
+
+		if (SteamService.singleton != null && SteamService.singleton.chatManager != null && SteamService.singleton.chatManager.receivers != null)
+			SteamService.singleton.chatManager.receivers.add(0, this);
+	}
+
+	@Override
+	public void handleSteamMessage(CallbackMsg msg) {
+		msg.handle(FriendMsgCallback.class, new ActionT<FriendMsgCallback>() {
+			@Override
+			public void call(FriendMsgCallback callback) {
+				final EChatEntryType type = callback.getEntryType();
+
+				if (type == EChatEntryType.Typing && callback.getSender().equals(otherID)) {
+					// set a timer for the thing
+					Log.d("SteamKit", "User is typing a message...");
+					if (chat_typing != null)
+						chat_typing.setVisibility(View.VISIBLE);
+					if (typingHandler != null) {
+						typingHandler.removeCallbacks(typingRunnable);
+						typingHandler.postDelayed(typingRunnable, 15 * 1000L);
+					}
+				}
+			}
+		});
+		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+			@Override
+			public void call(PersonaStateCallback obj) {
+				if (otherID != null && otherID.equals(obj.getFriendID()))
+					updateView();
+			}
+		});
+		msg.handle(FriendMsgHistoryCallback.class, new ActionT<FriendMsgHistoryCallback>() {
+			@Override
+			public void call(FriendMsgHistoryCallback obj) {
+				if (obj.getSteamId().equals(otherID)) {
+					// updated list (already received...)
+					// scroll to bottom
+					if (cursor != null)
+						chatList.scrollToPosition(cursor.getCount() - 1);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -148,7 +202,8 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 			}
 		});
 
-		adapter = new ChatAdapter(cursor);
+		boolean isCompact = PreferenceManager.getDefaultSharedPreferences(activity()).getBoolean("pref_chat_compact", false);
+		adapter = new ChatAdapter(cursor, isCompact);
 		adapter.time_last_read = time_last_read;
 		layoutManager = new LinearLayoutManager(activity());
 		layoutManager.setStackFromEnd(true);
@@ -159,19 +214,6 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		setTitle(getString(R.string.chat));
 		updateView();
 		return view;
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		// set up the cursor
-		adapter.changeCursor(cursor = fetchCursor());
-
-		activity().getPreferences(Context.MODE_PRIVATE).edit().putLong("chat_read_" + ourID.convertToLong() + "_" + otherID.convertToLong(), System.currentTimeMillis()).apply();
-
-		if (SteamService.singleton != null && SteamService.singleton.chatManager != null && SteamService.singleton.chatManager.receivers != null)
-			SteamService.singleton.chatManager.receivers.add(0, this);
 	}
 
 	@Override
@@ -190,43 +232,48 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	}
 
 	private Cursor fetchCursor() {
-		return SteamService.singleton.db().query(
-				ChatEntry.TABLE,                    // The table to query
-				new String[]{ChatEntry._ID, ChatEntry.COLUMN_TIME, ChatEntry.COLUMN_MESSAGE, ChatEntry.COLUMN_SENDER},
-				ChatEntry.COLUMN_OUR_ID + " = ? AND " + ChatEntry.COLUMN_OTHER_ID + " = ? AND " + ChatEntry.COLUMN_TYPE + " = ?",
-				new String[]{"" + ourID.convertToLong(), "" + otherID.convertToLong(), "" + SteamChatManager.CHAT_TYPE_CHAT},
-				null, // don't group the rows
-				null, // don't filter by row groups
-				ChatEntry.COLUMN_TIME + " ASC"
-		);
+		if (SteamService.singleton != null) {
+			return SteamService.singleton.db().query(
+					ChatEntry.TABLE,                    // The table to query
+					new String[]{ChatEntry._ID, ChatEntry.COLUMN_TIME, ChatEntry.COLUMN_MESSAGE, ChatEntry.COLUMN_SENDER},
+					ChatEntry.COLUMN_OUR_ID + " = ? AND " + ChatEntry.COLUMN_OTHER_ID + " = ? AND " + ChatEntry.COLUMN_TYPE + " = ?",
+					new String[]{"" + ourID.convertToLong(), "" + otherID.convertToLong(), "" + SteamChatManager.CHAT_TYPE_CHAT},
+					null, // don't group the rows
+					null, // don't filter by row groups
+					ChatEntry.COLUMN_TIME + " ASC"
+			);
+		}
+		return null;
 	}
 
 	public void updateView() {
 		if (activity() == null || activity().steamFriends == null)
 			return;
-		String game = activity().steamFriends.getFriendGamePlayedName(otherID);
-		EPersonaState state = activity().steamFriends.getFriendPersonaState(otherID);
-		String nickname = activity().steamFriends.getFriendNickname(otherID);
-		if (nickname == null)
-			name.setText(activity().steamFriends.getFriendPersonaName(otherID));
+		String friendGamePlayedName = activity().steamFriends.getFriendGamePlayedName(otherID);
+		EPersonaState friendPersonaState = activity().steamFriends.getFriendPersonaState(otherID);
+		String friendNickname = activity().steamFriends.getFriendNickname(otherID);
+		String friendPersonaName = activity().steamFriends.getFriendPersonaName(otherID);
+		if (friendNickname == null)
+			name.setText(friendPersonaName);
 		else
-			name.setText(activity().steamFriends.getFriendPersonaName(otherID) + " (" + nickname + ")");
+			name.setText(friendPersonaName + " (" + friendNickname + ")");
 
-		if (game != null && game.length() != 0)
-			status.setText(getString(R.string.playing) + " " + game);
+		if (friendGamePlayedName != null && friendGamePlayedName.length() != 0)
+			status.setText(getString(R.string.playing) + " " + friendGamePlayedName);
 		else
-			status.setText(state.toString());
+			status.setText(friendPersonaState.toString());
+
+
+		adapter.setPersonaNames(activity().steamFriends.getPersonaName(), friendPersonaName);
 
 		// do colors for profile view
-		// TODO refactor this into a separate method
-		int color = SteamUtil.colorOnline;
-		if (game != null && game.length() != 0) {
-			// 8BC53F (AED04E ?) game
-			color = SteamUtil.colorGame;
-		} else if (state == EPersonaState.Offline || state == null) {
-			// 898989 (CFD2D3 ?) offline
-			color = SteamUtil.colorOffline;
-		}
+		Resources resources = getResources();
+		int color = resources.getColor(R.color.steam_online);
+		if (friendGamePlayedName != null && friendGamePlayedName.length() > 0)
+			color = resources.getColor(R.color.steam_game);
+		else if (friendPersonaState == EPersonaState.Offline || friendPersonaState == null)
+			color = resources.getColor(R.color.steam_offline);
+
 		name.setTextColor(color);
 		status.setTextColor(color);
 		avatar.setBorderColor(color);
@@ -236,44 +283,6 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		avatar.setImageResource(R.drawable.default_avatar);
 		if (!imgHash.equals("0000000000000000000000000000000000000000") && imgHash.length() == 40)
 			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + imgHash.substring(0, 2) + "/" + imgHash + "_medium.jpg", avatar);
-	}
-
-	@Override
-	public void handleSteamMessage(CallbackMsg msg) {
-		msg.handle(FriendMsgCallback.class, new ActionT<FriendMsgCallback>() {
-			@Override
-			public void call(FriendMsgCallback callback) {
-				final EChatEntryType type = callback.getEntryType();
-
-				if (type == EChatEntryType.Typing && callback.getSender().equals(otherID)) {
-					// set a timer for the thing
-					Log.d("SteamKit", "User is typing a message...");
-					if (chat_typing != null)
-						chat_typing.setVisibility(View.VISIBLE);
-					if (typingHandler != null) {
-						typingHandler.removeCallbacks(typingRunnable);
-						typingHandler.postDelayed(typingRunnable, 15 * 1000L);
-					}
-				}
-			}
-		});
-		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
-			@Override
-			public void call(PersonaStateCallback obj) {
-				if (otherID != null && otherID.equals(obj.getFriendID()))
-					updateView();
-			}
-		});
-		msg.handle(FriendMsgHistoryCallback.class, new ActionT<FriendMsgHistoryCallback>() {
-			@Override
-			public void call(FriendMsgHistoryCallback obj) {
-				if (obj.getSteamId().equals(otherID)) {
-					// updated list (already received...)
-					// scroll to bottom
-					chatList.scrollToPosition(cursor.getCount() - 1);
-				}
-			}
-		});
 	}
 
 	@Override
@@ -288,7 +297,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 						chatList.scrollToPosition(cursor.getCount() - 1);
 
 					if (!sent_by_us && chat_typing != null)
-						chat_typing.setVisibility(View.INVISIBLE);
+						chat_typing.setVisibility(View.GONE);
 				}
 			});
 			return true;

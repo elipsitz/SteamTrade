@@ -252,7 +252,7 @@ public class SteamTradeManager implements OnClickListener {
 		if (v == tradeStatus && v.getVisibility() == View.VISIBLE) {
 			if (currentTrade != null && currentTrade.listener != null && currentTrade.listener.loaded) {
 				Fragment fragment = new FragmentTrade();
-				activity().browseToFragment(fragment, false);
+				activity().browseToFragment(fragment, true);
 			}
 		}
 		if (v == yesButton) {

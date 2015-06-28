@@ -105,6 +105,14 @@ public class ItemListView extends RecyclerView implements OnClickListener {
 		filter(null);
 	}
 
+	public int getTotalItemCount() {
+		return rawList == null ? 0 : rawList.size();
+	}
+
+	public int getFilteredItemCount() {
+		return filteredList == null ? 0 : filteredList.size();
+	}
+
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.itemlist_check) {
