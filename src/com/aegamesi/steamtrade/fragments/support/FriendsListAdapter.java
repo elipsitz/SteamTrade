@@ -407,7 +407,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 		@Override
 		public int compareTo(FriendListItem other) {
-			int compare = AndroidUtil.intCompare(this.category.order, other.category.order);
+			int compare = AndroidUtil.numCompare(this.category.order, other.category.order);
 			if (compare != 0)
 				return compare;
 
@@ -421,7 +421,11 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			if (category == FriendListCategory.RECENTCHAT && recentChats != null) {
 				int aPosition = recentChats.indexOf(steamid);
 				int bPosition = recentChats.indexOf(other.steamid);
-				return AndroidUtil.intCompare(aPosition, bPosition);
+				return AndroidUtil.numCompare(aPosition, bPosition);
+			}
+			// sort offline friends by last time online
+			if(category == FriendListCategory.OFFLINE) {
+				return -AndroidUtil.numCompare(lastOnline, other.lastOnline);
 			}
 
 			compare = this.name.toLowerCase(Locale.getDefault()).compareTo(other.name.toLowerCase(Locale.getDefault()));

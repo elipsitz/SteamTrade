@@ -11,6 +11,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="unknown">\?</string>
+    <string name="action_successful">Action successful.</string>
+    <string name="action_failed">Action failed.</string>
 
     <string name="nav_friends">Friends</string>
     <string name="nav_inventory">Inventory</string>

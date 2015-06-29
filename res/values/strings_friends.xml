@@ -20,6 +20,8 @@
     <string name="profile_loading_summary">Loading summary…</string>
     <string name="friend_request">Friend Request</string>
     <string name="friend_request_text">%1$s has added you.</string>
+    <string name="friend_block">Block</string>
+    <string name="friend_unblock">Unblock</string>
 
     <string name="chat_you">You</string>
     <string name="chat_them">Them</string>

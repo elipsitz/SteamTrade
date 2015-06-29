@@ -26,7 +26,11 @@ public class AndroidUtil {
 				apkUpdateTime(packageManager, packageName));
 	}
 
-	public static int intCompare(int x, int y) {
+	public static int numCompare(int x, int y) {
+		return (x < y) ? -1 : ((x == y) ? 0 : 1);
+	}
+
+	public static int numCompare(long x, long y) {
 		return (x < y) ? -1 : ((x == y) ? 0 : 1);
 	}
 

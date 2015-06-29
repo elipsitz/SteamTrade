@@ -105,6 +105,12 @@ public class SteamService extends Service {
 		return cookies;
 	}
 
+	public void resetAuthentication() {
+		sessionID = null;
+		token = null;
+		tokenSecure = null;
+	}
+
 	public static void attemptLogon(Context context, final SteamConnectionListener listener, Bundle bundle, boolean start_service) {
 		extras = bundle;
 
@@ -564,10 +570,11 @@ public class SteamService extends Service {
 	public void disconnect() {
 		stopSelf();
 		steamClient.disconnect();
+		resetAuthentication();
 	}
 
 	private boolean doSteamWebAuthentication() {
-		sessionID = Base64.encodeToString(CryptoHelper.GenerateRandomBlock(16), Base64.DEFAULT).trim();
+		sessionID = SteamUtil.bytesToHex(SteamUtil.calculateSHA1(extras.getString("username").getBytes()));
 		final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);//SteamUtil.webApiKey); // this shouldn't require an api key
 		// generate an AES session key
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);

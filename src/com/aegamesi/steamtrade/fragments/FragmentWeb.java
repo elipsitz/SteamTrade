@@ -91,6 +91,10 @@ public class FragmentWeb extends FragmentBase {
 		menu.findItem(R.id.web_toggle_view).setChecked(desktop_mode);
 	}
 
+	// set cookie mobileClient=android to hide header and footer
+	// javascript:document.cookie="mobileClient=android";void(0);
+	// mobileClientVersion=0 (2.0)
+	// javascript:document.cookie="mobileClientVersion=0%20(2.0)";void(0);
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

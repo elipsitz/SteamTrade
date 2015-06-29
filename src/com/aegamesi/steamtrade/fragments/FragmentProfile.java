@@ -34,6 +34,8 @@ import java.util.regex.Pattern;
 import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EFriendRelationship;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.IgnoreFriendCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.ProfileInfoCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.SteamLevelCallback;
@@ -61,6 +63,8 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 	public Button inventoryButton;
 	public Button addFriendButton;
 	public Button removeFriendButton;
+	public Button blockFriendButton;
+	public Button unblockFriendButton;
 	public Button viewSteamButton;
 	public Button viewSteamRepButton;
 
@@ -120,6 +124,15 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 				}
 			}
 		});
+		msg.handle(IgnoreFriendCallback.class, new ActionT<IgnoreFriendCallback>() {
+			@Override
+			public void call(IgnoreFriendCallback obj) {
+				boolean success = obj.getResult() == EResult.OK;
+				int stringResource = success ? R.string.action_successful : R.string.action_failed;
+				Toast.makeText(activity(), stringResource, Toast.LENGTH_SHORT).show();
+				updateView();
+			}
+		});
 	}
 
 	@Override
@@ -140,6 +153,8 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		addFriendButton = (Button) view.findViewById(R.id.profile_button_add_friend);
 		viewSteamButton = (Button) view.findViewById(R.id.profile_button_viewsteam);
 		viewSteamRepButton = (Button) view.findViewById(R.id.profile_button_viewsteamrep);
+		blockFriendButton = (Button) view.findViewById(R.id.profile_button_block_friend);
+		unblockFriendButton = (Button) view.findViewById(R.id.profile_button_unblock_friend);
 
 		chatButton.setOnClickListener(this);
 		tradeButton.setOnClickListener(this);
@@ -149,6 +164,8 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		addFriendButton.setOnClickListener(this);
 		viewSteamButton.setOnClickListener(this);
 		viewSteamRepButton.setOnClickListener(this);
+		blockFriendButton.setOnClickListener(this);
+		unblockFriendButton.setOnClickListener(this);
 
 		nameView.setSelected(true);
 		statusView.setSelected(true);
@@ -229,18 +246,23 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		avatarView.setBorderColor(color);
 
 		// things to do if we are not friends
-		boolean isFriend = relationship == EFriendRelationship.Friend;
+		boolean isFriend = relationship == EFriendRelationship.Friend || relationship == EFriendRelationship.IgnoredFriend;
+		boolean isSelf = SteamService.singleton.steamClient.getSteamId().equals(id);
+		boolean isBlocked = relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend;
+
 		if (!isFriend) {
 			statusView.setText(relationship.toString());
 			addFriendButton.setEnabled(id != null);
 		}
 
 		// visibility of buttons and stuff
-		addFriendButton.setVisibility(!isFriend ? View.VISIBLE : View.GONE);
-		removeFriendButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-		chatButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-		tradeButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
-		tradeOfferButton.setVisibility(isFriend ? View.VISIBLE : View.GONE);
+		addFriendButton.setVisibility((!isFriend && !isSelf && !isBlocked) ? View.VISIBLE : View.GONE);
+		removeFriendButton.setVisibility((isFriend && !isSelf) ? View.VISIBLE : View.GONE);
+		chatButton.setVisibility((isFriend && !isSelf && !isBlocked) ? View.VISIBLE : View.GONE);
+		tradeButton.setVisibility((isFriend && !isSelf && !isBlocked) ? View.VISIBLE : View.GONE);
+		tradeOfferButton.setVisibility((isFriend && !isSelf && !isBlocked) ? View.VISIBLE : View.GONE);
+		blockFriendButton.setVisibility((!isBlocked && !isSelf) ? View.VISIBLE : View.GONE);
+		unblockFriendButton.setVisibility((isBlocked) ? View.VISIBLE : View.GONE);
 	}
 
 	private void requestInfo() {
@@ -314,6 +336,12 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 			String steamRepUrl = "http://steamrep.com/profiles/" + id.convertToLong() + "/";
 			Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(steamRepUrl));
 			startActivity(browse);
+		}
+		if(view == blockFriendButton) {
+			activity().steamFriends.ignoreFriend(id, true);
+		}
+		if(view == unblockFriendButton) {
+			activity().steamFriends.ignoreFriend(id, false);
 		}
 	}
 

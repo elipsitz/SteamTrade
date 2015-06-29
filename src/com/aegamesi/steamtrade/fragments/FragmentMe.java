@@ -36,6 +36,7 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	public ImageView avatarView;
 	public TextView nameView;
 	public Spinner statusSpinner;
+	public Button viewProfileButton;
 	public Button changeNameButton;
 	public Button changeGameButton;
 
@@ -70,6 +71,7 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		avatarView = (ImageView) view.findViewById(R.id.profile_avatar);
 		nameView = (TextView) view.findViewById(R.id.profile_name);
 		statusSpinner = (Spinner) view.findViewById(R.id.profile_status_spinner);
+		viewProfileButton = (Button) view.findViewById(R.id.me_view_profile);
 		changeNameButton = (Button) view.findViewById(R.id.me_set_name);
 		changeGameButton = (Button) view.findViewById(R.id.me_set_game);
 
@@ -88,6 +90,7 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 		statusSpinner.setOnItemSelectedListener(this);
 		changeNameButton.setOnClickListener(this);
 		changeGameButton.setOnClickListener(this);
+		viewProfileButton.setOnClickListener(this);
 		//changeGameButton.setEnabled(false);
 
 		updateView();
@@ -143,6 +146,13 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 
 	@Override
 	public void onClick(View v) {
+		if (v == viewProfileButton) {
+			Fragment fragment = new FragmentProfile();
+			Bundle bundle = new Bundle();
+			bundle.putLong("steamId", SteamService.singleton.steamClient.getSteamId().convertToLong());
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
+		}
 		if (v == changeNameButton) {
 			//SteamFriends f = activity().steamFriends;
 			//f.requestFriendInfo(new SteamID(76561198000739785L));
