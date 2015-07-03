@@ -22,14 +22,14 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:linksClickable="true"
+            android:paddingBottom="4dp"
             android:paddingLeft="8dip"
             android:paddingRight="8dip"
             android:paddingTop="4dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#DE000000"
             android:textColorLink="#DE0099FF"
-            tools:text="Message"
-            android:paddingBottom="4dp"/>
+            tools:text="Message"/>
 
         <TextView
             android:id="@+id/chat_status"

@@ -48,7 +48,7 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 	}
 
 	public void setTitle(CharSequence title) {
-		if (activity() != null) {
+		if (activity() != null && activity().toolbar != null) {
 			activity().toolbar.setTitle(title);
 		}
 	}

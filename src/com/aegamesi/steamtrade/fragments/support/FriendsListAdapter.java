@@ -424,7 +424,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				return AndroidUtil.numCompare(aPosition, bPosition);
 			}
 			// sort offline friends by last time online
-			if(category == FriendListCategory.OFFLINE) {
+			if (category == FriendListCategory.OFFLINE) {
 				return -AndroidUtil.numCompare(lastOnline, other.lastOnline);
 			}
 

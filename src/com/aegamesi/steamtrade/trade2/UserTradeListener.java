@@ -271,8 +271,6 @@ public class UserTradeListener extends TradeListener {
 
 	/**
 	 * Called when our trading partner ticked or unticked the "ready" checkbox.
-	 * In response, we will do the opposite of what they did so the trade never
-	 * happens, 50% of the time.
 	 *
 	 * @param ready Whether or not the checkbox is set.
 	 */

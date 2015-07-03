@@ -10,12 +10,18 @@
         <item
             android:id="@+id/nav_offers"
             android:title="@string/nav_offers" />
+    </group>
+
+    <group android:checkableBehavior="none" android:id="@+id/navgroup_2">
+        <item
+            android:id="@+id/nav_store"
+            android:title="@string/nav_store" />
         <item
             android:id="@+id/nav_browser"
             android:title="@string/nav_browser" />
     </group>
 
-    <group android:checkableBehavior="none" android:id="@+id/navgroup_2">
+    <group android:checkableBehavior="none" android:id="@+id/navgroup_3">
         <item
             android:id="@+id/nav_settings"
             android:title="@string/nav_settings" />
@@ -24,7 +30,7 @@
             android:title="@string/nav_about" />
     </group>
 
-    <group android:checkableBehavior="none" android:id="@+id/navgroup_3">
+    <group android:checkableBehavior="none" android:id="@+id/navgroup_4">
         <item
             android:id="@+id/nav_signout"
             android:title="@string/nav_signout" />

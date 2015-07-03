@@ -58,6 +58,7 @@
         android:layout_height="40dip"
         android:layout_margin="8dip"
         android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/chat"
         android:src="@drawable/ic_comment"/>
 
     <ImageButton
@@ -66,6 +67,7 @@
         android:layout_height="40dip"
         android:layout_margin="8dip"
         android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/friend_accept"
         android:src="@drawable/ic_yes"
         android:visibility="gone"/>
 
@@ -75,6 +77,7 @@
         android:layout_height="40dip"
         android:layout_margin="8dip"
         android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/friend_request_ignore"
         android:src="@drawable/ic_no"
         android:visibility="gone"/>
 </LinearLayout>

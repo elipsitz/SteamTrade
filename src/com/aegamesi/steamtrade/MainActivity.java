@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 	public BillingProcessor billingProcessor;
 
 	public Toolbar toolbar;
+	public ProgressBar progressBar;
+	public TabLayout tabs;
 	private DrawerLayout drawerLayout;
 	private ActionBarDrawerToggle drawerToggle;
 	private ImageView drawerAvatar;
@@ -88,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 	private TextView drawerStatus;
 	private CardView drawerNotifyCard;
 	private TextView drawerNotifyText;
-
-	private FragmentWeb fragmentWeb = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		steamNotifications = SteamService.singleton.steamClient.getHandler(SteamNotifications.class);
 
 		// set up the toolbar
+		progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+		tabs = (TabLayout) findViewById(R.id.tabs);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		ActionBar actionBar = getSupportActionBar();
@@ -119,7 +123,13 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 			drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 			NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
 			navigationView.setNavigationItemSelectedListener(this);
-			drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
+			drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+				@Override
+				public void onDrawerSlide(View drawerView, float slideOffset) {
+					super.onDrawerSlide(drawerView, 0);
+				}
+			};
+			// drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 			drawerLayout.setDrawerListener(drawerToggle);
 
 			// set up
@@ -352,9 +362,17 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
 			toggleDrawer();
 			return true;
-		} else {
-			return super.onKeyUp(keyCode, event);
 		}
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			Fragment activeFragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+			if (activeFragment instanceof FragmentWeb) {
+				// go *back* if possible
+				if (((FragmentWeb) activeFragment).onBackPressed())
+					return true;
+			}
+		}
+
+		return super.onKeyUp(keyCode, event);
 	}
 
 	@Override
@@ -392,6 +410,15 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 				break;
 			case R.id.nav_offers:
 				browseToFragment(new FragmentOffersList(), true);
+				break;
+			case R.id.nav_store:
+				Bundle args = new Bundle();
+				args.putBoolean("headless", true);
+				args.putStringArray("tabs", getResources().getStringArray(R.array.store_tabs));
+				args.putStringArray("tabUrls", getResources().getStringArray(R.array.store_urls));
+				FragmentWeb fragment = new FragmentWeb();
+				fragment.setArguments(args);
+				browseToFragment(fragment, true);
 				break;
 			case R.id.nav_browser:
 				browseToFragment(new FragmentWeb(), true);
@@ -496,18 +523,6 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 
 		if (!handled)
 			super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	@Override
-	public void onBackPressed() {
-		Fragment activeFragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-		if (activeFragment instanceof FragmentWeb) {
-			// go *back* if possible
-			if (((FragmentWeb) activeFragment).onBackPressed())
-				return;
-		}
-
-		super.onBackPressed();
 	}
 
 	@Override

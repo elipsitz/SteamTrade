@@ -1,7 +1,12 @@
 package com.aegamesi.steamtrade.fragments;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
+import android.support.design.widget.TabLayout.OnTabSelectedListener;
+import android.support.design.widget.TabLayout.Tab;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +24,17 @@ import android.widget.ProgressBar;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamService;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class FragmentWeb extends FragmentBase {
 	public WebView web_view;
 	public String url = null;
-	public ProgressBar loading_bar;
 	private boolean loaded_page = false;
+	private boolean headless = false;
+	private boolean forceDesktop = false;
+	private boolean hasTabs = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -31,14 +42,72 @@ public class FragmentWeb extends FragmentBase {
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
 
-		if (getArguments() != null)
-			url = getArguments().getString("url");
+		Bundle args = getArguments();
+		if (args != null) {
+			if (args.containsKey("url"))
+				url = getArguments().getString("url");
+			headless = args.getBoolean("headless", false);
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		setTitle(getString(R.string.nav_browser));
+
+		Bundle args = getArguments();
+		if(args != null) {
+			String[] tabNames = args.getStringArray("tabs");
+			if (tabNames != null) {
+				hasTabs = true;
+				TabLayout tabs = activity().tabs;
+				tabs.removeAllTabs();
+				tabs.setVisibility(View.VISIBLE);
+				tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
+				for(String tabName : tabNames) {
+					Tab newTab = tabs.newTab();
+					newTab.setText(tabName);
+					tabs.addTab(newTab);
+				}
+				final String[] tabUrls = args.getStringArray("tabUrls");
+				if(tabUrls != null && tabUrls.length == tabNames.length) {
+					tabs.setOnTabSelectedListener(new OnTabSelectedListener() {
+						@Override
+						public void onTabSelected(Tab tab) {
+							String url = tabUrls[tab.getPosition()];
+							web_view.loadUrl(url);
+						}
+
+						@Override
+						public void onTabUnselected(Tab tab) {
+						}
+
+						@Override
+						public void onTabReselected(Tab tab) {
+							onTabSelected(tab);
+						}
+					});
+				}
+			}
+		}
+
+		if (web_view != null) {
+			CookieSyncManager.createInstance(activity());
+			forceDesktop = PreferenceManager.getDefaultSharedPreferences(activity()).getBoolean("pref_desktop_mode", false);
+			updateCookies();
+
+			if (!loaded_page) {
+				if(hasTabs) {
+					activity().tabs.getTabAt(0).select();
+				} else {
+					if (url == null)
+						web_view.loadUrl("https://steamcommunity.com/profiles/" + SteamService.singleton.steamClient.getSteamId().convertToLong());
+					else
+						web_view.loadUrl(url);
+				}
+				loaded_page = true;
+			}
+		}
 	}
 
 	@Override
@@ -46,7 +115,6 @@ public class FragmentWeb extends FragmentBase {
 		inflater = activity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.fragment_web, container, false);
 		web_view = (WebView) view.findViewById(R.id.web_view);
-		loading_bar = (ProgressBar) view.findViewById(R.id.web_progress);
 
 		web_view.setWebViewClient(new SteamWebViewClient());
 		web_view.setWebChromeClient(new SteamWebChromeClient());
@@ -58,28 +126,13 @@ public class FragmentWeb extends FragmentBase {
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onPause() {
+		super.onPause();
 
-		if (web_view != null) {
-			CookieSyncManager.createInstance(activity());
-			CookieManager cookieManager = CookieManager.getInstance();
-			String[] cookies = SteamService.generateSteamWebCookies().split(";");
-			for (String cookie : cookies) {
-				cookieManager.setCookie("store.steampowered.com", cookie);
-				cookieManager.setCookie("steamcommunity.com", cookie);
-			}
-			boolean desktop_mode = PreferenceManager.getDefaultSharedPreferences(activity()).getBoolean("pref_desktop_mode", false);
-			updateDesktopViewCookie(desktop_mode);
-			CookieSyncManager.getInstance().sync();
-
-			if (!loaded_page) {
-				if (url == null)
-					web_view.loadUrl("https://steamcommunity.com/profiles/" + SteamService.singleton.steamClient.getSteamId().convertToLong());
-				else
-					web_view.loadUrl(url);
-				loaded_page = true;
-			}
+		if(activity() != null && activity().tabs != null) {
+			activity().tabs.setVisibility(View.GONE);
+			activity().tabs.setOnTabSelectedListener(null);
+			activity().tabs.removeAllTabs();
 		}
 	}
 
@@ -87,14 +140,16 @@ public class FragmentWeb extends FragmentBase {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.fragment_web, menu);
 
-		boolean desktop_mode = PreferenceManager.getDefaultSharedPreferences(activity()).getBoolean("pref_desktop_mode", false);
-		menu.findItem(R.id.web_toggle_view).setChecked(desktop_mode);
+		if (headless) {
+			menu.findItem(R.id.web_toggle_view).setVisible(false);
+			menu.findItem(R.id.web_community).setVisible(false);
+			menu.findItem(R.id.web_store).setVisible(false);
+		} else {
+			boolean desktop_mode = PreferenceManager.getDefaultSharedPreferences(activity()).getBoolean("pref_desktop_mode", false);
+			menu.findItem(R.id.web_toggle_view).setChecked(desktop_mode);
+		}
 	}
 
-	// set cookie mobileClient=android to hide header and footer
-	// javascript:document.cookie="mobileClient=android";void(0);
-	// mobileClientVersion=0 (2.0)
-	// javascript:document.cookie="mobileClientVersion=0%20(2.0)";void(0);
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -116,8 +171,9 @@ public class FragmentWeb extends FragmentBase {
 			case R.id.web_toggle_view:
 				// switch
 				item.setChecked(!item.isChecked());
-				updateDesktopViewCookie(item.isChecked());
-				PreferenceManager.getDefaultSharedPreferences(activity()).edit().putBoolean("pref_desktop_mode", item.isChecked()).apply();
+				forceDesktop = item.isChecked();
+				updateCookies();
+				PreferenceManager.getDefaultSharedPreferences(activity()).edit().putBoolean("pref_desktop_mode", forceDesktop).apply();
 				web_view.reload();
 				return true;
 			default:
@@ -125,12 +181,18 @@ public class FragmentWeb extends FragmentBase {
 		}
 	}
 
-	public void updateDesktopViewCookie(boolean enable) {
+	public void updateCookies() {
+		List<String> cookies = new ArrayList<String>();
+		Collections.addAll(cookies, SteamService.generateSteamWebCookies().split(";"));
+		cookies.add("forceMobile=" + ((!forceDesktop || headless) ? 1 : 0));
+		cookies.add("dob=1"); // age check
+		cookies.add("mobileClient=" + (headless ? "android" : ""));
+
 		CookieManager cookieManager = CookieManager.getInstance();
-		//cookieManager.removeSessionCookie();
-		String cookieValue = "forceMobile=" + (enable ? 0 : 1);
-		cookieManager.setCookie("store.steampowered.com", cookieValue);
-		cookieManager.setCookie("steamcommunity.com", cookieValue);
+		for (String cookie : cookies) {
+			cookieManager.setCookie("store.steampowered.com", cookie);
+			cookieManager.setCookie("steamcommunity.com", cookie);
+		}
 		CookieSyncManager.getInstance().sync();
 	}
 
@@ -146,6 +208,23 @@ public class FragmentWeb extends FragmentBase {
 	private class SteamWebViewClient extends WebViewClient {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			Uri uri = Uri.parse(url);
+			if (uri.getScheme().equalsIgnoreCase("steammobile")) {
+				Log.d("FragmentWeb", "Captured url: " + url);
+				String command = uri.getHost();
+
+				if (command.equalsIgnoreCase("settitle")) {
+					setTitle(uri.getQueryParameter("title"));
+				}
+				if (command.equalsIgnoreCase("openurl")) {
+					view.loadUrl(uri.getQueryParameter("url"));
+				}
+				if (command.equalsIgnoreCase("reloadpage")) {
+					view.reload();
+				}
+				return true;
+			}
+
 			view.loadUrl(url);
 			return true;
 		}
@@ -153,12 +232,15 @@ public class FragmentWeb extends FragmentBase {
 
 	private class SteamWebChromeClient extends WebChromeClient {
 		public void onProgressChanged(WebView view, int progress) {
-			if (progress < 100 && loading_bar.getVisibility() != View.VISIBLE)
-				loading_bar.setVisibility(View.VISIBLE);
-			if (progress == 100)
-				loading_bar.setVisibility(View.GONE);
+			if (activity() != null && activity().progressBar != null) {
+				ProgressBar loading_bar = activity().progressBar;
+				if (progress < 100 && loading_bar.getVisibility() != View.VISIBLE)
+					loading_bar.setVisibility(View.VISIBLE);
+				if (progress == 100)
+					loading_bar.setVisibility(View.GONE);
 
-			loading_bar.setProgress(progress);
+				loading_bar.setProgress(progress);
+			}
 		}
 	}
 }

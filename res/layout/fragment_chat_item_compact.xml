@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?attr/selectableItemBackground"
               android:orientation="vertical"
-             android:layout_height="wrap_content"
-             android:background="?attr/selectableItemBackground"
     >
 
-    <View android:id="@+id/chat_divider"
-          android:layout_width="match_parent"
-          android:layout_height="1dp"
-          android:background="@color/chat_divider"
-          android:layout_marginTop="2dp"
-          android:layout_marginBottom="2dp"/>
+    <View
+        android:id="@+id/chat_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/chat_divider"/>
 
     <TextView
         android:id="@+id/chat_message"
@@ -20,14 +21,13 @@
         android:layout_height="wrap_content"
         android:autoLink="web"
         android:linksClickable="true"
+        android:paddingBottom="2dp"
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
+        android:paddingTop="4dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="#ffffff"
         android:textColorLink="#DE0099FF"
-        tools:text="Message"
-        android:password="false"
-        android:paddingTop="4dp"
-        android:paddingBottom="2dp"/>
+        tools:text="Message"/>
 
 </LinearLayout>

@@ -337,10 +337,10 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 			Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(steamRepUrl));
 			startActivity(browse);
 		}
-		if(view == blockFriendButton) {
+		if (view == blockFriendButton) {
 			activity().steamFriends.ignoreFriend(id, true);
 		}
-		if(view == unblockFriendButton) {
+		if (view == unblockFriendButton) {
 			activity().steamFriends.ignoreFriend(id, false);
 		}
 	}

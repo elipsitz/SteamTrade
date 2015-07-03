@@ -2,6 +2,7 @@ package com.aegamesi.steamtrade.steam;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -105,8 +106,7 @@ public class SteamWeb {
 				url += "?" + dataString;
 			}
 			final URL url2 = new URL(url);
-			final HttpURLConnection conn =
-					(HttpURLConnection) url2.openConnection();
+			final HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
 			conn.setRequestProperty("Cookie", cookies);
 			conn.setRequestMethod(method);
 			System.setProperty("http.agent", "");
@@ -152,7 +152,15 @@ public class SteamWeb {
 				}
 			}
 
-			java.io.InputStream netStream = conn.getInputStream();
+			InputStream netStream;
+			int responseCode = conn.getResponseCode();
+			if (responseCode >= 400) {
+				// we had an error. Read the error stream
+				netStream = conn.getErrorStream();
+				System.err.println("Error reading from " + url2 + ": " + responseCode);
+			} else {
+				netStream = conn.getInputStream();
+			}
 
 			// If GZIPped response, then use the gzip decoder.
 			if (conn.getContentEncoding() != null) {

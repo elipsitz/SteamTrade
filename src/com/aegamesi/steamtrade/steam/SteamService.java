@@ -16,7 +16,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Base64;
 import android.util.Log;
 
 import com.aegamesi.steamtrade.LoginActivity;
@@ -105,12 +104,6 @@ public class SteamService extends Service {
 		return cookies;
 	}
 
-	public void resetAuthentication() {
-		sessionID = null;
-		token = null;
-		tokenSecure = null;
-	}
-
 	public static void attemptLogon(Context context, final SteamConnectionListener listener, Bundle bundle, boolean start_service) {
 		extras = bundle;
 
@@ -144,6 +137,12 @@ public class SteamService extends Service {
 				SteamService.singleton.processLogon(listener);
 			}
 		}).start();
+	}
+
+	public void resetAuthentication() {
+		sessionID = null;
+		token = null;
+		tokenSecure = null;
 	}
 
 	private void buildNotification(int code, boolean update) {
@@ -511,7 +510,7 @@ public class SteamService extends Service {
 		msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
 			@Override
 			public void call(LoginKeyCallback callback) {
-				Log.d("SteamService", "Got loginkey " + callback.getLoginKey() + ", uniqueid: " + callback.getUniqueId());
+				Log.d("SteamService", "Got loginkey " + callback.getLoginKey() + "| uniqueid: " + callback.getUniqueId());
 				if (extras != null && extras.getBoolean("remember", false)) {
 					Log.d("SteamService", "Saving loginkey.");
 					SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
@@ -574,7 +573,7 @@ public class SteamService extends Service {
 	}
 
 	private boolean doSteamWebAuthentication() {
-		sessionID = SteamUtil.bytesToHex(SteamUtil.calculateSHA1(extras.getString("username").getBytes()));
+		sessionID = SteamUtil.bytesToHex(CryptoHelper.GenerateRandomBlock(4));
 		final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);//SteamUtil.webApiKey); // this shouldn't require an api key
 		// generate an AES session key
 		byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);

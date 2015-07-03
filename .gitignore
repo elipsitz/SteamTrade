@@ -4,3 +4,5 @@ tools/
 TODO
 .project
 gen/
+Thumbs.db
+.DS_Store

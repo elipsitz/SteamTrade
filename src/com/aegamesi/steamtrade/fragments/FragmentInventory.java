@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -156,8 +155,6 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 			}
 		};
 		// inventory search (hide here, still used in trading)
-		EditText inventorySearch = (EditText) view.findViewById(R.id.inventory_search);
-		inventorySearch.setVisibility(View.GONE);
 		viewSearchResult = (TextView) view.findViewById(R.id.inventory_search_result);
 		//
 		buttonCraft = (Button) view.findViewById(R.id.inventory_craft);

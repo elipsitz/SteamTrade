@@ -17,6 +17,7 @@
     <string name="nav_friends">Friends</string>
     <string name="nav_inventory">Inventory</string>
     <string name="nav_offers">Trade Offers</string>
+    <string name="nav_store">Steam Store</string>
     <string name="nav_browser">Steam Browser</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_about">About Ice</string>
@@ -85,6 +86,21 @@
     <string name="web_community">Steam Community</string>
     <string name="web_store">Steam Store</string>
     <string name="web_toggle_view">Desktop view</string>
+
+    <string-array name="store_tabs">
+        <item>Catalog</item>
+        <item>Cart</item>
+        <item>Search</item>
+        <item>Wishlist</item>
+        <item>Account</item>
+    </string-array>
+    <string-array name="store_urls">
+        <item>https://store.steampowered.com/mobilestorefront/main</item>
+        <item>https://store.steampowered.com/mobilecart/</item>
+        <item>https://store.steampowered.com/mobilestorefront/search</item>
+        <item>https://steamcommunity.com/my/wishlist/</item>
+        <item>https://store.steampowered.com/mobileaccount/</item>
+    </string-array>
 
     <color name="notification_on">#5C7E10</color>
     <color name="notification_off">#777</color>

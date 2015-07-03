@@ -8,10 +8,10 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TabLayout.OnTabSelectedListener;
 import android.support.design.widget.TabLayout.Tab;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -58,14 +58,14 @@ import uk.co.thomasc.steamkit.types.steamid.SteamID;
 
 public class FragmentTrade extends FragmentBase implements OnClickListener, AdapterView.OnItemSelectedListener {
 	public static int[] tab_notifications = new int[]{0, 0, 0};
-	public TabLayout tab_layout;
 	public View[] tab_views;
+	public Menu optionsMenu;
 
 	public Spinner tabInventorySelect;
 	public ArrayAdapter<AppContextPair> tabInventorySelectAdapter;
 	public View tabInventoryLoading;
-	public EditText tabInventorySearch;
 	public ItemListView tabInventoryList;
+	public TextView tabInventorySearchResult;
 	//
 	public CheckBox tabOfferMeReady;
 	public CheckBox tabOfferOtherReady;
@@ -96,27 +96,12 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (trade() == null)
-			return;
-		// etc.
-		String friendName = activity().steamFriends.getFriendPersonaName(new SteamID(SteamService.singleton.tradeManager.currentTrade.otherSteamId));
-		setTitle(String.format(activity().getString(R.string.trading_with), friendName));
-		SteamService.singleton.tradeManager.tradeStatus.setVisibility(View.GONE);
-		// update UI
-		updateUIInventory();
-		updateUIOffers();
-		updateUIChat();
-	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		inflater = activity().getLayoutInflater();
-		View view = inflater.inflate(R.layout.fragment_trade, container, false);
-		tab_views[0] = view.findViewById(R.id.trade_tab_inventory);
-		tab_views[1] = view.findViewById(R.id.trade_tab_offerings);
-		tab_views[2] = view.findViewById(R.id.trade_tab_chat);
-		tab_layout = (TabLayout) view.findViewById(R.id.tabs);
+		// create tabs
+		TabLayout tab_layout = activity().tabs;
+		tab_layout.setVisibility(View.VISIBLE);
+		tab_layout.removeAllTabs();
+		tab_layout.setTabMode(TabLayout.MODE_FIXED);
 		tab_layout.setOnTabSelectedListener(new OnTabSelectedListener() {
 			@Override
 			public void onTabSelected(Tab tab) {
@@ -137,6 +122,11 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 						tabChatAdapter.time_last_read = System.currentTimeMillis();
 					updateUIChat();
 				}
+
+				if (optionsMenu != null) {
+					optionsMenu.findItem(R.id.menu_inventory_toggle_view).setVisible(i == 0 || i == 1);
+					optionsMenu.findItem(R.id.action_search).setVisible(i == 0);
+				}
 			}
 
 			@Override
@@ -153,6 +143,29 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 			tab_layout.addTab(tab_layout.newTab(), i == 0);
 			updateUITabButton(i);
 		}
+
+		// etc.
+		if (trade() == null)
+			return;
+		String friendName = activity().steamFriends.getFriendPersonaName(new SteamID(SteamService.singleton.tradeManager.currentTrade.otherSteamId));
+		setTitle(String.format(activity().getString(R.string.trading_with), friendName));
+		SteamService.singleton.tradeManager.tradeStatus.setVisibility(View.GONE);
+
+		// update UI
+		updateUIInventory();
+		updateUIOffers();
+		updateUIChat();
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// Inflate the layout for this fragment
+		inflater = activity().getLayoutInflater();
+		View view = inflater.inflate(R.layout.fragment_trade, container, false);
+		tab_views[0] = view.findViewById(R.id.trade_tab_inventory);
+		tab_views[1] = view.findViewById(R.id.trade_tab_offerings);
+		tab_views[2] = view.findViewById(R.id.trade_tab_chat);
+
 		if (trade() == null)
 			return view;
 
@@ -189,21 +202,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 			}
 		});
 		tabInventoryLoading = tab_views[0].findViewById(R.id.inventory_loading);
-		tabInventorySearch = (EditText) tab_views[0].findViewById(R.id.inventory_search);
-		tabInventorySearch.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				tabInventoryList.filter(s.toString());
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-		});
+		tabInventorySearchResult = (TextView) tab_views[0].findViewById(R.id.inventory_search_result);
 		// TAB 1: Offers
 		tabOfferMeReady = (CheckBox) tab_views[1].findViewById(R.id.trade_offer_myready);
 		tabOfferMeReady.setOnClickListener(this);
@@ -250,12 +249,43 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 
 		if (SteamService.singleton != null && SteamService.singleton.tradeManager != null)
 			SteamService.singleton.tradeManager.updateTradeStatus();
+
+		if(activity() != null && activity().tabs != null) {
+			activity().tabs.setVisibility(View.GONE);
+			activity().tabs.setOnTabSelectedListener(null);
+			activity().tabs.removeAllTabs();
+		}
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.fragment_inventory, menu);
 		inflater.inflate(R.menu.item_list, menu);
+
+		SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				return onQueryTextChange(query);
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				tabInventoryList.filter(newText);
+
+				boolean filtering = newText != null && newText.trim().length() > 0;
+				if (filtering) {
+					tabInventorySearchResult.setVisibility(View.VISIBLE);
+					tabInventorySearchResult.setText(String.format(getString(R.string.search_result_count), tabInventoryList.getFilteredItemCount(), tabInventoryList.getTotalItemCount()));
+				} else {
+					tabInventorySearchResult.setVisibility(View.GONE);
+				}
+				return true;
+			}
+		});
+
+		optionsMenu = menu;
 	}
 
 	@Override
@@ -341,8 +371,8 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	}
 
 	public void updateUITabButton(int num) {
-		if (tab_layout != null) {
-			Tab tab = tab_layout.getTabAt(num);
+		if (activity() != null && activity().tabs != null) {
+			Tab tab = activity().tabs.getTabAt(num);
 			String text = activity().getResources().getStringArray(R.array.trade_tabs)[num];
 			if (tab_notifications[num] > 0)
 				text += " (" + tab_notifications[num] + ")";

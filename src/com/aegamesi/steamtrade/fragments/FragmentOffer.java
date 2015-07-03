@@ -8,8 +8,9 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TabLayout.OnTabSelectedListener;
 import android.support.design.widget.TabLayout.Tab;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,11 +45,11 @@ import java.util.List;
 
 public class FragmentOffer extends FragmentBase implements OnClickListener, AdapterView.OnItemSelectedListener {
 	public static int[] tab_notifications = new int[]{0, 0, 0};
-	public TabLayout tab_layout;
 	public View[] tab_views;
 	public TradeOffer offer = null;
 	public JSONObject jsonResult = null;
 
+	public Menu optionsMenu = null;
 	public View loadingView;
 	public TextView loadingStatusView;
 
@@ -57,8 +58,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	public Spinner tabInventorySelect;
 	public ArrayAdapter<AppContextPair> tabInventorySelectAdapter;
 	public View tabInventoryLoading;
-	public EditText tabInventorySearch;
 	public ItemListView tabInventoryList;
+	public TextView tabInventorySearchResult;
 	//
 	public ExpandableHeightGridView tabOfferMeOffer;
 	public ExpandableHeightGridView tabOfferOtherOffer;
@@ -87,10 +88,57 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		// create tabs
+		TabLayout tab_layout = activity().tabs;
+		tab_layout.removeAllTabs();
+		tab_layout.setTabMode(TabLayout.MODE_FIXED);
+		tab_layout.setVisibility(View.VISIBLE);
+		tab_layout.setOnTabSelectedListener(new OnTabSelectedListener() {
+			@Override
+			public void onTabSelected(Tab tab) {
+				int i = tab.getPosition();
+				View tabView = tab_views[i];
+				tabView.setVisibility(View.VISIBLE);
+				tabView.bringToFront();
+				tabView.invalidate();
+
+				tab_notifications[i] = 0;
+				updateUITabButton(i);
+				if (i == 0)
+					updateUIInventory();
+				if (i == 1)
+					updateUIOffers();
+				if (i == 2)
+					updateUIReview();
+
+				if (optionsMenu != null) {
+					optionsMenu.findItem(R.id.menu_inventory_toggle_view).setVisible(i == 0 || i == 1);
+					optionsMenu.findItem(R.id.action_search).setVisible(i == 0);
+				}
+			}
+
+			@Override
+			public void onTabUnselected(Tab tab) {
+				tab_views[tab.getPosition()].setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onTabReselected(Tab tab) {
+				onTabSelected(tab);
+			}
+		});
+		for (int i = 0; i < tab_views.length; i++) {
+			tab_layout.addTab(tab_layout.newTab(), i == 0);
+			updateUITabButton(i);
+		}
+
+		// etc.
 		if (offer == null)
 			return;
-		// etc.
+
 		setTitle(String.format(activity().getString(R.string.offer_with), offer.partnerName));
+
 		// update UI
 		updateUIInventory();
 		updateUIOffers();
@@ -109,40 +157,6 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		tab_views[0] = view.findViewById(R.id.offer_tab_inventories);
 		tab_views[1] = view.findViewById(R.id.offer_tab_offerings);
 		tab_views[2] = view.findViewById(R.id.offer_tab_review);
-		tab_layout = (TabLayout) view.findViewById(R.id.tabs);
-		tab_layout.setOnTabSelectedListener(new OnTabSelectedListener() {
-			@Override
-			public void onTabSelected(Tab tab) {
-				int i = tab.getPosition();
-				View tabView = tab_views[i];
-				tabView.setVisibility(View.VISIBLE);
-				tabView.bringToFront();
-				tabView.invalidate();
-
-				tab_notifications[i] = 0;
-				updateUITabButton(i);
-				if (i == 0)
-					updateUIInventory();
-				if (i == 1)
-					updateUIOffers();
-				if (i == 2)
-					updateUIReview();
-			}
-
-			@Override
-			public void onTabUnselected(Tab tab) {
-				tab_views[tab.getPosition()].setVisibility(View.GONE);
-			}
-
-			@Override
-			public void onTabReselected(Tab tab) {
-				onTabSelected(tab);
-			}
-		});
-		for (int i = 0; i < tab_views.length; i++) {
-			tab_layout.addTab(tab_layout.newTab(), i == 0);
-			updateUITabButton(i);
-		}
 		//if (offer == null)
 		//	return view;
 
@@ -175,21 +189,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			}
 		});
 		tabInventoryLoading = tab_views[0].findViewById(R.id.inventory_loading);
-		tabInventorySearch = (EditText) tab_views[0].findViewById(R.id.inventory_search);
-		tabInventorySearch.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				tabInventoryList.filter(s.toString());
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-		});
+		tabInventorySearchResult = (TextView) tab_views[0].findViewById(R.id.inventory_search_result);
 		// TAB 1: Offers
 		tabOfferMeOffer = (ExpandableHeightGridView) tab_views[1].findViewById(R.id.trade_offer_mylist);
 		tabOfferMeOffer.setExpanded(true);
@@ -237,13 +237,44 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	public void onPause() {
 		super.onPause();
 
+		if(activity() != null && activity().tabs != null) {
+			activity().tabs.setVisibility(View.GONE);
+			activity().tabs.setOnTabSelectedListener(null);
+			activity().tabs.removeAllTabs();
+		}
+
 		// TODO save offer temporarily
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.fragment_inventory, menu);
 		inflater.inflate(R.menu.item_list, menu);
+
+		SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				return onQueryTextChange(query);
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				tabInventoryList.filter(newText);
+
+				boolean filtering = newText != null && newText.trim().length() > 0;
+				if (filtering) {
+					tabInventorySearchResult.setVisibility(View.VISIBLE);
+					tabInventorySearchResult.setText(String.format(getString(R.string.search_result_count), tabInventoryList.getFilteredItemCount(), tabInventoryList.getTotalItemCount()));
+				} else {
+					tabInventorySearchResult.setVisibility(View.GONE);
+				}
+				return true;
+			}
+		});
+
+		optionsMenu = menu;
 	}
 
 	@Override
@@ -351,8 +382,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	}
 
 	public void updateUITabButton(int num) {
-		if (tab_layout != null) {
-			Tab tab = tab_layout.getTabAt(num);
+		if (activity() != null && activity().tabs != null && activity().tabs.getTabCount() > 0) {
+			Tab tab = activity().tabs.getTabAt(num);
 			String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
 			if (tab_notifications[num] > 0)
 				text += " (" + tab_notifications[num] + ")";
@@ -437,7 +468,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			if (jsonResult.has("strError")) {
 				// this was not a successful offer
 				resultHeader.setText(R.string.trade_error);
-				resultText.setText(jsonResult.optString("strError", ""));
+				resultText.setText(Html.fromHtml(jsonResult.optString("strError", "")));
 			} else {
 				resultHeader.setText(R.string.trade_completed);
 				boolean trade_confirm_email = jsonResult.optBoolean("needs_email_confirmation", false);
