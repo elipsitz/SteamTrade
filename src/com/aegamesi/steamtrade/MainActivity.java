@@ -2,6 +2,7 @@ package com.aegamesi.steamtrade;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -101,6 +103,20 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 
 		setContentView(R.layout.activity_main);
 		instance = this;
+
+		// inform the user about SteamGuard restrictions
+		if(SteamService.extras != null && SteamService.extras.getBoolean("alertSteamGuard", false)) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					if(SteamService.extras != null)
+						SteamService.extras.putBoolean("alertSteamGuard", false);
+				}
+			});
+			builder.setMessage(R.string.steamguard_new);
+			builder.show();
+		}
 
 		// get the standard steam handlers
 		SteamService.singleton.messageHandler = this;

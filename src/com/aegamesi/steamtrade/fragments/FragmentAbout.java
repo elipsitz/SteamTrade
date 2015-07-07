@@ -14,8 +14,8 @@ public class FragmentAbout extends FragmentBase {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
-
+		if(abort)
+			return;
 	}
 
 	@Override

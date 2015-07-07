@@ -74,7 +74,8 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		if(abort)
+			return;
 
 		if (getArguments().containsKey("steamId")) {
 			id = new SteamID(getArguments().getLong("steamId"));

@@ -14,6 +14,8 @@
     <string name="action_successful">Action successful.</string>
     <string name="action_failed">Action failed.</string>
 
+    <string name="steamguard_new">This is the first time you are logging into this account on this device.\n\nAs per Valve restrictions, you may not be allowed to trade or send trade offers from this device for the next 7 days.</string>
+
     <string name="nav_friends">Friends</string>
     <string name="nav_inventory">Inventory</string>
     <string name="nav_offers">Trade Offers</string>

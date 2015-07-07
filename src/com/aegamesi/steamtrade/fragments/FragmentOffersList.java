@@ -58,7 +58,9 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		if(abort)
+			return;
+
 		setHasOptionsMenu(true);
 
 		if (getArguments() != null && getArguments().containsKey("new_offer_url"))

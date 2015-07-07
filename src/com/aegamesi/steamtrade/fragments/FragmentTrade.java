@@ -87,7 +87,9 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		if(abort)
+			return;
+
 		setHasOptionsMenu(true);
 
 		tab_views = new View[3];
@@ -106,6 +108,8 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 			@Override
 			public void onTabSelected(Tab tab) {
 				int i = tab.getPosition();
+				if(i < 0 || i >= tab_views.length)
+					return;
 				View tabView = tab_views[i];
 				tabView.setVisibility(View.VISIBLE);
 				tabView.bringToFront();
@@ -131,11 +135,17 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 
 			@Override
 			public void onTabUnselected(Tab tab) {
+				int i = tab.getPosition();
+				if(i < 0 || i >= tab_views.length)
+					return;
 				tab_views[tab.getPosition()].setVisibility(View.GONE);
 			}
 
 			@Override
 			public void onTabReselected(Tab tab) {
+				int i = tab.getPosition();
+				if(i < 0 || i >= tab_views.length)
+					return;
 				onTabSelected(tab);
 			}
 		});

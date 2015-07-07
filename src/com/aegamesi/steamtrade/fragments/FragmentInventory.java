@@ -72,7 +72,9 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		if(abort)
+			return;
+
 		setHasOptionsMenu(true);
 
 		appContextPairs = new ArrayList<AppContextPair>();

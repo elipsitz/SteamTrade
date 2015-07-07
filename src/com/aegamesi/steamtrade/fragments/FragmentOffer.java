@@ -98,6 +98,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			@Override
 			public void onTabSelected(Tab tab) {
 				int i = tab.getPosition();
+				if(i < 0 || i >= tab_views.length)
+					return;
 				View tabView = tab_views[i];
 				tabView.setVisibility(View.VISIBLE);
 				tabView.bringToFront();
@@ -120,11 +122,17 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 
 			@Override
 			public void onTabUnselected(Tab tab) {
+				int i = tab.getPosition();
+				if(i < 0 || i >= tab_views.length)
+					return;
 				tab_views[tab.getPosition()].setVisibility(View.GONE);
 			}
 
 			@Override
 			public void onTabReselected(Tab tab) {
+				int i = tab.getPosition();
+				if(i < 0 || i >= tab_views.length)
+					return;
 				onTabSelected(tab);
 			}
 		});

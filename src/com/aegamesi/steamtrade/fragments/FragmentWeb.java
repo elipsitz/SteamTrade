@@ -35,11 +35,14 @@ public class FragmentWeb extends FragmentBase {
 	private boolean headless = false;
 	private boolean forceDesktop = false;
 	private boolean hasTabs = false;
+	private int last_tab = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		if(abort)
+			return;
+
 		setHasOptionsMenu(true);
 
 		Bundle args = getArguments();
@@ -64,10 +67,10 @@ public class FragmentWeb extends FragmentBase {
 				tabs.removeAllTabs();
 				tabs.setVisibility(View.VISIBLE);
 				tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
-				for(String tabName : tabNames) {
+				for(int i = 0; i < tabNames.length; i++) {
 					Tab newTab = tabs.newTab();
-					newTab.setText(tabName);
-					tabs.addTab(newTab);
+					newTab.setText(tabNames[i]);
+					tabs.addTab(newTab, i == last_tab);
 				}
 				final String[] tabUrls = args.getStringArray("tabUrls");
 				if(tabUrls != null && tabUrls.length == tabNames.length) {
@@ -76,6 +79,7 @@ public class FragmentWeb extends FragmentBase {
 						public void onTabSelected(Tab tab) {
 							String url = tabUrls[tab.getPosition()];
 							web_view.loadUrl(url);
+							last_tab = tab.getPosition();
 						}
 
 						@Override

@@ -50,7 +50,8 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		if(abort)
+			return;
 
 	}
 

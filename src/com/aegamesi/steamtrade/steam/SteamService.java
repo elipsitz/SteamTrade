@@ -339,7 +339,7 @@ public class SteamService extends Service {
 								raf.readFully(data);
 								raf.close();
 								details.sentryFileHash = SteamUtil.calculateSHA1(data);
-								details.authCode = "";
+								//details.authCode = "";
 
 								sentryHash = SteamUtil.bytesToHex(details.sentryFileHash);
 							} catch (IOException e) {
@@ -420,6 +420,9 @@ public class SteamService extends Service {
 					SteamUser steamUser = steamClient.getHandler(SteamUser.class);
 					if (steamUser != null)
 						steamUser.sendMachineAuthResponse(auth);
+
+					if(extras != null)
+						extras.putBoolean("alertSteamGuard", true);
 				}
 			}
 		});

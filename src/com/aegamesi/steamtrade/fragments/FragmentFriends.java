@@ -45,7 +45,9 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+		if(abort)
+			return;
+
 		setHasOptionsMenu(true);
 	}
 

@@ -10,13 +10,14 @@ import com.google.android.gms.analytics.HitBuilders;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 
 public class FragmentBase extends Fragment implements SteamMessageHandler {
+	protected boolean abort = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// make sure we're actually connected to steam...
-		activity().assertSteamConnection();
+		abort = activity().assertSteamConnection();
 	}
 
 	@Override
@@ -25,7 +26,7 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 
 		setAnalyticsScreen(getClass().getName());
 		// make sure we're actually connected to steam...
-		activity().assertSteamConnection();
+		abort = activity().assertSteamConnection();
 	}
 
 	public void setAnalyticsScreen(String name) {
