@@ -48,7 +48,6 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	public void createList() {
-		SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
 		dataset = new ArrayList<FriendListItem>();
 		filteredDataset = new ArrayList<FriendListItem>();
 
@@ -58,12 +57,15 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			categoryCounts.put(category, 0);
 
 		// populate friends list
-		if (steamFriends != null) {
-			List<SteamID> listFriends = steamFriends.getFriendList();
-			for (SteamID id : listFriends) {
-				FriendListItem item = new FriendListItem(id);
-				dataset.add(item);
-				categoryCounts.put(item.category, categoryCounts.get(item.category) + 1);
+		if (SteamService.singleton != null && SteamService.singleton.steamClient != null) {
+			SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
+			if (steamFriends != null) {
+				List<SteamID> listFriends = steamFriends.getFriendList();
+				for (SteamID id : listFriends) {
+					FriendListItem item = new FriendListItem(id);
+					dataset.add(item);
+					categoryCounts.put(item.category, categoryCounts.get(item.category) + 1);
+				}
 			}
 		}
 

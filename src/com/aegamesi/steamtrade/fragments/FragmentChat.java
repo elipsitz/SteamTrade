@@ -64,7 +64,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 
 		ourID = SteamService.singleton.steamClient.getSteamId();

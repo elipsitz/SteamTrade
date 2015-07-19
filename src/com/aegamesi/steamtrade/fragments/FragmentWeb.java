@@ -40,7 +40,7 @@ public class FragmentWeb extends FragmentBase {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 
 		setHasOptionsMenu(true);
@@ -59,7 +59,7 @@ public class FragmentWeb extends FragmentBase {
 		setTitle(getString(R.string.nav_browser));
 
 		Bundle args = getArguments();
-		if(args != null) {
+		if (args != null) {
 			String[] tabNames = args.getStringArray("tabs");
 			if (tabNames != null) {
 				hasTabs = true;
@@ -67,13 +67,13 @@ public class FragmentWeb extends FragmentBase {
 				tabs.removeAllTabs();
 				tabs.setVisibility(View.VISIBLE);
 				tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
-				for(int i = 0; i < tabNames.length; i++) {
+				for (int i = 0; i < tabNames.length; i++) {
 					Tab newTab = tabs.newTab();
 					newTab.setText(tabNames[i]);
 					tabs.addTab(newTab, i == last_tab);
 				}
 				final String[] tabUrls = args.getStringArray("tabUrls");
-				if(tabUrls != null && tabUrls.length == tabNames.length) {
+				if (tabUrls != null && tabUrls.length == tabNames.length) {
 					tabs.setOnTabSelectedListener(new OnTabSelectedListener() {
 						@Override
 						public void onTabSelected(Tab tab) {
@@ -101,7 +101,7 @@ public class FragmentWeb extends FragmentBase {
 			updateCookies();
 
 			if (!loaded_page) {
-				if(hasTabs) {
+				if (hasTabs) {
 					activity().tabs.getTabAt(0).select();
 				} else {
 					if (url == null)
@@ -133,10 +133,16 @@ public class FragmentWeb extends FragmentBase {
 	public void onPause() {
 		super.onPause();
 
-		if(activity() != null && activity().tabs != null) {
-			activity().tabs.setVisibility(View.GONE);
-			activity().tabs.setOnTabSelectedListener(null);
-			activity().tabs.removeAllTabs();
+		if (activity() != null) {
+			if(activity().tabs != null) {
+				activity().tabs.setVisibility(View.GONE);
+				activity().tabs.setOnTabSelectedListener(null);
+				activity().tabs.removeAllTabs();
+			}
+
+			if(activity().progressBar != null) {
+				activity().progressBar.setVisibility(View.GONE);
+			}
 		}
 	}
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_library_sort"
+        android:icon="@drawable/ic_sort"
+        android:title="@string/library_sort"
+        app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/menu_library_sort_name" android:title="@string/library_sort_name"/>
+            <item android:id="@+id/menu_library_sort_playtime" android:title="@string/library_sort_playtime"/>
+        </menu>
+    </item>
+
+</menu>

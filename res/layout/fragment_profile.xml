@@ -81,32 +81,43 @@
                 android:layout_height="wrap_content"
                 android:text="@string/chat"/>
 
-            <Button
-                android:id="@+id/profile_button_add_friend"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/friend_add"/>
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/profile_button_remove_friend"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/friend_remove"/>
+                <Button
+                    android:id="@+id/profile_button_add_friend"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/friend_add"
+                    android:layout_weight="1"/>
 
-            <Button
-                android:id="@+id/profile_button_block_friend"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/friend_block"/>
+                <Button
+                    android:id="@+id/profile_button_remove_friend"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/friend_remove"
+                    android:layout_weight="1"/>
 
-            <Button
-                android:id="@+id/profile_button_unblock_friend"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/friend_unblock"/>
+                <Button
+                    android:id="@+id/profile_button_block_friend"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/friend_block"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/profile_button_unblock_friend"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/friend_unblock"
+                    android:layout_weight="1"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -127,6 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/friend_view_steamrep"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -156,6 +168,12 @@
                     android:text="@string/offer_trade"/>
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/profile_button_library"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/friend_view_library"/>
 
             <android.support.v7.widget.CardView
                 xmlns:android="http://schemas.android.com/apk/res/android"

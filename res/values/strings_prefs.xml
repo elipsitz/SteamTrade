@@ -17,6 +17,7 @@
     <string name="pref_recent_chats_summ">Adjust the cut-off for recent chats.</string>
     <string name="pref_chat_compact">Compact Chat Display</string>
     <string name="pref_chat_compact_summ">Display compact lines instead of large bubbles.</string>
+    <string name="pref_currency">Preferred Currency</string>
 
     <string-array name="pref_recent_chats_entries">
         <item>Within 7 days</item>

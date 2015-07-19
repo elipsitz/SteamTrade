@@ -72,7 +72,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 
 		setHasOptionsMenu(true);
@@ -194,7 +194,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.fragment_inventory, menu);
+		inflater.inflate(R.menu.search, menu);
 		inflater.inflate(R.menu.item_list, menu);
 
 		SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));

@@ -10,24 +10,24 @@
         android:padding="4dp">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
             android:layout_gravity="center_horizontal|top"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
             android:cropToPadding="false"
             android:padding="-16dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ice_feature"
-            />
+            android:src="@drawable/ice_logo"
+            android:layout_marginTop="16dp"/>
 
         <TextView
             android:id="@+id/ice_text_thanks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/ice_thanks"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 

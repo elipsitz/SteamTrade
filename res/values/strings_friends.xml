@@ -14,6 +14,7 @@
     <string name="friend_request_ignore">Ignored Friend Request</string>
     <string name="friend_view_steam">View on Steam</string>
     <string name="friend_view_steamrep">View on SteamRep</string>
+    <string name="friend_view_library">View Games</string>
     <string name="friend_is_typing">Other user is typing…</string>
     <string name="profile_view">View Profile</string>
     <string name="profile_summary">Summary</string>

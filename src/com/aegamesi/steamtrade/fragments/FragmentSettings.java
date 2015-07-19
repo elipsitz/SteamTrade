@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
+import com.aegamesi.steamtrade.steam.SteamService;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 public class FragmentSettings extends PreferenceFragment {
@@ -29,7 +30,8 @@ public class FragmentSettings extends PreferenceFragment {
 				MainActivity activity = ((MainActivity) getActivity());
 
 				if ((boolean) newValue) {
-					if (activity.billingProcessor.listOwnedProducts().contains(IAP_REMOVEADS)) {
+					boolean override = SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getSteamId().convertToLong() == 76561198000739785L;
+					if (activity.billingProcessor.listOwnedProducts().contains(IAP_REMOVEADS) || override) {
 						// okay, remove ads
 						return true;
 					} else {

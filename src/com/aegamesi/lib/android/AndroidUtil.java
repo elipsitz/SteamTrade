@@ -14,6 +14,7 @@ import com.aegamesi.steamtrade.R;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 
 public class AndroidUtil {
@@ -26,7 +27,8 @@ public class AndroidUtil {
 				apkUpdateTime(packageManager, packageName));
 	}
 
-	public static int numCompare(int x, int y) {
+
+	public static int numCompare(double x, double y) {
 		return (x < y) ? -1 : ((x == y) ? 0 : 1);
 	}
 

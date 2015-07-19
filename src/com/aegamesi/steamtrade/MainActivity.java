@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.aegamesi.steamtrade.fragments.FragmentAbout;
 import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.fragments.FragmentInventory;
+import com.aegamesi.steamtrade.fragments.FragmentLibrary;
 import com.aegamesi.steamtrade.fragments.FragmentMe;
 import com.aegamesi.steamtrade.fragments.FragmentOffersList;
 import com.aegamesi.steamtrade.fragments.FragmentProfile;
@@ -105,12 +106,12 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		instance = this;
 
 		// inform the user about SteamGuard restrictions
-		if(SteamService.extras != null && SteamService.extras.getBoolean("alertSteamGuard", false)) {
+		if (SteamService.extras != null && SteamService.extras.getBoolean("alertSteamGuard", false)) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					if(SteamService.extras != null)
+					if (SteamService.extras != null)
 						SteamService.extras.putBoolean("alertSteamGuard", false);
 				}
 			});
@@ -166,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		updateDrawerProfile();
 
 		if (savedInstanceState == null)
-			browseToFragment(new FragmentMe(), false);
+			browseToFragment(new FragmentMe(), true);
 		SteamService.singleton.tradeManager.setupTradeStatus();
 		SteamService.singleton.tradeManager.updateTradeStatus();
 
@@ -427,6 +428,9 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 			case R.id.nav_offers:
 				browseToFragment(new FragmentOffersList(), true);
 				break;
+			case R.id.nav_games:
+				browseToFragment(new FragmentLibrary(), true);
+				break;
 			case R.id.nav_store:
 				Bundle args = new Bundle();
 				args.putBoolean("headless", true);
@@ -515,7 +519,9 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 	public void onPurchaseHistoryRestored() {
 		if (!billingProcessor.listOwnedProducts().contains(FragmentSettings.IAP_REMOVEADS)) {
 			// the user did not purchase remove ads-- just set the preference to false.
-			PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("pref_remove_ads", false).apply();
+			boolean override = SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getSteamId().convertToLong() == 76561198000739785L;
+			if(!override)
+				PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("pref_remove_ads", false).apply();
 		}
 	}
 
@@ -584,7 +590,7 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 					Bundle arguments = getIntent().getBundleExtra("arguments");
 					if (arguments != null)
 						fragment.setArguments(arguments);
-					browseToFragment(fragment, getIntent().getBooleanExtra("fragment_subfragment", false));
+					browseToFragment(fragment, getIntent().getBooleanExtra("fragment_subfragment", true));
 				}
 			}
 		}

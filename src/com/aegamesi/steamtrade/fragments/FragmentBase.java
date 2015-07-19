@@ -17,7 +17,7 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 		super.onCreate(savedInstanceState);
 
 		// make sure we're actually connected to steam...
-		abort = activity().assertSteamConnection();
+		abort = !activity().assertSteamConnection();
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 
 		setAnalyticsScreen(getClass().getName());
 		// make sure we're actually connected to steam...
-		abort = activity().assertSteamConnection();
+		abort = !activity().assertSteamConnection();
 	}
 
 	public void setAnalyticsScreen(String name) {

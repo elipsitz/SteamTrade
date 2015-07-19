@@ -366,6 +366,15 @@ public class SteamService extends Service {
 			@Override
 			public void call(LoggedOnCallback callback) {
 				if (callback.getResult() != EResult.OK) {
+					// if there's a loginkey saved and it's an InvalidPassword, scrap it
+					if(callback.getResult() == EResult.InvalidPassword) {
+						if (extras != null && extras.containsKey("username")) {
+							SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
+							prefs.remove("loginkey_" + extras.getString("username"));
+							prefs.apply();
+						}
+					}
+
 					if (connectionListener != null) {
 						connectionListener.onConnectionResult(callback.getResult());
 						connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_FAILURE);
@@ -377,6 +386,14 @@ public class SteamService extends Service {
 				} else {
 					// okay! :)
 					webapiUserNonce = callback.getWebAPIUserNonce();
+
+					// save password (it's valid!)
+					if (extras != null && extras.getBoolean("remember", false) && extras.containsKey("password")) {
+						Log.d("SteamService", "Saving password.");
+						SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
+						prefs.putString("password_" + extras.getString("username"), extras.getString("password"));
+						prefs.apply();
+					}
 
 					if (connectionListener != null)
 						connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_AUTH);
@@ -421,7 +438,7 @@ public class SteamService extends Service {
 					if (steamUser != null)
 						steamUser.sendMachineAuthResponse(auth);
 
-					if(extras != null)
+					if (extras != null)
 						extras.putBoolean("alertSteamGuard", true);
 				}
 			}
@@ -642,7 +659,7 @@ public class SteamService extends Service {
 		// fetch api key
 		String apikey = SteamWeb.requestWebAPIKey("localhost"); // hopefully this keeps working
 		SteamUtil.webApiKey = apikey == null ? "" : apikey;
-		Log.d("Steam", "Fetched api key:  " + SteamUtil.webApiKey);
+		Log.d("Steam", "Fetched api key: " + SteamUtil.webApiKey);
 	}
 
 	private void finalizeConnection() {

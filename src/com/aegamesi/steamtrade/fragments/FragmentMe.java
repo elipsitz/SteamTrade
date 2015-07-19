@@ -50,7 +50,7 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 
 	}
@@ -99,6 +99,11 @@ public class FragmentMe extends FragmentBase implements OnClickListener, OnItemS
 	}
 
 	public void updateView() {
+		if (activity() == null || activity().steamFriends == null)
+			return;
+		if (SteamService.singleton == null || SteamService.singleton.steamClient == null)
+			return;
+
 		EPersonaState state = activity().steamFriends.getPersonaState();
 		String name = activity().steamFriends.getPersonaName();
 		String avatar = SteamUtil.bytesToHex(activity().steamFriends.getFriendAvatar(SteamService.singleton.steamClient.getSteamId())).toLowerCase(Locale.US);

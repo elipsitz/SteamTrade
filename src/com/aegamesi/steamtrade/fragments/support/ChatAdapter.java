@@ -90,7 +90,13 @@ public class ChatAdapter extends CursorRecyclerAdapter<ChatAdapter.ViewHolder> i
 			holder.textMessage.setText(Html.fromHtml(message, imageGetter, null));
 		} else {
 			// next adjust the layout
-			holder.viewBubble.setBackgroundResource(column_sent_by_us ? R.drawable.chat_bubble_right : R.drawable.chat_bubble_left);
+			int bubbleDrawable = 0;
+			if (column_sent_by_us)
+				bubbleDrawable = expandedDivider ? R.drawable.chat_bubble_right : R.drawable.chat_bubble_right_min;
+			else
+				bubbleDrawable = expandedDivider ? R.drawable.chat_bubble_left : R.drawable.chat_bubble_left_min;
+
+			holder.viewBubble.setBackgroundResource(bubbleDrawable);
 			FrameLayout.LayoutParams bubbleParams = (FrameLayout.LayoutParams) holder.viewBubble.getLayoutParams();
 			bubbleParams.gravity = column_sent_by_us ? Gravity.RIGHT : Gravity.LEFT;
 			bubbleParams.leftMargin = holder.itemView.getResources().getDimensionPixelSize(!column_sent_by_us ? R.dimen.chat_margin_minor : R.dimen.chat_margin_major);

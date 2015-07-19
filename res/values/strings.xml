@@ -13,12 +13,15 @@
     <string name="unknown">\?</string>
     <string name="action_successful">Action successful.</string>
     <string name="action_failed">Action failed.</string>
+    <string name="search">Search</string>
 
     <string name="steamguard_new">This is the first time you are logging into this account on this device.\n\nAs per Valve restrictions, you may not be allowed to trade or send trade offers from this device for the next 7 days.</string>
+    <string name="api_key_not_loaded">A WebAPI key was not properly retrieved. This feature will not work.</string>
 
     <string name="nav_friends">Friends</string>
     <string name="nav_inventory">Inventory</string>
     <string name="nav_offers">Trade Offers</string>
+    <string name="nav_games">Library</string>
     <string name="nav_store">Steam Store</string>
     <string name="nav_browser">Steam Browser</string>
     <string name="nav_settings">Settings</string>
@@ -88,6 +91,12 @@
     <string name="web_community">Steam Community</string>
     <string name="web_store">Steam Store</string>
     <string name="web_toggle_view">Desktop view</string>
+
+    <string name="library_playtime">%1$.1f hrs on record</string>
+    <string name="library_playtime_full">%1$.1f hrs past two weeks\n%2$.1f hrs on record</string>
+    <string name="library_sort">Change sorting</string>
+    <string name="library_sort_name">Sort alphabetically</string>
+    <string name="library_sort_playtime">Sort by playtime</string>
 
     <string-array name="store_tabs">
         <item>Catalog</item>

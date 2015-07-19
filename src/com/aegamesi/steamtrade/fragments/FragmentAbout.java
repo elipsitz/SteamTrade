@@ -14,7 +14,7 @@ public class FragmentAbout extends FragmentBase {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 	}
 

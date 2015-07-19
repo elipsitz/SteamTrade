@@ -87,7 +87,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 
 		setHasOptionsMenu(true);
@@ -108,7 +108,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 			@Override
 			public void onTabSelected(Tab tab) {
 				int i = tab.getPosition();
-				if(i < 0 || i >= tab_views.length)
+				if (i < 0 || i >= tab_views.length)
 					return;
 				View tabView = tab_views[i];
 				tabView.setVisibility(View.VISIBLE);
@@ -136,7 +136,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 			@Override
 			public void onTabUnselected(Tab tab) {
 				int i = tab.getPosition();
-				if(i < 0 || i >= tab_views.length)
+				if (i < 0 || i >= tab_views.length)
 					return;
 				tab_views[tab.getPosition()].setVisibility(View.GONE);
 			}
@@ -144,7 +144,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 			@Override
 			public void onTabReselected(Tab tab) {
 				int i = tab.getPosition();
-				if(i < 0 || i >= tab_views.length)
+				if (i < 0 || i >= tab_views.length)
 					return;
 				onTabSelected(tab);
 			}
@@ -157,7 +157,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		// etc.
 		if (trade() == null)
 			return;
-		String friendName = activity().steamFriends.getFriendPersonaName(new SteamID(SteamService.singleton.tradeManager.currentTrade.otherSteamId));
+		String friendName = activity().steamFriends.getFriendPersonaName(new SteamID(trade().otherSteamId));
 		setTitle(String.format(activity().getString(R.string.trading_with), friendName));
 		SteamService.singleton.tradeManager.tradeStatus.setVisibility(View.GONE);
 
@@ -260,7 +260,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		if (SteamService.singleton != null && SteamService.singleton.tradeManager != null)
 			SteamService.singleton.tradeManager.updateTradeStatus();
 
-		if(activity() != null && activity().tabs != null) {
+		if (activity() != null && activity().tabs != null) {
 			activity().tabs.setVisibility(View.GONE);
 			activity().tabs.setOnTabSelectedListener(null);
 			activity().tabs.removeAllTabs();
@@ -270,7 +270,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.fragment_inventory, menu);
+		inflater.inflate(R.menu.search, menu);
 		inflater.inflate(R.menu.item_list, menu);
 
 		SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
@@ -381,7 +381,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	}
 
 	public void updateUITabButton(int num) {
-		if (activity() != null && activity().tabs != null) {
+		if (activity() != null && activity().tabs != null && num < activity().tabs.getTabCount()) {
 			Tab tab = activity().tabs.getTabAt(num);
 			String text = activity().getResources().getStringArray(R.array.trade_tabs)[num];
 			if (tab_notifications[num] > 0)
@@ -448,8 +448,11 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 	public void updateUIChat() {
 		// fetch a new cursor
 		if (tabChatAdapter != null) {
-			String friendName = activity().steamFriends.getFriendPersonaName(new SteamID(SteamService.singleton.tradeManager.currentTrade.otherSteamId));
-			tabChatAdapter.setPersonaNames(activity().steamFriends.getPersonaName(), friendName);
+			if (trade() != null) {
+				SteamID otherID = new SteamID(trade().otherSteamId);
+				String friendName = activity().steamFriends.getFriendPersonaName(otherID);
+				tabChatAdapter.setPersonaNames(activity().steamFriends.getPersonaName(), friendName);
+			}
 			tabChatAdapter.color_default = getResources().getColor(R.color.steam_online);
 			tabChatAdapter.changeCursor(tabChatCursor = fetchCursor());
 

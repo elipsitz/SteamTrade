@@ -12,6 +12,11 @@
         android:title="@string/persist_notification"/>
     <CheckBoxPreference
         android:defaultValue="true"
+        android:key="pref_reconnect"
+        android:summary="@string/pref_reconnect_summ"
+        android:title="@string/pref_reconnect"/>
+    <CheckBoxPreference
+        android:defaultValue="true"
         android:key="pref_vibrate"
         android:summary="@string/pref_vibrate_summ"
         android:title="@string/pref_vibrate"/>
@@ -37,11 +42,13 @@
         android:entryValues="@array/pref_recent_chats_values"
         android:defaultValue="48"
         />
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_reconnect"
-        android:summary="@string/pref_reconnect_summ"
-        android:title="@string/pref_reconnect"/>
+    <ListPreference
+        android:key="pref_currency"
+        android:title="@string/pref_currency"
+        android:entries="@array/steam_currency"
+        android:entryValues="@array/steam_currency_val"
+        android:defaultValue="1"
+        />
 
     <PreferenceScreen
         android:summary="@string/pref_advanced_summ"

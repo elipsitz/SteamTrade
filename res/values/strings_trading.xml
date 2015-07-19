@@ -44,6 +44,28 @@
     <string name="trade_confirm_email">You and/or your partner may need to confirm this trade via email.</string>
     <string name="trade_status_unknown">Status unknown.</string>
 
+    <!-- market -->
+    <string-array name="steam_currency">
+        <item>US Dollar (USD)</item>
+        <item>British Pound (GBP)</item>
+        <item>Euro (EUR)</item>
+        <item>Swiss Franc (CHF)</item>
+        <item>Russian Ruble (RUB)</item>
+        <item>Polish Zloty (PLN)</item>
+        <item>Brazilian Real (BRL)</item>
+        <item>Norwegian Krone (NOK)</item>
+    </string-array>
+    <string-array name="steam_currency_val">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>9</item>
+    </string-array>
+
     <!-- offers -->
     <string name="trade_offers">Trade Offers</string>
     <string name="trade_offer">Trade Offer</string>

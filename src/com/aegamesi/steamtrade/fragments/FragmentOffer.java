@@ -98,7 +98,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			@Override
 			public void onTabSelected(Tab tab) {
 				int i = tab.getPosition();
-				if(i < 0 || i >= tab_views.length)
+				if (i < 0 || i >= tab_views.length)
 					return;
 				View tabView = tab_views[i];
 				tabView.setVisibility(View.VISIBLE);
@@ -115,15 +115,20 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 					updateUIReview();
 
 				if (optionsMenu != null) {
-					optionsMenu.findItem(R.id.menu_inventory_toggle_view).setVisible(i == 0 || i == 1);
-					optionsMenu.findItem(R.id.action_search).setVisible(i == 0);
+					MenuItem itemToggleView = optionsMenu.findItem(R.id.menu_inventory_toggle_view);
+					if (itemToggleView != null)
+						itemToggleView.setVisible(i == 0 || i == 1);
+
+					MenuItem itemSearch = optionsMenu.findItem(R.id.action_search);
+					if (itemSearch != null)
+						itemSearch.setVisible(i == 0);
 				}
 			}
 
 			@Override
 			public void onTabUnselected(Tab tab) {
 				int i = tab.getPosition();
-				if(i < 0 || i >= tab_views.length)
+				if (i < 0 || i >= tab_views.length)
 					return;
 				tab_views[tab.getPosition()].setVisibility(View.GONE);
 			}
@@ -131,7 +136,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 			@Override
 			public void onTabReselected(Tab tab) {
 				int i = tab.getPosition();
-				if(i < 0 || i >= tab_views.length)
+				if (i < 0 || i >= tab_views.length)
 					return;
 				onTabSelected(tab);
 			}
@@ -245,7 +250,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	public void onPause() {
 		super.onPause();
 
-		if(activity() != null && activity().tabs != null) {
+		if (activity() != null && activity().tabs != null) {
 			activity().tabs.setVisibility(View.GONE);
 			activity().tabs.setOnTabSelectedListener(null);
 			activity().tabs.removeAllTabs();
@@ -257,7 +262,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.fragment_inventory, menu);
+		inflater.inflate(R.menu.search, menu);
 		inflater.inflate(R.menu.item_list, menu);
 
 		SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
@@ -51,9 +52,9 @@ public class SteamItemUtil {
 				new Runnable() {
 					@Override
 					public void run() {
-						// TODO support other currencies
+						String currency = PreferenceManager.getDefaultSharedPreferences(context).getString("pref_currency", "1");
 						Map<String, String> parameters = new HashMap<String, String>();
-						parameters.put("currency", "1"); // USD
+						parameters.put("currency", currency);
 						parameters.put("appid", "" + asset.getAppid());
 						parameters.put("market_hash_name", asset.getMarketHashName());
 						String result = SteamWeb.fetch(

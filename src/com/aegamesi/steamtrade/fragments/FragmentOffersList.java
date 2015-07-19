@@ -58,7 +58,7 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 
 		setHasOptionsMenu(true);
@@ -126,8 +126,12 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 	public void onStart() {
 		super.onStart();
 
-		if (offers == null)
-			new FetchOffersTask().execute();
+		if (offers == null) {
+			if(SteamUtil.webApiKey != null && SteamUtil.webApiKey.length() > 0)
+				new FetchOffersTask().execute();
+			else
+				Toast.makeText(activity(), R.string.api_key_not_loaded, Toast.LENGTH_LONG).show();
+		}
 		//activity().getSupportActionBar().setTitle(R.string.trade_offer);
 	}
 

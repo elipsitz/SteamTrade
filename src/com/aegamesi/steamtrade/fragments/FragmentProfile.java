@@ -67,6 +67,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 	public Button unblockFriendButton;
 	public Button viewSteamButton;
 	public Button viewSteamRepButton;
+	public Button viewLibraryButton;
 
 	public ProfileInfoCallback profile_info = null;
 	public PersonaStateCallback persona_info = null;
@@ -74,7 +75,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(abort)
+		if (abort)
 			return;
 
 		if (getArguments().containsKey("steamId")) {
@@ -156,6 +157,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		viewSteamRepButton = (Button) view.findViewById(R.id.profile_button_viewsteamrep);
 		blockFriendButton = (Button) view.findViewById(R.id.profile_button_block_friend);
 		unblockFriendButton = (Button) view.findViewById(R.id.profile_button_unblock_friend);
+		viewLibraryButton = (Button) view.findViewById(R.id.profile_button_library);
 
 		chatButton.setOnClickListener(this);
 		tradeButton.setOnClickListener(this);
@@ -167,6 +169,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		viewSteamRepButton.setOnClickListener(this);
 		blockFriendButton.setOnClickListener(this);
 		unblockFriendButton.setOnClickListener(this);
+		viewLibraryButton.setOnClickListener(this);
 
 		nameView.setSelected(true);
 		statusView.setSelected(true);
@@ -330,8 +333,12 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 			activity().browseToFragment(fragment, true);
 		}
 		if (view == viewSteamButton) {
-			Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse("http://steamcommunity.com/profiles/" + id.convertToLong()));
-			startActivity(browse);
+			String url = "http://steamcommunity.com/profiles/" + id.convertToLong();
+			Fragment fragment = new FragmentWeb();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
 		}
 		if (view == viewSteamRepButton) {
 			String steamRepUrl = "http://steamrep.com/profiles/" + id.convertToLong() + "/";
@@ -343,6 +350,13 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		}
 		if (view == unblockFriendButton) {
 			activity().steamFriends.ignoreFriend(id, false);
+		}
+		if (view == viewLibraryButton) {
+			Fragment fragment = new FragmentLibrary();
+			Bundle bundle = new Bundle();
+			bundle.putLong("id", id.convertToLong());
+			fragment.setArguments(bundle);
+			activity().browseToFragment(fragment, true);
 		}
 	}
 

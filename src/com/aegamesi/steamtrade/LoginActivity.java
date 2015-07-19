@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
@@ -51,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 	public static String password;
 	private boolean need_twofactor = false;
 	// UI references.
+	private CheckBox rememberInfoCheckbox;
 	private EditText textUsername;
 	private EditText textPassword;
 	private EditText textSteamguard;
@@ -117,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
 		}
 
 		// prepare login form
+		rememberInfoCheckbox = ((CheckBox) findViewById(R.id.remember));
 		textSteamguard = (EditText) findViewById(R.id.steamguard);
 		textSteamguard.setVisibility(View.GONE);
 		textUsername = (EditText) findViewById(R.id.username);
@@ -151,11 +154,23 @@ public class LoginActivity extends AppCompatActivity {
 
 	public void loginWithSavedAccount(String username) {
 		// start the logging in progess
-		Bundle bundle = new Bundle();
-		bundle.putString("username", username);
-		bundle.putBoolean("loginkey", true);
-		bundle.putBoolean("remember", true);
-		SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+		if(prefs.contains("loginkey_" + username)) {
+			Bundle bundle = new Bundle();
+			bundle.putString("username", username);
+			bundle.putBoolean("loginkey", true);
+			bundle.putBoolean("remember", true);
+			connectionListener.handle_result = true;
+			SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
+		} else {
+			String password = prefs.getString("password_" + username, "");
+			Bundle bundle = new Bundle();
+			bundle.putString("username", username);
+			bundle.putString("password", password);
+			bundle.putBoolean("remember", true);
+			connectionListener.handle_result = true;
+			SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
+		}
 	}
 
 	public void attemptLogin() {
@@ -208,8 +223,9 @@ public class LoginActivity extends AppCompatActivity {
 			bundle.putString("username", username);
 			bundle.putString("password", password);
 			bundle.putString("steamguard", steamGuard);
-			bundle.putBoolean("remember", ((CheckBox) findViewById(R.id.remember)).isChecked());
+			bundle.putBoolean("remember", rememberInfoCheckbox.isChecked());
 			bundle.putBoolean("twofactor", need_twofactor);
+			connectionListener.handle_result = true;
 			SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
 		}
 	}
@@ -262,6 +278,8 @@ public class LoginActivity extends AppCompatActivity {
 	}
 
 	private class ConnectionListener implements SteamConnectionListener {
+		private boolean handle_result = true;
+
 		@Override
 		public void onConnectionResult(final EResult result) {
 			Log.i("ConnectionListener", "Connection result: " + result);
@@ -276,11 +294,28 @@ public class LoginActivity extends AppCompatActivity {
 						progressDialog.dismiss();
 					progressDialog = null;
 
+					if(!handle_result)
+						return;
+					handle_result = false;
+
 					if (result == EResult.InvalidPassword) {
-						textPassword.setError(getString(R.string.error_incorrect_password));
-						textPassword.requestFocus();
+						// maybe change error to "login key expired, log in again" if using loginkey
+						if(SteamService.extras != null && SteamService.extras.getBoolean("loginkey", false)) {
+							headerNew.performClick();
+							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+							String password = prefs.getString("password_" + SteamService.extras.getString("username"), "");
+
+							Toast.makeText(LoginActivity.this, R.string.error_loginkey_expired, Toast.LENGTH_LONG).show();
+							textPassword.setError(getString(R.string.error_loginkey_expired));
+							textUsername.setText(SteamService.extras.getString("username"));
+							textPassword.setText(password);
+							rememberInfoCheckbox.setChecked(true);
+						} else {
+							textPassword.setError(getString(R.string.error_incorrect_password));
+							textPassword.requestFocus();
+						}
 					} else if (result == EResult.ConnectFailed) {
-						Toast.makeText(LoginActivity.this, R.string.cannot_connect_to_steam, Toast.LENGTH_LONG).show();
+						Toast.makeText(LoginActivity.this, R.string.cannot_connect_to_steam, Toast.LENGTH_SHORT).show();
 					} else if (result == EResult.ServiceUnavailable) {
 						Toast.makeText(LoginActivity.this, R.string.cannot_auth_with_steamweb, Toast.LENGTH_LONG).show();
 					} else if (result == EResult.AccountLogonDenied || result == EResult.AccountLogonDeniedNoMail || result == EResult.AccountLogonDeniedVerifiedEmailRequired || result == EResult.AccountLoginDeniedNeedTwoFactor) {
@@ -348,7 +383,14 @@ public class LoginActivity extends AppCompatActivity {
 			Map<String, ?> allPrefs = prefs.getAll();
 			for (String key : allPrefs.keySet()) {
 				if (key.startsWith("loginkey_")) {
-					accountNames.add(key.substring("loginkey_".length()));
+					String accountName = key.substring("loginkey_".length());
+					if(!accountNames.contains(accountName))
+						accountNames.add(accountName);
+				}
+				if (key.startsWith("password_")) {
+					String accountName = key.substring("password_".length());
+					if(!accountNames.contains(accountName))
+						accountNames.add(accountName);
 				}
 			}
 
