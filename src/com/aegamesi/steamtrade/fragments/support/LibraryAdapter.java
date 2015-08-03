@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.aegamesi.lib.android.AndroidUtil;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.FragmentLibrary;
-import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -23,11 +22,10 @@ import java.util.Locale;
 public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHolderGame> {
 	public static final int SORT_ALPHABETICAL = 0;
 	public static final int SORT_PLAYTIME = 1;
-
+	public int currentSort = SORT_ALPHABETICAL;
 	private List<FragmentLibrary.LibraryEntry> games = null;
 	private List<FragmentLibrary.LibraryEntry> filteredList;
 	private FragmentLibrary fragment;
-	public int currentSort = SORT_ALPHABETICAL;
 
 	public LibraryAdapter(FragmentLibrary fragmentLibrary) {
 		this.fragment = fragmentLibrary;
@@ -90,7 +88,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
 	}
 
 	public void setGames(List<FragmentLibrary.LibraryEntry> list, final int sort) {
-		if(list != null) {
+		if (list != null) {
 			Collections.sort(list, new Comparator<FragmentLibrary.LibraryEntry>() {
 				@Override
 				public int compare(FragmentLibrary.LibraryEntry lhs, FragmentLibrary.LibraryEntry rhs) {

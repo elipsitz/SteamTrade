@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.aegamesi.lib.android.AndroidUtil;
 import com.aegamesi.steamtrade.R;
-import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -38,16 +37,29 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	private List<FriendListItem> filteredDataset;
 	private List<FriendListItem> dataset;
 	private Map<FriendListCategory, Integer> categoryCounts;
-	private FragmentFriends fragment;
+	private View.OnClickListener clickListener;
 	private String filter = null;
 
-	public FriendsListAdapter(FragmentFriends fragment) {
-		this.fragment = fragment;
+	private boolean hasSections = true;
 
-		createList();
+	public FriendsListAdapter(View.OnClickListener clickListener) {
+		this(clickListener, null, true);
 	}
 
-	public void createList() {
+	public FriendsListAdapter(View.OnClickListener clickListener, List<SteamID> listFriends, boolean hasSections) {
+		this.clickListener = clickListener;
+		this.hasSections = hasSections;
+
+		if (listFriends == null && SteamService.singleton != null && SteamService.singleton.steamClient != null) {
+			SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
+			if (steamFriends != null)
+				listFriends = steamFriends.getFriendList();
+		}
+
+		createList(listFriends);
+	}
+
+	public void createList(List<SteamID> listFriends) {
 		dataset = new ArrayList<FriendListItem>();
 		filteredDataset = new ArrayList<FriendListItem>();
 
@@ -57,25 +69,28 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			categoryCounts.put(category, 0);
 
 		// populate friends list
-		if (SteamService.singleton != null && SteamService.singleton.steamClient != null) {
-			SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
-			if (steamFriends != null) {
-				List<SteamID> listFriends = steamFriends.getFriendList();
-				for (SteamID id : listFriends) {
-					FriendListItem item = new FriendListItem(id);
-					dataset.add(item);
-					categoryCounts.put(item.category, categoryCounts.get(item.category) + 1);
-				}
+		if (listFriends != null) {
+			updateList(listFriends);
+		}
+
+		if (hasSections) {
+			// add section headers
+			for (Entry<FriendListCategory, Integer> categoryEntry : categoryCounts.entrySet()) {
+				if (categoryEntry.getValue() > 0)
+					dataset.add(new FriendListItem(categoryEntry.getKey()));
 			}
-		}
 
-		// add section headers
-		for (Entry<FriendListCategory, Integer> categoryEntry : categoryCounts.entrySet()) {
-			if (categoryEntry.getValue() > 0)
-				dataset.add(new FriendListItem(categoryEntry.getKey()));
+			Collections.sort(dataset);
 		}
+	}
 
-		Collections.sort(dataset);
+	public void updateList(List<SteamID> listFriends) {
+		for (SteamID id : listFriends) {
+			FriendListItem item = new FriendListItem(id);
+			dataset.add(item);
+
+			categoryCounts.put(item.category, categoryCounts.get(item.category) + 1);
+		}
 	}
 
 	public boolean hasUserID(SteamID id) {
@@ -95,6 +110,9 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	private void incrementCategoryCount(FriendListCategory category) {
+		if (!hasSections)
+			return;
+
 		int categoryCount = categoryCounts.get(category);
 		categoryCounts.put(category, ++categoryCount);
 
@@ -107,6 +125,9 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	private void deincrementCategoryCount(FriendListCategory category) {
+		if (!hasSections)
+			return;
+
 		int categoryCount = categoryCounts.get(category);
 		categoryCounts.put(category, --categoryCount);
 
@@ -229,7 +250,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			ViewHolderFriend holder = (ViewHolderFriend) h;
 			holder.itemView.setTag(p.steamid);
 
-		/* DO Populate View */
+			/* DO Populate View */
 			if (p.nickname == null)
 				holder.textName.setText(p.name);
 			else
@@ -246,16 +267,8 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			else
 				holder.textStatus.setText(p.state.toString());
 
-			// friend request buttons
-			if (p.category == FriendListCategory.FRIENDREQUEST) {
-				holder.buttonAccept.setVisibility(View.VISIBLE);
-				holder.buttonReject.setVisibility(View.VISIBLE);
-			} else {
-				holder.buttonAccept.setVisibility(View.GONE);
-				holder.buttonReject.setVisibility(View.GONE);
-			}
 
-			Resources resources = fragment.getResources();
+			Resources resources = holder.itemView.getContext().getResources();
 			int color = resources.getColor(R.color.steam_online);
 			if (p.category == FriendListCategory.BLOCKED)
 				color = resources.getColor(R.color.steam_blocked);
@@ -268,24 +281,39 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			holder.textStatus.setTextColor(color);
 			holder.imageAvatar.setBorderColor(color);
 
-			holder.buttonChat.setVisibility((p.relationship == EFriendRelationship.Friend) ? View.VISIBLE : View.GONE);
-			if (SteamService.singleton.chatManager.unreadMessages.contains(p.steamid)) {
-				holder.buttonChat.setColorFilter(resources.getColor(R.color.steam_online), Mode.MULTIPLY);
-				holder.buttonChat.setImageResource(R.drawable.ic_comment_processing);
-			} else {
-				holder.buttonChat.setColorFilter(resources.getColor(R.color.steam_offline), Mode.MULTIPLY);
-				holder.buttonChat.setImageResource(R.drawable.ic_comment);
-			}
+			if (hasSections) {
+				// friend request buttons
+				if (p.category == FriendListCategory.FRIENDREQUEST) {
+					holder.buttonAccept.setVisibility(View.VISIBLE);
+					holder.buttonReject.setVisibility(View.VISIBLE);
+				} else {
+					holder.buttonAccept.setVisibility(View.GONE);
+					holder.buttonReject.setVisibility(View.GONE);
+				}
 
-			holder.buttonChat.setTag(p.steamid);
-			holder.buttonChat.setOnClickListener(fragment);
-			holder.buttonChat.setFocusable(false);
-			holder.buttonAccept.setTag(p.steamid);
-			holder.buttonAccept.setOnClickListener(fragment);
-			holder.buttonAccept.setFocusable(false);
-			holder.buttonReject.setTag(p.steamid);
-			holder.buttonReject.setOnClickListener(fragment);
-			holder.buttonReject.setFocusable(false);
+				holder.buttonChat.setVisibility((p.relationship == EFriendRelationship.Friend) ? View.VISIBLE : View.GONE);
+				if (SteamService.singleton.chatManager.unreadMessages.contains(p.steamid)) {
+					holder.buttonChat.setColorFilter(resources.getColor(R.color.steam_online), Mode.MULTIPLY);
+					holder.buttonChat.setImageResource(R.drawable.ic_comment_processing);
+				} else {
+					holder.buttonChat.setColorFilter(resources.getColor(R.color.steam_offline), Mode.MULTIPLY);
+					holder.buttonChat.setImageResource(R.drawable.ic_comment);
+				}
+
+				holder.buttonChat.setTag(p.steamid);
+				holder.buttonChat.setOnClickListener(clickListener);
+				holder.buttonChat.setFocusable(false);
+				holder.buttonAccept.setTag(p.steamid);
+				holder.buttonAccept.setOnClickListener(clickListener);
+				holder.buttonAccept.setFocusable(false);
+				holder.buttonReject.setTag(p.steamid);
+				holder.buttonReject.setOnClickListener(clickListener);
+				holder.buttonReject.setFocusable(false);
+			} else {
+				holder.buttonChat.setVisibility(View.GONE);
+				holder.buttonAccept.setVisibility(View.GONE);
+				holder.buttonReject.setVisibility(View.GONE);
+			}
 
 			holder.imageAvatar.setImageResource(R.drawable.default_avatar);
 			if (p.avatar_url != null)
@@ -445,7 +473,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 		public ViewHolderFriend(ViewGroup parent) {
 			super(LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_friends_list_item, parent, false));
-			itemView.setOnClickListener(fragment);
+			itemView.setOnClickListener(clickListener);
 
 			imageAvatar = (CircleImageView) itemView.findViewById(R.id.friend_avatar_left);
 			textName = (TextView) itemView.findViewById(R.id.friend_name);

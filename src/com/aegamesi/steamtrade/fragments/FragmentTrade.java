@@ -239,8 +239,6 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tabChatButton = (ImageButton) view.findViewById(R.id.chat_button);
 		tabChatButton.setOnClickListener(this);
 
-		view.findViewById(R.id.friend_info).setVisibility(View.GONE); // TODO readd this
-
 		boolean isCompact = PreferenceManager.getDefaultSharedPreferences(activity()).getBoolean("pref_chat_compact", false);
 		tabChatAdapter = new ChatAdapter(tabChatCursor, isCompact);
 		tabChatAdapter.time_last_read = 0;

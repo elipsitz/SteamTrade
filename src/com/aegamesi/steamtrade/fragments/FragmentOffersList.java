@@ -127,7 +127,7 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 		super.onStart();
 
 		if (offers == null) {
-			if(SteamUtil.webApiKey != null && SteamUtil.webApiKey.length() > 0)
+			if (SteamUtil.webApiKey != null && SteamUtil.webApiKey.length() > 0)
 				new FetchOffersTask().execute();
 			else
 				Toast.makeText(activity(), R.string.api_key_not_loaded, Toast.LENGTH_LONG).show();

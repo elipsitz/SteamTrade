@@ -209,6 +209,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		}
 
 		addFriendButton.setText((relationship == EFriendRelationship.RequestRecipient) ? R.string.friend_accept : R.string.friend_add);
+		unblockFriendButton.setText((relationship == EFriendRelationship.RequestRecipient) ? R.string.friend_ignore : R.string.friend_unblock);
 
 		if (profile_info != null) {
 			String summary_raw = profile_info.getSummary();
@@ -253,6 +254,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		boolean isFriend = relationship == EFriendRelationship.Friend || relationship == EFriendRelationship.IgnoredFriend;
 		boolean isSelf = SteamService.singleton.steamClient.getSteamId().equals(id);
 		boolean isBlocked = relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend;
+		boolean isFriendRequest = relationship == EFriendRelationship.RequestRecipient;
 
 		if (!isFriend) {
 			statusView.setText(relationship.toString());
@@ -266,7 +268,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		tradeButton.setVisibility((isFriend && !isSelf && !isBlocked) ? View.VISIBLE : View.GONE);
 		tradeOfferButton.setVisibility((isFriend && !isSelf && !isBlocked) ? View.VISIBLE : View.GONE);
 		blockFriendButton.setVisibility((!isBlocked && !isSelf) ? View.VISIBLE : View.GONE);
-		unblockFriendButton.setVisibility((isBlocked) ? View.VISIBLE : View.GONE);
+		unblockFriendButton.setVisibility((isFriendRequest || isBlocked) ? View.VISIBLE : View.GONE);
 	}
 
 	private void requestInfo() {
@@ -314,7 +316,9 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 			activity().browseToFragment(fragment, true);
 		}
 		if (view == tradeButton) {
-			SteamService.singleton.tradeManager.trade(id);
+			if (SteamService.singleton != null && SteamService.singleton.tradeManager != null) {
+				SteamService.singleton.tradeManager.trade(id);
+			}
 		}
 		if (view == tradeOfferButton) {
 			Fragment fragment = new FragmentOffer();

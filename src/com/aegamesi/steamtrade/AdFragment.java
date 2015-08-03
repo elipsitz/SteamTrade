@@ -1,8 +1,10 @@
 package com.aegamesi.steamtrade;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import com.aegamesi.steamtrade.fragments.FragmentSettings;
 import com.amazon.device.ads.Ad;
 import com.amazon.device.ads.AdError;
 import com.amazon.device.ads.AdProperties;
+import com.amazon.device.ads.AdRegistration;
 import com.amazon.device.ads.AdTargetingOptions;
 import com.google.android.gms.ads.AdRequest;
 
@@ -24,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AdFragment extends Fragment implements View.OnClickListener {
 	private static final int AD_REFRESH_TIME = 60;
-	private static final int AD_MIN_TIME = 30;
+	private static final int AD_MIN_TIME = 10;
 	private long last_load = 0;
 	private com.amazon.device.ads.AdLayout amazonAdView;
 	private com.google.android.gms.ads.AdView admobAdView;
@@ -32,9 +35,26 @@ public class AdFragment extends Fragment implements View.OnClickListener {
 	private ScheduledFuture<?> scheduledFuture = null;
 	private Runnable refreshAdRunnable = null;
 
+	public static boolean areAdsEnabled(Context context) {
+		// user purchased and is removing ads via preferences
+		boolean user_removed_ads = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("pref_remove_ads", false);
+		if (user_removed_ads)
+			return false;
+
+		// don't show ads on the first day of use.
+		Date installTime = AndroidUtil.getInstallTime(context.getPackageManager(), "com.aegamesi.steamtrade");
+		long installTimeAgo = (new Date()).getTime() - installTime.getTime();
+		if (installTimeAgo < 1000 * 60 * 60 * 24)
+			return false;
+
+		return true;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		AdRegistration.setAppKey(getString(R.string.amazon_ad_key));
 
 		scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
 		refreshAdRunnable = new Runnable() {
@@ -61,6 +81,7 @@ public class AdFragment extends Fragment implements View.OnClickListener {
 		amazonAdView.setListener(new com.amazon.device.ads.AdListener() {
 			@Override
 			public void onAdLoaded(Ad ad, AdProperties adProperties) {
+				Log.d("Amazon", "Amazon ad loaded.");
 				if (amazonAdView != null)
 					amazonAdView.setVisibility(View.VISIBLE);
 				if (admobAdView != null)
@@ -72,6 +93,7 @@ public class AdFragment extends Fragment implements View.OnClickListener {
 
 			@Override
 			public void onAdFailedToLoad(Ad ad, AdError adError) {
+				Log.d("Amazon", "Amazon ad failed to load: " + adError.getMessage());
 				// Call AdMob SDK for backfill
 				if (amazonAdView != null)
 					amazonAdView.setVisibility(View.GONE);
@@ -161,7 +183,7 @@ public class AdFragment extends Fragment implements View.OnClickListener {
 			return;
 
 		// if ads aren't enabled, leave...
-		boolean adsEnabled = areAdsEnabled();
+		boolean adsEnabled = areAdsEnabled(getActivity());
 		if (!adsEnabled) {
 			getView().setVisibility(View.GONE);
 			return;
@@ -171,21 +193,6 @@ public class AdFragment extends Fragment implements View.OnClickListener {
 		getView().setVisibility(View.VISIBLE);
 		AdTargetingOptions amazonAdOptions = new AdTargetingOptions();
 		amazonAdView.loadAd(amazonAdOptions);
-	}
-
-	private boolean areAdsEnabled() {
-		// user purchased and is removing ads via preferences
-		boolean user_removed_ads = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("pref_remove_ads", false);
-		if (user_removed_ads)
-			return false;
-
-		// don't show ads on the first day of use.
-		Date installTime = AndroidUtil.getInstallTime(getActivity().getPackageManager(), "com.aegamesi.steamtrade");
-		long installTimeAgo = (new Date()).getTime() - installTime.getTime();
-		if (installTimeAgo < 1000 * 60 * 60 * 24)
-			return false;
-
-		return true;
 	}
 
 	@Override

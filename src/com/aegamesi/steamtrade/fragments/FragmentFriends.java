@@ -71,7 +71,11 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 		msg.handle(FriendAddedCallback.class, new ActionT<FriendAddedCallback>() {
 			@Override
 			public void call(FriendAddedCallback obj) {
-				adapter.add(obj.getSteamID());
+				if (adapter.hasUserID(obj.getSteamID())) {
+					adapter.update(obj.getSteamID());
+				} else {
+					adapter.add(obj.getSteamID());
+				}
 			}
 		});
 		msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {

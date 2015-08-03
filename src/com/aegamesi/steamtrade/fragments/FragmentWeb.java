@@ -134,13 +134,13 @@ public class FragmentWeb extends FragmentBase {
 		super.onPause();
 
 		if (activity() != null) {
-			if(activity().tabs != null) {
+			if (activity().tabs != null) {
 				activity().tabs.setVisibility(View.GONE);
 				activity().tabs.setOnTabSelectedListener(null);
 				activity().tabs.removeAllTabs();
 			}
 
-			if(activity().progressBar != null) {
+			if (activity().progressBar != null) {
 				activity().progressBar.setVisibility(View.GONE);
 			}
 		}

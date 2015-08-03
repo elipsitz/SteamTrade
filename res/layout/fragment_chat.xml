@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout android:id="@+id/chat_main"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical">
-
-    <include
-        android:id="@+id/friend_info"
-        layout="@layout/fragment_friends_list_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+              android:orientation="vertical"
+              android:visibility="gone"
+        >
 
     <View
         android:layout_width="fill_parent"
@@ -64,5 +65,13 @@
             />
 
     </LinearLayout>
+    </LinearLayout>
 
-</LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/chat_participants"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:scrollbars="vertical"/>
+
+</FrameLayout>

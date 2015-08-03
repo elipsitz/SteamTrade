@@ -367,7 +367,7 @@ public class SteamService extends Service {
 			public void call(LoggedOnCallback callback) {
 				if (callback.getResult() != EResult.OK) {
 					// if there's a loginkey saved and it's an InvalidPassword, scrap it
-					if(callback.getResult() == EResult.InvalidPassword) {
+					if (callback.getResult() == EResult.InvalidPassword) {
 						if (extras != null && extras.containsKey("username")) {
 							SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
 							prefs.remove("loginkey_" + extras.getString("username"));
@@ -476,27 +476,42 @@ public class SteamService extends Service {
 			@Override
 			public void call(PersonaStateCallback obj) {
 				// handle notifications for friend requests
+				boolean enableNotification = PreferenceManager.getDefaultSharedPreferences(SteamService.this).getBoolean("pref_notification_friendrequest", true);
 				SteamFriends steamFriends = steamClient.getHandler(SteamFriends.class);
-				if (steamFriends != null) {
+				if (steamFriends != null && enableNotification) {
 					if (steamFriends.getFriendRelationship(obj.getFriendID()) == EFriendRelationship.RequestRecipient) {
+						// get number of friend requests pending
+						int friendRequests = 0;
+						for (SteamID id : steamFriends.getFriendList())
+							if (steamFriends.getFriendRelationship(id) == EFriendRelationship.RequestRecipient)
+								friendRequests++;
+
 						// create a notification
 						String partnerName = obj.getName();
 						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this);
 						NotificationCompat.Builder builder = new NotificationCompat.Builder(SteamService.this);
 						builder.setSmallIcon(R.drawable.ic_notify_friend);
 						builder.setContentTitle(getString(R.string.friend_request));
-						builder.setContentText(String.format(getString(R.string.friend_request_text), partnerName));
+						if (friendRequests == 1) {
+							builder.setContentText(String.format(getString(R.string.friend_request_text), partnerName));
+						} else {
+							builder.setContentText(String.format(getString(R.string.friend_request_multi), friendRequests));
+						}
 						builder.setPriority(NotificationCompat.PRIORITY_MAX);
 						builder.setVibrate(prefs.getBoolean("pref_vibrate", true) ? new long[]{0, 500, 200, 500, 1000} : new long[]{0});
 						builder.setSound(Uri.parse(prefs.getString("pref_notification_sound", "DEFAULT_SOUND")));
 						builder.setOnlyAlertOnce(true);
 						builder.setAutoCancel(true);
 
-						Bundle bundle = new Bundle();
-						bundle.putLong("steamId", obj.getFriendID().convertToLong());
 						Intent intent = new Intent(SteamService.this, MainActivity.class);
-						intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentProfile");
-						intent.putExtra("arguments", bundle);
+						if (friendRequests == 1) {
+							Bundle bundle = new Bundle();
+							bundle.putLong("steamId", obj.getFriendID().convertToLong());
+							intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentProfile");
+							intent.putExtra("arguments", bundle);
+						} else {
+							intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentFriends");
+						}
 
 						TaskStackBuilder stackBuilder = TaskStackBuilder.create(SteamService.this);
 						stackBuilder.addParentStack(MainActivity.class);
@@ -619,6 +634,7 @@ public class SteamService extends Service {
 						tokenSecure = authResult.get("tokensecure").asString();
 						Log.i("Steam", "Successfully authenticated: " + token + " secure: " + tokenSecure);
 
+
 						// tell our listener and start fetching the webapi key
 						if (connectionListener != null)
 							connectionListener.onConnectionStatusUpdate(SteamConnectionListener.STATUS_APIKEY);
@@ -656,10 +672,21 @@ public class SteamService extends Service {
 	}
 
 	private void fetchAPIKey() {
-		// fetch api key
-		String apikey = SteamWeb.requestWebAPIKey("localhost"); // hopefully this keeps working
-		SteamUtil.webApiKey = apikey == null ? "" : apikey;
-		Log.d("Steam", "Fetched api key: " + SteamUtil.webApiKey);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this);
+		String apikey = prefs.getString("webapikey_" + steamClient.getSteamId().convertToLong(), "");
+		if (apikey.trim().length() > 0) {
+			SteamUtil.webApiKey = apikey;
+			Log.d("Steam", "Using saved api key: " + SteamUtil.webApiKey);
+		} else {
+			// fetch api key
+			apikey = SteamWeb.requestWebAPIKey("localhost"); // hopefully this keeps working
+			SteamUtil.webApiKey = apikey == null ? "" : apikey;
+			Log.d("Steam", "Fetched api key: " + SteamUtil.webApiKey);
+
+			if (SteamUtil.webApiKey.trim().length() > 0) {
+				prefs.edit().putString("webapikey_" + steamClient.getSteamId().convertToLong(), SteamUtil.webApiKey).apply();
+			}
+		}
 	}
 
 	private void finalizeConnection() {

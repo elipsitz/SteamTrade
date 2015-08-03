@@ -6,7 +6,7 @@
     <string name="persist_notification_summ">Unchecking this will tell Android that Ice is low-priority.</string>
     <string name="pref_reconnect">Auto-Reconnect</string>
     <string name="pref_reconnect_summ">Reconnect when disconnected from the Steam network</string>
-    <string name="pref_advanced">Advanced</string>
+    <string name="pref_advanced">Advanced Settings</string>
     <string name="pref_advanced_summ">Do not use these unless you know what you\'re doing.</string>
     <string name="pref_machineauth">Override machineAuth</string>
     <string name="pref_machineauth_prompt">Input machineAuth:</string>
@@ -18,6 +18,13 @@
     <string name="pref_chat_compact">Compact Chat Display</string>
     <string name="pref_chat_compact_summ">Display compact lines instead of large bubbles.</string>
     <string name="pref_currency">Preferred Currency</string>
+    <string name="pref_webapikey">Edit cached WebAPI Key</string>
+    <string name="pref_webapikey_prompt">Input WebAPI Key:</string>
+    <string name="pref_webapikey_summary">Requires this account\'s key for full functionality.</string>
+    <string name="pref_notification">Notification Settings</string>
+    <string name="pref_notification_chat">Chat Notifications</string>
+    <string name="pref_notification_friendrequest">Friend Request Notifications</string>
+    <string name="pref_notification_trade">Trade Notifications</string>
 
     <string-array name="pref_recent_chats_entries">
         <item>Within 7 days</item>

@@ -10,10 +10,8 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class SteamUtil {
@@ -33,7 +31,7 @@ public class SteamUtil {
 		bbCodeMap.put("(?i)\\[url=(.+?)\\](.+?)\\[/url\\]", "<a href=\"$1\">$2</a>");
 
 		// this wonderful piece of regex matches all links that *aren't* already parsed... and parses them.
-		bbCodeMap.put("(?i)(?<![\\\"\\'])(?<![\\\"\\']>)((http|https|ftp):\\/\\/[\\w?=&.\\/-;#~%-]+)", "<a href=\"$1\">$1</a>");
+		bbCodeMap.put("(?i)(?<![\\\"\\'])(?<![\\\"\\']>)((http|https|ftp):\\/\\/[\\w?=&.\\/-;#~%-,]+)", "<a href=\"$1\">$1</a>");
 		//bbCodeMap.put("(?i)(?<!=\")((?:\\b[a-zA-Z]+:\\/\\/)?[a-zA-Z0-9\\-?&;#~=\\.\\/\\@]+\\.[a-zA-Z]{3,6})", "<a href=\"$1\">$1</a>");
 	}
 

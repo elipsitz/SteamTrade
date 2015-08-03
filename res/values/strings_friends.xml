@@ -2,7 +2,8 @@
 <resources>
     <color name="color_friend_unread">#555</color>
     <string name="friend_add">Add Friend</string>
-    <string name="friend_accept">Accept Friend Request</string>
+    <string name="friend_accept">Accept Request</string>
+    <string name="friend_ignore">Ignore Request</string>
     <string name="friend_add_prompt">Please enter the SteamID64 or email address of the friend you wish to add:</string>
     <string name="friend_add_fail">Failed to add friend: %1$s</string>
     <string name="friend_add_success">Added friend.</string>
@@ -21,11 +22,19 @@
     <string name="profile_loading_summary">Loading summary…</string>
     <string name="friend_request">Friend Request</string>
     <string name="friend_request_text">%1$s has added you.</string>
+    <string name="friend_request_multi">You have %1$d pending requests.</string>
     <string name="friend_block">Block</string>
     <string name="friend_unblock">Unblock</string>
 
+    <string name="chat_group">Group Chat</string>
+    <string name="chat_with">Chat with %1$s</string>
+    <string name="friend_invite_to_chat">Invite to Chat…</string>
+    <string name="friend_invite_to_trade">Invite to Trade</string>
+    <string name="friend_send_trade_offer">Send a Trade Offer</string>
     <string name="chat_you">You</string>
     <string name="chat_them">Them</string>
+    <string name="chat_chat">Chat</string>
+    <string name="chat_participants">Participants</string>
     <color name="color_chat_left">#B3E5FC</color>
     <color name="color_chat_right">#607D8B</color>
     <color name="chat_divider">#22FFFFFF</color>

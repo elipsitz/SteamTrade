@@ -46,7 +46,6 @@ import com.aegamesi.steamtrade.fragments.FragmentWeb;
 import com.aegamesi.steamtrade.steam.SteamMessageHandler;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.amazon.device.ads.AdRegistration;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.gms.analytics.HitBuilders;
@@ -224,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		// setup amazon ads
 		//AdRegistration.enableLogging(debug_amazon_ads);
 		//AdRegistration.enableTesting(debug_amazon_ads);
-		AdRegistration.setAppKey(getString(R.string.amazon_ad_key));
 	}
 
 	@Override
@@ -520,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		if (!billingProcessor.listOwnedProducts().contains(FragmentSettings.IAP_REMOVEADS)) {
 			// the user did not purchase remove ads-- just set the preference to false.
 			boolean override = SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getSteamId().convertToLong() == 76561198000739785L;
-			if(!override)
+			if (!override)
 				PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("pref_remove_ads", false).apply();
 		}
 	}

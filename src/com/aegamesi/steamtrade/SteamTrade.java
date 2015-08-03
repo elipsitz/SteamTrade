@@ -3,8 +3,10 @@ package com.aegamesi.steamtrade;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.aegamesi.steamtrade.steam.SteamLogcatDebugListener;
+import com.aegamesi.steamtrade.steam.SteamWeb;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -14,6 +16,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -29,8 +33,10 @@ import uk.co.thomasc.steamkit.util.logging.DebugLog;
 		mode = ReportingInteractionMode.TOAST,
 		forceCloseDialogAfterToast = false,
 		resToastText = R.string.app_crashed_toast)
+
 public class SteamTrade extends Application {
 	public static File filesDir;
+	public static JSONObject webConfig = new JSONObject();
 
 	@Override
 	public void onCreate() {
@@ -60,6 +66,10 @@ public class SteamTrade extends Application {
 				.defaultDisplayImageOptions(defaultImageOptions)
 				.build();
 		ImageLoader.getInstance().init(imageLoaderConfiguration);
+
+
+		// set up web config
+		// handleWebConfig();
 	}
 
 	private void FixNoClassDefFoundError81083() {
@@ -74,4 +84,23 @@ public class SteamTrade extends Application {
 		return analytics.newTracker(R.xml.tracker);
 	}
 
+	private void handleWebConfig() {
+		final String url = "http://aegamesi.com/sites/ice/config.json";
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String response = SteamWeb.request(url, "GET", null, "", "");
+				Log.i("SteamTrade", "Fetched webconfig");
+				Log.i("SteamTrade", response);
+
+				try {
+					webConfig = new JSONObject(response);
+				} catch (JSONException e) {
+					e.printStackTrace();
+					webConfig = new JSONObject();
+				}
+			}
+		}).start();
+	}
 }

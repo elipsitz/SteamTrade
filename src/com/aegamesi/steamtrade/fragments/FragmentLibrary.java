@@ -4,8 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -81,7 +79,7 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 		super.onStart();
 
 		if (games == null) {
-			if(SteamUtil.webApiKey != null && SteamUtil.webApiKey.length() > 0)
+			if (SteamUtil.webApiKey != null && SteamUtil.webApiKey.length() > 0)
 				new FetchLibraryTask().execute();
 			else
 				Toast.makeText(activity(), R.string.api_key_not_loaded, Toast.LENGTH_LONG).show();
@@ -113,12 +111,12 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_library_sort_name:
-				if(adapterLibrary != null && adapterLibrary.currentSort != LibraryAdapter.SORT_ALPHABETICAL)
+				if (adapterLibrary != null && adapterLibrary.currentSort != LibraryAdapter.SORT_ALPHABETICAL)
 					adapterLibrary.setGames(games, LibraryAdapter.SORT_ALPHABETICAL);
 				return true;
 
 			case R.id.menu_library_sort_playtime:
-				if(adapterLibrary != null && adapterLibrary.currentSort != LibraryAdapter.SORT_PLAYTIME)
+				if (adapterLibrary != null && adapterLibrary.currentSort != LibraryAdapter.SORT_PLAYTIME)
 					adapterLibrary.setGames(games, LibraryAdapter.SORT_PLAYTIME);
 				return true;
 
@@ -162,6 +160,26 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 		}
 	}
 
+	public static class LibraryEntry {
+		public int appid;
+		public String name;
+		public double playtime_2weeks;
+		public double playtime_forever;
+		public String img_icon_url;
+		public String img_logo_url;
+		public boolean has_community_visible_stats;
+
+		public LibraryEntry(JSONObject json) {
+			appid = json.optInt("appid", 0);
+			name = json.optString("name", "Unknown");
+			playtime_2weeks = ((double) json.optInt("playtime_2weeks", 0)) / 60.0;
+			playtime_forever = ((double) json.optInt("playtime_forever", 0)) / 60.0;
+			img_icon_url = json.optString("img_icon_url");
+			img_logo_url = json.optString("img_logo_url");
+			has_community_visible_stats = json.optBoolean("has_community_visible_stats", false);
+		}
+	}
+
 	private class FetchLibraryTask extends AsyncTask<Void, Void, List<LibraryEntry>> {
 		@Override
 		protected List<LibraryEntry> doInBackground(Void... args) {
@@ -183,26 +201,6 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 
 			// get rid of UI stuff,
 			loading_view.setVisibility(View.GONE);
-		}
-	}
-
-	public static class LibraryEntry {
-		public int appid;
-		public String name;
-		public double playtime_2weeks;
-		public double playtime_forever;
-		public String img_icon_url;
-		public String img_logo_url;
-		public boolean has_community_visible_stats;
-
-		public LibraryEntry(JSONObject json) {
-			appid = json.optInt("appid", 0);
-			name = json.optString("name", "Unknown");
-			playtime_2weeks = ((double) json.optInt("playtime_2weeks", 0)) / 60.0;
-			playtime_forever = ((double) json.optInt("playtime_forever", 0)) / 60.0;
-			img_icon_url = json.optString("img_icon_url");
-			img_logo_url = json.optString("img_logo_url");
-			has_community_visible_stats = json.optBoolean("has_community_visible_stats", false);
 		}
 	}
 }

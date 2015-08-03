@@ -14,7 +14,6 @@ import com.aegamesi.steamtrade.R;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 
 public class AndroidUtil {
@@ -130,5 +129,21 @@ public class AndroidUtil {
 
 		// default to "month day year, time"
 		return DateFormat.format("MMM d yyyy, h:mm a", time_then);
+	}
+
+	public static final int STORE_UNKNOWN = 0;
+	public static final int STORE_GOOGLEPLAY = 1;
+	public static final int STORE_AMAZON = 2;
+	public int getAppStore(Context context) {
+		PackageManager pkgManager = context.getPackageManager();
+		String installerPackageName = pkgManager.getInstallerPackageName(context.getPackageName());
+
+		if(installerPackageName.startsWith("com.amazon")) {
+			return STORE_AMAZON;
+		} else if ("com.android.vending".equals(installerPackageName)) {
+			return STORE_GOOGLEPLAY;
+		}
+
+		return 0;
 	}
 }

@@ -149,22 +149,25 @@ public class SteamTradeManager implements OnClickListener {
 
 		// create notification
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(activity());
-		builder.setSmallIcon(R.drawable.ic_notify_trade);
-		builder.setContentTitle(activity().getString(R.string.trade_new_request));
-		builder.setContentText(String.format(activity().getString(R.string.trade_got_request), partnerName));
-		builder.setPriority(NotificationCompat.PRIORITY_MAX);
-		builder.setVibrate(prefs.getBoolean("pref_vibrate", true) ? new long[]{0, 500, 200, 500, 1000} : new long[]{0});
-		builder.setSound(Uri.parse(prefs.getString("pref_notification_sound", "DEFAULT_SOUND")));
-		Intent intent = new Intent(SteamService.singleton, MainActivity.class);
-		intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentFriends");
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(SteamService.singleton);
-		stackBuilder.addParentStack(MainActivity.class);
-		stackBuilder.addNextIntent(intent);
-		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-		builder.setContentIntent(resultPendingIntent);
-		NotificationManager mNotificationManager = (NotificationManager) activity().getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(NOTIFICATION_TRADE, builder.build());
+		boolean enableNotification = prefs.getBoolean("pref_notification_trade", true);
+		if(enableNotification) {
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(activity());
+			builder.setSmallIcon(R.drawable.ic_notify_trade);
+			builder.setContentTitle(activity().getString(R.string.trade_new_request));
+			builder.setContentText(String.format(activity().getString(R.string.trade_got_request), partnerName));
+			builder.setPriority(NotificationCompat.PRIORITY_MAX);
+			builder.setVibrate(prefs.getBoolean("pref_vibrate", true) ? new long[]{0, 500, 200, 500, 1000} : new long[]{0});
+			builder.setSound(Uri.parse(prefs.getString("pref_notification_sound", "DEFAULT_SOUND")));
+			Intent intent = new Intent(SteamService.singleton, MainActivity.class);
+			intent.putExtra("fragment", "com.aegamesi.steamtrade.fragments.FragmentFriends");
+			TaskStackBuilder stackBuilder = TaskStackBuilder.create(SteamService.singleton);
+			stackBuilder.addParentStack(MainActivity.class);
+			stackBuilder.addNextIntent(intent);
+			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+			builder.setContentIntent(resultPendingIntent);
+			NotificationManager mNotificationManager = (NotificationManager) activity().getSystemService(Context.NOTIFICATION_SERVICE);
+			mNotificationManager.notify(NOTIFICATION_TRADE, builder.build());
+		}
 
 		Toast.makeText(activity(), String.format(activity().getString(R.string.trade_got_request), partnerName), Toast.LENGTH_LONG).show();
 	}

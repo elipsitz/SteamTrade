@@ -39,7 +39,8 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:hint="@string/offer_send_message"
-            android:textStyle="italic"/>
+            android:textStyle="italic"
+            android:maxLength="128"/>
 
         <Button
             android:id="@+id/offer_tab_review_accept"

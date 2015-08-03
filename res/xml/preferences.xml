@@ -7,27 +7,50 @@
         android:title="@string/pref_remove_ads"/>
     <CheckBoxPreference
         android:defaultValue="true"
-        android:key="pref_persist_notification"
-        android:summary="@string/persist_notification_summ"
-        android:title="@string/persist_notification"/>
-    <CheckBoxPreference
-        android:defaultValue="true"
         android:key="pref_reconnect"
         android:summary="@string/pref_reconnect_summ"
         android:title="@string/pref_reconnect"/>
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_vibrate"
-        android:summary="@string/pref_vibrate_summ"
-        android:title="@string/pref_vibrate"/>
-    <RingtonePreference
-        android:defaultValue="content://settings/system/notification_sound"
-        android:key="pref_notification_sound"
-        android:ringtoneType="notification"
-        android:showDefault="true"
-        android:showSilent="true"
-        android:title="@string/pref_notification_sound"
-        />
+
+    <PreferenceScreen
+        android:title="@string/pref_notification">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_persist_notification"
+            android:summary="@string/persist_notification_summ"
+            android:title="@string/persist_notification"/>
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="pref_notification_sound"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:showSilent="true"
+            android:title="@string/pref_notification_sound"
+            />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_vibrate"
+            android:summary="@string/pref_vibrate_summ"
+            android:title="@string/pref_vibrate"/>
+
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_notification_chat"
+            android:title="@string/pref_notification_chat"/>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_notification_friendrequest"
+            android:title="@string/pref_notification_friendrequest"/>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_notification_trade"
+            android:title="@string/pref_notification_trade"/>
+    </PreferenceScreen>
+
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="pref_chat_compact"
@@ -59,5 +82,12 @@
             android:dialogTitle="@string/pref_machineauth_prompt"
             android:key="pref_machineauth"
             android:title="@string/pref_machineauth"/>
+
+        <EditTextPreference
+            android:persistent="false"
+            android:dialogTitle="@string/pref_webapikey_prompt"
+            android:key="pref_webapikey"
+            android:summary="@string/pref_webapikey_summary"
+            android:title="@string/pref_webapikey"/>
     </PreferenceScreen>
 </PreferenceScreen>

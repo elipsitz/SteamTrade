@@ -79,6 +79,11 @@ public class SteamChatManager {
 	}
 
 	public void updateNotification() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
+		boolean enableNotification = prefs.getBoolean("pref_notification_chat", true);
+		if(!enableNotification)
+			return;
+
 		NotificationManager notificationManager = (NotificationManager) SteamService.singleton.getSystemService(Context.NOTIFICATION_SERVICE);
 		if (unreadMessages.size() == 0) {
 			notificationManager.cancel(49717);
@@ -87,7 +92,6 @@ public class SteamChatManager {
 		SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
 		if (steamFriends == null)
 			return;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
 
 		// basics for the notification
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(SteamService.singleton).setSmallIcon(R.drawable.ic_notify_msg);

@@ -49,21 +49,37 @@
         <item>US Dollar (USD)</item>
         <item>British Pound (GBP)</item>
         <item>Euro (EUR)</item>
-        <item>Swiss Franc (CHF)</item>
         <item>Russian Ruble (RUB)</item>
-        <item>Polish Zloty (PLN)</item>
         <item>Brazilian Real (BRL)</item>
+        <item>Japanese Yen (JPN)</item>
         <item>Norwegian Krone (NOK)</item>
+        <item>Indonesian Rupiah (IDR)</item>
+        <item>Malaysian Ringgit (RM)</item>
+        <item>Philippine Peso (PHP)</item>
+        <item>Singapore Dollar (SGD)</item>
+        <item>Thai Baht (THB)</item>
+        <item>Turkish Lira (TRY)</item>
+        <item>Mexican Peso (MXN)</item>
+        <item>Canadian Dollar (CDN)</item>
+        <item>New Zealand Dollar (NZD)</item>
     </string-array>
     <string-array name="steam_currency_val">
         <item>1</item>
         <item>2</item>
         <item>3</item>
-        <item>4</item>
         <item>5</item>
-        <item>6</item>
         <item>7</item>
+        <item>8</item>
         <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>17</item>
+        <item>19</item>
+        <item>20</item>
+        <item>22</item>
     </string-array>
 
     <!-- offers -->
@@ -120,7 +136,7 @@
     <string name="offer_accepting">Accepting offer…</string>
     <string name="offer_submitting">Submitting offer…</string>
     <string name="offer_loading">Loading offer…</string>
-    <string name="offer_send_message">Send a message with your offer</string>
+    <string name="offer_send_message">Send a message with your offer\n(maximum 128 characters)</string>
     <string name="offer_fromurl">Create offer from URL</string>
     <string name="offer_create">Create Trade Offer</string>
     <string name="offer_create_prompt">Please enter a sharable trade offer URL to create a trade offer.\n\nAlternatively, tap on a friend in your friends list and select \"Offer Trade\".</string>

@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
@@ -155,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 	public void loginWithSavedAccount(String username) {
 		// start the logging in progess
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-		if(prefs.contains("loginkey_" + username)) {
+		if (prefs.contains("loginkey_" + username)) {
 			Bundle bundle = new Bundle();
 			bundle.putString("username", username);
 			bundle.putBoolean("loginkey", true);
@@ -294,13 +293,13 @@ public class LoginActivity extends AppCompatActivity {
 						progressDialog.dismiss();
 					progressDialog = null;
 
-					if(!handle_result)
+					if (!handle_result)
 						return;
 					handle_result = false;
 
 					if (result == EResult.InvalidPassword) {
 						// maybe change error to "login key expired, log in again" if using loginkey
-						if(SteamService.extras != null && SteamService.extras.getBoolean("loginkey", false)) {
+						if (SteamService.extras != null && SteamService.extras.getBoolean("loginkey", false)) {
 							headerNew.performClick();
 							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
 							String password = prefs.getString("password_" + SteamService.extras.getString("username"), "");
@@ -384,12 +383,12 @@ public class LoginActivity extends AppCompatActivity {
 			for (String key : allPrefs.keySet()) {
 				if (key.startsWith("loginkey_")) {
 					String accountName = key.substring("loginkey_".length());
-					if(!accountNames.contains(accountName))
+					if (!accountNames.contains(accountName))
 						accountNames.add(accountName);
 				}
 				if (key.startsWith("password_")) {
 					String accountName = key.substring("password_".length());
-					if(!accountNames.contains(accountName))
+					if (!accountNames.contains(accountName))
 						accountNames.add(accountName);
 				}
 			}
