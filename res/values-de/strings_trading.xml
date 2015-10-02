@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">Sende Handesanfrage an %1$s</string>
+    <string name="trade_got_request">%1$s hat dir eine Handelsanfrage gesendet</string>
+    <string name="trade_new_request">Handelsanfrage</string>
+    <string name="trade_currently_trading">Handeln mit %1$s.</string>
+    <string name="trade_result_accepted">%1$s hat deine Handelsanfrage angenommen.</string>
+    <string name="trade_result_alreadytrading">%1$s handelt mit jemand anderem.</string>
+    <string name="trade_result_timeout">%1$s hat nicht auf deine Handelsanfrage reagiert. Zeitüberschreitung</string>
+    <string name="trade_result_declined">%1$s hat deine Handelsanfrage abgelehnt.</string>
+    <string name="trade_result_unknown">%1$s kann aus einem unbekanntem Grund nicht Handeln: %2$s</string>
+    <string name="trade_result_cancelled">Handelsanfrage abgebrochen.</string>
+    <string name="trade_result_targetcannotrade">%1$s kann nicht Handeln. Mehr Information werden angezeigt, wenn er dir eine Anfrage sendet.</string>
+    <string name="trade_result_steamguard">SteamGuard muss zum Handeln aktiv sein!</string>
+    <string name="trade_result_steamguard_duration">SteamGuard muss zum Handeln mindestens 15 Tage lang aktiv sein!</string>
+    <string name="trade_result_steamguard_newdevice">Aufgrund der Steambestimmungen ist es dir f�r die n�chsten 7 Tage nicht erlaubt auf einem neuen Ger�t zu Handeln.</string>
+    <string name="trade_result_password_reset">Du hast vor kurzen dein Passwort ge�ndert und darfst deshalb nicht Handeln.</string>
+    <string name="trade_result_require_email">Du musst zum Handeln deine E-Mail verifizieren.</string>
+    <string name="trade_result_tradeban_target">%1$s wurde vom Handeln verbannt und darf deshalb nicht Handeln.</string>
+    <string name="trade_result_tradeban_initiator">Du wurdest vom Handeln verbannt und darfst nicht Handeln.</string>
+
+    <string name="trading_with">Handel mit %1$s</string>
+
+    <string-array name="trade_tabs">
+        <item>Inventar</item>
+        <item>Angebote</item>
+        <item>Chat</item>
+    </string-array>
+
+    <string name="trade_ready">Bereit</string>
+    <string name="trade_your_offerings">Deine Angebote</string>
+    <string name="trade_their_offerings">Seine Angebote</string>
+    <string name="trade_accept">Handel akzeptieren</string>
+    <string name="trade_tap_to_view">Zum Ansehen antippen</string>
+    <string name="trade_error">Fehler beim Handeln</string>
+    <string name="trade_completed">Handel abgeschlossen</string>
+    <string name="trade_new_items">%1$d neue Gegenst�nde erhalten</string>
+    <string name="trade_cancel">Abbrechen</string>
+    <string name="trade_confirm_email">Du und/oder dein Partner muss(t) den Handeln per E-Mail best�tigen.</string>
+    <string name="trade_status_unknown">Status unbekannt.</string>
+
+    <!-- market -->
+    <string-array name="steam_currency">
+        <item>US Dollar (USD)</item>
+        <item>British Pound (GBP)</item>
+        <item>Euro (EUR)</item>
+        <item>Russian Ruble (RUB)</item>
+        <item>Brazilian Real (BRL)</item>
+        <item>Japanese Yen (JPN)</item>
+        <item>Norwegian Krone (NOK)</item>
+        <item>Indonesian Rupiah (IDR)</item>
+        <item>Malaysian Ringgit (RM)</item>
+        <item>Philippine Peso (PHP)</item>
+        <item>Singapore Dollar (SGD)</item>
+        <item>Thai Baht (THB)</item>
+        <item>Turkish Lira (TRY)</item>
+        <item>Mexican Peso (MXN)</item>
+        <item>Canadian Dollar (CDN)</item>
+        <item>New Zealand Dollar (NZD)</item>
+    </string-array>
+
+
+    <!-- offers -->
+    <string name="trade_offers">Handelsanfragen</string>
+    <string name="trade_offer">Handelsanfrage</string>
+    <string name="offer_trade">Handeln</string>
+    <string-array name="offer_tabs">
+        <item>Inventar</item>
+        <item>Angebote</item>
+        <item>Vorschau</item>
+    </string-array>
+    <string-array name="offer_status">
+        <item>Unbekannt</item>
+        <item>Ung�ltig</item>
+        <item>Aktiv</item>
+        <item>Akzeptiert</item>
+        <item>Quitiert</item>
+        <item>Abgelaufen</item>
+        <item>Abgebrochen</item>
+        <item>Abgelehnt</item>
+        <item>Ung�ltige Gegenst�nde</item>
+        <item>Warte auf E-Mailbest�tigung</item>
+        <item>Abgebrochen durch E-Mail</item>
+    </string-array>
+    <string name="offer_radio_incoming">Erhaltene Angebote</string>
+    <string name="offer_radio_sent">Gesendete Angebote</string>
+    <string name="offer_inventory_us">Dein Inventar</string>
+    <string name="offer_inventory_them">Das Inventar deines Partners</string>
+    <string name="offer_message">Nachricht</string>
+    <string name="offer_accept">Angebot annehmen</string>
+    <string name="offer_decline">Angebot ablehnen</string>
+    <string name="offer_button_respond">Antworten</string>
+    <string name="offer_button_decline">Ablehnen</string>
+    <string name="offer_button_cancel">Abbrechen</string>
+    <string name="offer_counter">Gegenangebot senden</string>
+    <string name="offer_cancel">Angebot abbrechen</string>
+    <string name="offer_send">Angebot senden</string>
+    <string name="offer_contents">Du gibst %1$d Gegenst�nde und bekommst %2$d Gegenst�nde.</string>
+    <string name="offer_will_give">Du gibst:</string>
+    <string name="offer_will_receive">Du erh�lst:</string>
+    <string name="offer_no_message">[Keine Nachricht]</string>
+    <string name="offer_count">Zeige %1$d Handelsanfragen.</string>
+    <string name="offer_error_loading">Fehler beim Laden der Handeldetails.</string>
+    <string name="offers_error_loading">Fehler beim Laden des Handelangebots.</string>
+    <string name="offer_with">Angebot mit %1$s</string>
+    <string name="offer_received_heading">%1$s hat dir einen Handel vorgeschlagen:</string>
+    <string name="offer_sent_heading">Du hast %1$s Angebot(e) gesendet:</string>
+    <string name="offer_cancelled">Angebot abgebrochen.</string>
+    <string name="offer_declined">Angebot abgelehnt.</string>
+    <string name="offer_submitted">Angebot eingereicht.</string>
+    <string name="offer_accepted">Angebot akzeptiert.</string>
+    <string name="offer_message_quote">Nachricht:\n\"%1$s\"</string>
+    <string name="offer_declining">Lehne Angebot ab�</string>
+    <string name="offer_accepting">Nehme Angebot an�</string>
+    <string name="offer_submitting">Reiche Angebot ein�</string>
+    <string name="offer_loading">Lade Angebot�</string>
+    <string name="offer_send_message">Sende eine Nachricht mit deinem Angebot\n(maximal 128 Zeichen)</string>
+    <string name="offer_fromurl">Erstelle Handel aus Link (URL)</string>
+    <string name="offer_create">Erstelle Handelsangebot</string>
+    <string name="offer_create_prompt">Bitte gebe einen teilbaren Handelslink(URL) ein um einen Handel zu erstellen.\n\nOder tippe auf einen Freund in der Freundeliste und w�hle \"Handeln\".</string>
+    <string name="offer_invalid_url">Ung�ltiger Handelslink(URL).</string>
+    <string name="offer_confirm_decline">Bist du dir sicher, dass du das Handelsangebot ablehnen m�chtest?</string>
+    <string name="offer_confirm_cancel">Bist du dir sicher, dass du das Handelsangebot abbrechen m�chtest??</string>
+    <string name="offer_successful">Handelsangebot war erfolgreich.</string>
+    <string name="offer_confirm_email">Um das Handelsangebot abzuschlie�en, musst du einen weiteren Verifikationschritt durchf�hren. Eine E-Mail mit weiteren Informationen wurde an deine Adresse gesendet.(Endet in "%1$s").</string>
+
+</resources>

@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error_disconnected">Verbindung zum Steam-Netzwerk getrennt</string>
+    <string name="drawer_open">Drawer öffnen</string>
+    <string name="drawer_close">Drawer schließen</string>
+    <string name="steam_avatar">Avatar</string>
+    <string name="chat">Chat</string>
+    <string name="trade">Handeln</string>
+    <string name="friends">Freunde</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="unknown">\?</string>
+    <string name="action_successful">Aktion erfolgreich.</string>
+    <string name="action_failed">Aktion fehlgeschlagen.</string>
+    <string name="search">Suche</string>
+
+    <string name="steamguard_new">Dies ist dein erster Login auf diesem Gerät.\n\nAufgrund der Steambestimmungen ist es dir für die nächsten 7 Tage nicht erlaubt auf diesem (neuen) Gerät zu Handeln.</string>
+    <string name="api_key_not_loaded">Ein WebAPI-Schlüssel konnte nicht abgerufen werden. Diese Funktion wird nicht funktionieren.</string>
+
+    <string name="nav_friends">Freunde</string>
+    <string name="nav_inventory">Inventar</string>
+    <string name="nav_offers">Handelsangebote</string>
+    <string name="nav_games">Bibliothek</string>
+    <string name="nav_store">Shop</string>
+    <string name="nav_market">Steam Community-Markt</string>
+    <string name="nav_browser">Steam Browser</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="nav_about">Über Ice</string>
+    <string name="nav_signout">Abmelden</string>
+
+    <string name="purchase_pending">Kauf bevorstehend...</string>
+    <string name="purchase_complete">Kauf erfolgreich! Danke dir!</string>
+    <string name="signed_out">Abgemeldet</string>
+    <string name="send_button">Senden</string>
+    <string name="chat_hint">Zum chatten antippen!</string>
+    <string name="app_crashed_toast">Ice Client ist abgestürzt, ein Bericht wurde an den Entwickler gesendet um das Problem zu beheben!</string>
+    <string name="playing">Spielt</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="accept">Akzeptieren</string>
+    <string name="add">Hinzufügen</string>
+    <string name="change_display_name">Anzeigenamen ändern</string>
+    <string name="change_display_name_prompt">Neuen Anzeigenamen eingeben:</string>
+    <string name="set_currently_playing_game">Aktuell gespieltes Spiel wählen</string>
+
+    <string name="x_new_messages">%1$d Nachrichten</string>
+
+    <string-array name="allowed_states">
+        <item>Online</item>
+        <item>Abwesend</item>
+        <item>Beschäftigt</item>
+        <item>Untäting</item>
+        <item>Möchte Handeln</item>
+        <item>Möchte Spielen</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>Offline</item>
+        <item>Online</item>
+        <item>Beschäftigt</item>
+        <item>Abwesend</item>
+        <item>Untäting</item>
+        <item>Möchte Handeln</item>
+        <item>Möchte Spielen</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>Unbekannter Status</item>
+        <item>Initialisierung...</item>
+        <item>Verbinde...</item>
+        <item>Melde an...</item>
+        <item>Authentifiziere...</item>
+        <item>Schlüssel abrufen...</item>
+        <item>Verbunden</item>
+        <item>Getrennt</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">In die Zwischenablage kopiert.</string>
+
+    <string name="change">ändern</string>
+    <string name="baa">moo</string>
+    <string name="dismiss">Verwerfen</string>
+    <string name="feature_not_implemented">Funktion nicht eingebaut</string>
+    <string name="error_getting_key">Fehler beim abrufen des WebAPI-Schlüssels. Einige Funktion (z.B. Handelsangebote) werden nicht ordnungsgemäß funktionieren.</string>
+    <string name="error_steamapi">Fehler beim SteamAPI-Zugriff.</string>
+    <string name="ok">OK</string>
+
+    <string name="action_settings">Einstellungen</string>
+
+    <string name="web_back">Zurück</string>
+    <string name="web_forward">Vorwärts</string>
+    <string name="web_reload">Seite erneut laden</string>
+    <string name="web_community">Steam Community</string>
+    <string name="web_store">Steam Shop</string>
+    <string name="web_toggle_view">Desktop-Ansicht</string>
+
+    <string name="library_playtime">%1$.1f Stunden gespielt</string>
+    <string name="library_playtime_full">%1$.1f Stunden in den letzten 2 Wochen\n%2$.1f Stunden insgesamt</string>
+    <string name="library_sort">Sortieren</string>
+    <string name="library_sort_name">alphabetisch</string>
+    <string name="library_sort_playtime">zeitlich</string>
+
+    <string-array name="store_tabs">
+        <item>Shop</item>
+        <item>Warenkorb</item>
+        <item>Suche</item>
+        <item>Wunschliste</item>
+        <item>Account</item>
+    </string-array>
+    <string-array name="store_urls">
+        <item>https://store.steampowered.com/mobilestorefront/main</item>
+        <item>https://store.steampowered.com/mobilecart/</item>
+        <item>https://store.steampowered.com/mobilestorefront/search</item>
+        <item>https://steamcommunity.com/my/wishlist/</item>
+        <item>https://store.steampowered.com/mobileaccount/</item>
+    </string-array>
+
+
+    <plurals name="notification_comments">
+        <item quantity="one">%d neuer Kommentar</item>
+        <item quantity="other">%d neue Kommentare</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d neuer Gegenstand im Inventar</item>
+        <item quantity="other">%d neue Gegenstände im Inventar</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d ungelese Chatnachricht</item>
+        <item quantity="other">%d ungelese Chatnachrichten</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d neue Handelsanfrage</item>
+        <item quantity="other">%d neue Handelsanfragen</item>
+    </plurals>
+    <string name="developed_by_aegamesi">developed by aegamesi.com</string>
+    <string name="offer_must_counter">You must make a counteroffer to change the offer.</string>
+    <string name="rate_snackbar_action">RATE</string>
+    <string name="rate_snackbar_text">Do you like Ice?</string>
+    <string name="remove_ads_ad">Support the development of Ice!\nTap here to remove ads.</string>
+    <string name="time_in_future">In the future</string>
+    <string name="time_just_now">Just now</string>
+    <string name="time_now">Now</string>
+</resources>

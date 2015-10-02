@@ -188,7 +188,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tabInventoryList = (ItemListView) tab_views[0].findViewById(R.id.itemlist);
 		tabInventoryList.setProvider(new ItemListView.IItemListProvider() {
 			@Override
-			public void onItemChecked(final TradeInternalAsset item, final boolean checked) {
+			public boolean onItemChecked(final TradeInternalAsset item, final boolean checked) {
 				final Trade trade = trade();
 				trade.run(new Runnable() {
 					@Override
@@ -204,6 +204,8 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 				tabOfferOtherReady.setChecked(false);
 				tabOfferAccept.setEnabled(false);
 				tabOfferStatusCircle.setVisibility(View.GONE);
+
+				return true;
 			}
 
 			@Override
@@ -234,6 +236,7 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 		tabOfferCancel.setOnClickListener(this);
 		tabOfferStatusCircle = (ProgressBar) tab_views[1].findViewById(R.id.trade_status_progress);
 		// TAB 2: Chat
+		view.findViewById(R.id.chat_main).setVisibility(View.VISIBLE);
 		tabChatList = (RecyclerView) view.findViewById(R.id.chat);
 		tabChatInput = (EditText) view.findViewById(R.id.chat_input);
 		tabChatButton = (ImageButton) view.findViewById(R.id.chat_button);

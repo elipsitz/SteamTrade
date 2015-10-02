@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -219,6 +221,25 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		// set up billing processor
 		billingProcessor = new BillingProcessor(this, getString(R.string.iab_license_key), this);
 		billingProcessor.loadOwnedPurchasesFromGoogle();
+
+		// "rate this app!"
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		final int num_launches = prefs.getInt("num_launches", 0) + 1;
+		prefs.edit().putInt("num_launches", num_launches).apply();
+		boolean rated = prefs.getBoolean("rated", false);
+		if(num_launches > 0 && (num_launches % 10 == 0) && !rated && num_launches <= (10 * 5)) {
+			// show the snackbar
+			Snackbar.make(findViewById(android.R.id.content), R.string.rate_snackbar_text, Snackbar.LENGTH_LONG)
+					.setAction(R.string.rate_snackbar_action, new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							prefs.edit().putBoolean("rated", true).apply();
+							Uri marketUri = Uri.parse("market://details?id=" + getPackageName());
+							startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
+						}
+					}).show();
+		}
+
 
 		// setup amazon ads
 		//AdRegistration.enableLogging(debug_amazon_ads);
@@ -429,7 +450,16 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 			case R.id.nav_games:
 				browseToFragment(new FragmentLibrary(), true);
 				break;
-			case R.id.nav_store:
+			case R.id.nav_market: {
+				Bundle args = new Bundle();
+				args.putBoolean("headless", true);
+				args.putString("url", "https://steamcommunity.com/market/");
+				FragmentWeb fragment = new FragmentWeb();
+				fragment.setArguments(args);
+				browseToFragment(fragment, true);
+				break;
+			}
+			case R.id.nav_store: {
 				Bundle args = new Bundle();
 				args.putBoolean("headless", true);
 				args.putStringArray("tabs", getResources().getStringArray(R.array.store_tabs));
@@ -438,6 +468,7 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 				fragment.setArguments(args);
 				browseToFragment(fragment, true);
 				break;
+			}
 			case R.id.nav_browser:
 				browseToFragment(new FragmentWeb(), true);
 				break;

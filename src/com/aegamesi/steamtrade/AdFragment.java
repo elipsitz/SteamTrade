@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AdFragment extends Fragment implements View.OnClickListener {
 	private static final int AD_REFRESH_TIME = 60;
-	private static final int AD_MIN_TIME = 10;
+	private static final int AD_MIN_TIME = 30;
 	private long last_load = 0;
 	private com.amazon.device.ads.AdLayout amazonAdView;
 	private com.google.android.gms.ads.AdView admobAdView;

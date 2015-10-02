@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="friend_add">Freund hinzufügen</string>
+    <string name="friend_accept">Anfrage annehmen</string>
+    <string name="friend_ignore">Anfrage ignorieren</string>
+    <string name="friend_add_prompt">Bitte die SteamID oder die E-Mail des Freundes eingeben um Ihn hinzuzufügen:</string>
+    <string name="friend_add_fail">Fehler beim hinzufügen des Freundes: %1$s</string>
+    <string name="friend_add_success">Freund hinzugefügt.</string>
+    <string name="friend_remove">Freund entfernen</string>
+    <string name="friend_remove_message">Bist du dir sicher, dass du \'%1$s\' von deiner Freundesliste entfernen möchtest?</string>
+    <string name="friend_removed">Entfernt: \'%1$s\'.</string>
+    <string name="friend_search">Freundesliste durchsuchen</string>
+    <string name="friend_request_accept">Freundesanfrage annehmen</string>
+    <string name="friend_request_ignore">Freundesanfrage ignorieren</string>
+    <string name="friend_view_steam">Auf Steam anzeigen</string>
+    <string name="friend_view_steamrep">Auf SteamRep anzeigen</string>
+    <string name="friend_view_library">Spiele anzeigen</string>
+    <string name="friend_is_typing">Partner schreibt...</string>
+    <string name="profile_view">Profil anzeigen</string>
+    <string name="profile_summary">Übersicht</string>
+    <string name="profile_loading_summary">Übersicht wird geladen...</string>
+    <string name="friend_request">Freundesanfrage</string>
+    <string name="friend_request_text">%1$s hat dich hinzugefügt.</string>
+    <string name="friend_request_multi">Du hast %1$d verbleibende Anfrage(n).</string>
+    <string name="friend_block">Blockieren</string>
+    <string name="friend_unblock">Entsperren</string>
+
+    <string name="chat_group">Gruppen-Chat</string>
+    <string name="chat_with">Chat mit %1$s</string>
+    <string name="friend_invite_to_chat">Zum Chatten einladen...</string>
+    <string name="friend_invite_to_trade">Zum Handeln einladen</string>
+    <string name="friend_send_trade_offer">Handelsanfrage senden</string>
+    <string name="chat_you">Du</string>
+    <string name="chat_them">Sie</string>
+    <string name="chat_chat">Chat</string>
+    <string name="chat_participants">Teilnehmer</string>
+</resources>

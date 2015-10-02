@@ -1,8 +1,10 @@
 package com.aegamesi.steamtrade;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.aegamesi.steamtrade.steam.SteamLogcatDebugListener;
@@ -82,6 +84,11 @@ public class SteamTrade extends Application {
 	public Tracker getTracker() {
 		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
 		return analytics.newTracker(R.xml.tracker);
+	}
+
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
 	}
 
 	private void handleWebConfig() {

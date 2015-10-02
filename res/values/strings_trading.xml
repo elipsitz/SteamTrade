@@ -63,7 +63,7 @@
         <item>Canadian Dollar (CDN)</item>
         <item>New Zealand Dollar (NZD)</item>
     </string-array>
-    <string-array name="steam_currency_val">
+    <string-array name="steam_currency_val" translatable="false">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -145,5 +145,6 @@
     <string name="offer_confirm_cancel">Are you sure you want to cancel this trade offer?</string>
     <string name="offer_successful">The trade offer was successful.</string>
     <string name="offer_confirm_email">In order to complete this trade offer, you must complete an additional verification step. An email has been sent to your address (ending in "%1$s") with additional instructions.</string>
+    <string name="offer_must_counter">You must make a counteroffer to change the offer.</string>
 
 </resources>

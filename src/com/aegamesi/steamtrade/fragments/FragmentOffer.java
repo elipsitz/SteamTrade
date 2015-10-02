@@ -186,13 +186,20 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		tabInventoryList = (ItemListView) tab_views[0].findViewById(R.id.itemlist);
 		tabInventoryList.setProvider(new ItemListView.IItemListProvider() {
 			@Override
-			public void onItemChecked(TradeInternalAsset item, boolean checked) {
+			public boolean onItemChecked(TradeInternalAsset item, boolean checked) {
+				if(!offer.counterOffer && !offer.newOffer) {
+					Toast.makeText(activity(), R.string.offer_must_counter, Toast.LENGTH_LONG).show();
+					return false;
+				}
+
 				boolean isUs = tabInventoryRadioUs.isChecked();
 				if (checked)
 					(isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().add(item);
 				else
 					(isUs ? offer.TRADE_USER_SELF : offer.TRADE_USER_PARTNER).getOffer().remove(item);
 				updateUIOffers();
+
+				return true;
 			}
 
 			@Override
@@ -395,7 +402,7 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	}
 
 	public void updateUITabButton(int num) {
-		if (activity() != null && activity().tabs != null && activity().tabs.getTabCount() > 0) {
+		if (activity() != null && activity().tabs != null && activity().tabs.getTabCount() > num) {
 			Tab tab = activity().tabs.getTabAt(num);
 			String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
 			if (tab_notifications[num] > 0)
