@@ -33,7 +33,7 @@
         <item>Within 1 hour</item>
         <item>Do not show recent chats</item>
     </string-array>
-    <string-array name="pref_recent_chats_values">
+    <string-array name="pref_recent_chats_values" translatable="false">
         <item>168</item>
         <item>48</item>
         <item>24</item>

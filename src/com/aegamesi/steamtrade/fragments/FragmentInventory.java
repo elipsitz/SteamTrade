@@ -141,7 +141,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		itemList = (ItemListView) view.findViewById(R.id.itemlist);
 		itemListProvider = new ItemListView.IItemListProvider() {
 			@Override
-			public void onItemChecked(TradeInternalAsset item, boolean checked) {
+			public boolean onItemChecked(TradeInternalAsset item, boolean checked) {
 				if (checked)
 					craftingItems.add(item);
 				else
@@ -149,6 +149,8 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 
 				buttonCraft.setEnabled(craftingItems.size() > 0 && checkBoxEnableCrafting.isChecked());
 				buttonCraft.setText(String.format(getString(R.string.craft_x_items), craftingItems.size()));
+
+				return true;
 			}
 
 			@Override

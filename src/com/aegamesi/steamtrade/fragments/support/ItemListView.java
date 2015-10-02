@@ -118,8 +118,13 @@ public class ItemListView extends RecyclerView implements OnClickListener {
 		if (view.getId() == R.id.itemlist_check) {
 			TradeInternalAsset item = (TradeInternalAsset) view.getTag();
 			final boolean checked = ((CheckBox) view).isChecked();
+			boolean allowed = true;
 			if (provider != null)
-				provider.onItemChecked(item, checked);
+				allowed = provider.onItemChecked(item, checked);
+
+			if(!allowed) {
+				((CheckBox) view).setChecked(!checked);
+			}
 		}
 		if (view.getId() == R.id.itemlist_item) {
 			// item clicked
@@ -141,7 +146,7 @@ public class ItemListView extends RecyclerView implements OnClickListener {
 	}
 
 	public interface IItemListProvider {
-		void onItemChecked(TradeInternalAsset item, boolean checked);
+		boolean onItemChecked(TradeInternalAsset item, boolean checked);
 
 		boolean shouldItemBeChecked(TradeInternalAsset item);
 	}

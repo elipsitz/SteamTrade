@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Gegenstandsbild</string>
+
+    <string name="inv_error_private">Dieses Inventar ist Privat.</string>
+    <string name="inventory">Inventar</string>
+
+    <string name="search_inventory">Inventar durchsuchen</string>
+    <string name="search_result_count">Zeige %1$d von %2$d</string>
+    <string name="toggle_view_mode">Anzeigemodus aktivieren</string>
+    <string name="inv_error_loading">Unbekannter Fehler beim Laden des Inventars.</string>
+
+    <string name="craft_x_items">Stelle %1$d Team-Fortress 2 Gegenstand her</string>
+    <string name="craft_noncraftable">Ein oder mehrere der ausgewählten Gegenstände können nicht hergestellt werden.</string>
+    <string name="craft_nontradable">Ein oder mehrere der ausgewählten Gegenstände können nicht gehandelt werden. Trotzdem fortfahren?</string>
+    <string name="craft_failed">Herstellung fehlgeschlagen.</string>
+    <string name="craft_successful">Herstellung erfolgreich: %1$d Gegenstände hergestellt. Lade...</string>
+    <string name="craft_completed">Herstellung abgeschlossen</string>
+    <string name="craft_crafting">Stelle her...</string>
+    <string name="craft_enable">Herstellung aktivieren</string>
+
+    <string name="market_item_notfound">Keine Marktinfo gefunden</string>
+    <string name="market_info_loading">Lade Marktinfo...</string>
+    <string name="market_low">Beginne bei: %1$s</string>
+    <string name="market_median">Durchschnittspreis: %1$s</string>
+    <string name="market_volume">%1$s verkauft in den letzten 24 Stunden</string>
+</resources>

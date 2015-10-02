@@ -1,0 +1,29 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Nutzername</string>
+    <string name="prompt_password">Passwort</string>
+    <string name="prompt_steamguard">Steam Guard Code</string>
+    <string name="action_sign_in">Anmelden</string>
+    <string name="error_loginkey_expired">Dein Anmeldeschlüssel ist abgelaufen. Bitte versuche es erneut.</string>
+    <string name="error_incorrect_password">Falsches Passwort</string>
+    <string name="error_field_required">Dieses Feld wird benötigt</string>
+    <string name="error_incorrect_steamguard">Der SteamGuard-Code ist falsch</string>
+    <string name="error_steamguard_required">Dieser Account ist durch SteamGuard geschützt</string>
+    <string name="prompt_remember">Speichern</string>
+    <string name="description_logo">Logo</string>
+    <string name="authenticating">Authentifizieren…</string>
+    <string name="cannot_auth_with_steamweb">Das Authentifizieren mit dem SteamWeb ist nicht möglich. Möglicherweise sind die Steam-Server nicht erreichbar.</string>
+    <string name="not_connected_to_internet">Du bist nicht mit dem Internet verbunden.</string>
+    <string name="connected_via_mobiledata">Du bist über eine Mobile Datenverbindung mit dem Internet verbunden.\nDies könnte die Verbindung zu Steam erschweren.</string>
+    <string name="initializing">Initialisiere…</string>
+    <string name="signingout">Melde ab…</string>
+    <string name="logging_on">Melde an…</string>
+    <string name="connecting">Verbinde…</string>
+    <string name="fetching_key">Schlüssel abrufen…</string>
+    <string name="cannot_connect_to_steam">Verbindung zum Steam-Server konnte nicht hergestellt werden.</string>
+    <string name="login_saved">Mit gespeichertem Account angemeldet</string>
+    <string name="login_different">Mit neuem Account anmelden</string>
+    <string name="login_confirm_delete_account">Bist du dir sicher, dass du diesen Account entfernen möchtest \'%1$s\'?</string>
+
+</resources>

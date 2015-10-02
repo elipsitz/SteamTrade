@@ -17,12 +17,15 @@
 
     <string name="steamguard_new">This is the first time you are logging into this account on this device.\n\nAs per Valve restrictions, you may not be allowed to trade or send trade offers from this device for the next 7 days.</string>
     <string name="api_key_not_loaded">A WebAPI key was not properly retrieved. This feature will not work.</string>
+    <string name="rate_snackbar_text">Do you like Ice?</string>
+    <string name="rate_snackbar_action">RATE</string>
 
     <string name="nav_friends">Friends</string>
     <string name="nav_inventory">Inventory</string>
     <string name="nav_offers">Trade Offers</string>
     <string name="nav_games">Library</string>
     <string name="nav_store">Steam Store</string>
+    <string name="nav_market">Steam Community Market</string>
     <string name="nav_browser">Steam Browser</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_about">About Ice</string>
