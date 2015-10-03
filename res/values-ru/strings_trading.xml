@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">Sent a trade request to %1$s</string>
+    <string name="trade_got_request">%1$s has requested to trade.</string>
+    <string name="trade_new_request">Trade Request</string>
+    <string name="trade_currently_trading">Trading with %1$s.</string>
+    <string name="trade_result_accepted">%1$s accepted your trade request!</string>
+    <string name="trade_result_alreadytrading">%1$s is trading with someone else.</string>
+    <string name="trade_result_timeout">%1$s did not respond in time.</string>
+    <string name="trade_result_declined">%1$s declined to trade.</string>
+    <string name="trade_result_unknown">%1$s was unable to trade for an unknown reason: %2$s</string>
+    <string name="trade_result_cancelled">Trade request cancelled.</string>
+    <string name="trade_result_targetcannotrade">%1$s is unable to trade. More information will be shown if they request to trade.</string>
+    <string name="trade_result_steamguard">SteamGuard must be enabled to trade.</string>
+    <string name="trade_result_steamguard_duration">SteamGuard must have been enabled for 15 days to trade.</string>
+    <string name="trade_result_steamguard_newdevice">Due to Valve restrictions, you cannot trade for 7 days on a new device.</string>
+    <string name="trade_result_password_reset">You have recently reset your password and cannot trade.</string>
+    <string name="trade_result_require_email">You must verify your email address to trade.</string>
+    <string name="trade_result_tradeban_target">%1$s has been tradebanned, and cannot trade.</string>
+    <string name="trade_result_tradeban_initiator">You have been tradebanned, and cannot trade.</string>
+
+    <color name="color_trade_white">#A3A099</color>
+    <color name="color_trade_blacktext">#282827</color>
+    <color name="color_trade_result_background">#1D1D1D</color>
+
+    <string name="trading_with">Trading with %1$s</string>
+
+    <string-array name="trade_tabs">
+        <item>Inventory</item>
+        <item>Offerings</item>
+        <item>Chat</item>
+    </string-array>
+
+    <string name="trade_ready">Ready</string>
+    <string name="trade_your_offerings">Your Offerings</string>
+    <string name="trade_their_offerings">Their Offerings</string>
+    <string name="trade_accept">Accept Trade</string>
+    <string name="trade_tap_to_view">Tap to view</string>
+    <string name="trade_error">Error Trading</string>
+    <string name="trade_completed">Trade Completed</string>
+    <string name="trade_new_items">%1$d new items acquired</string>
+    <string name="trade_cancel">Cancel</string>
+    <string name="trade_confirm_email">You and/or your partner may need to confirm this trade via email.</string>
+    <string name="trade_status_unknown">Status unknown.</string>
+
+    <!-- market -->
+    <string-array name="steam_currency">
+        <item>US Dollar (USD)</item>
+        <item>British Pound (GBP)</item>
+        <item>Euro (EUR)</item>
+        <item>Russian Ruble (RUB)</item>
+        <item>Brazilian Real (BRL)</item>
+        <item>Japanese Yen (JPN)</item>
+        <item>Norwegian Krone (NOK)</item>
+        <item>Indonesian Rupiah (IDR)</item>
+        <item>Malaysian Ringgit (RM)</item>
+        <item>Philippine Peso (PHP)</item>
+        <item>Singapore Dollar (SGD)</item>
+        <item>Thai Baht (THB)</item>
+        <item>Turkish Lira (TRY)</item>
+        <item>Mexican Peso (MXN)</item>
+        <item>Canadian Dollar (CDN)</item>
+        <item>New Zealand Dollar (NZD)</item>
+    </string-array>
+    <string-array name="steam_currency_val" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>17</item>
+        <item>19</item>
+        <item>20</item>
+        <item>22</item>
+    </string-array>
+
+    <!-- offers -->
+    <string name="trade_offers">Trade Offers</string>
+    <string name="trade_offer">Trade Offer</string>
+    <string name="offer_trade">Offer Trade</string>
+    <string-array name="offer_tabs">
+        <item>Inventories</item>
+        <item>Offerings</item>
+        <item>Review</item>
+    </string-array>
+    <string-array name="offer_status">
+        <item>Unknown</item>
+        <item>Invalid</item>
+        <item>Active</item>
+        <item>Accepted</item>
+        <item>Countered</item>
+        <item>Expired</item>
+        <item>Canceled</item>
+        <item>Declined</item>
+        <item>Invalid Items</item>
+        <item>Awaiting Email Confirmation</item>
+        <item>Canceled via Email</item>
+    </string-array>
+    <string name="offer_radio_incoming">Incoming Offers</string>
+    <string name="offer_radio_sent">Sent Offers</string>
+    <string name="offer_inventory_us">Your Inventory</string>
+    <string name="offer_inventory_them">Partner\'s Inventory</string>
+    <string name="offer_message">Message</string>
+    <string name="offer_accept">Accept Offer</string>
+    <string name="offer_decline">Decline Offer</string>
+    <string name="offer_button_respond">Respond</string>
+    <string name="offer_button_decline">Decline</string>
+    <string name="offer_button_cancel">Cancel</string>
+    <string name="offer_counter">Make a Counteroffer</string>
+    <string name="offer_cancel">Cancel Offer</string>
+    <string name="offer_send">Send Offer</string>
+    <string name="offer_contents">You will give %1$d items and receive %2$d items.</string>
+    <string name="offer_will_give">You will give:</string>
+    <string name="offer_will_receive">You will receive:</string>
+    <string name="offer_no_message">[No message]</string>
+    <string name="offer_count">Showing %1$d active trade offers.</string>
+    <string name="offer_error_loading">Error loading offer details.</string>
+    <string name="offers_error_loading">Error loading trade offers.</string>
+    <string name="offer_with">Offer with %1$s</string>
+    <string name="offer_received_heading">%1$s offered you a trade:</string>
+    <string name="offer_sent_heading">You sent %1$s a trade:</string>
+    <string name="offer_cancelled">Offer cancelled.</string>
+    <string name="offer_declined">Offer declined.</string>
+    <string name="offer_submitted">Offer submitted.</string>
+    <string name="offer_accepted">Offer accepted.</string>
+    <string name="offer_message_quote">Message:\n\"%1$s\"</string>
+    <string name="offer_declining">Declining offer…</string>
+    <string name="offer_accepting">Accepting offer…</string>
+    <string name="offer_submitting">Submitting offer…</string>
+    <string name="offer_loading">Loading offer…</string>
+    <string name="offer_send_message">Send a message with your offer\n(maximum 128 characters)</string>
+    <string name="offer_fromurl">Create offer from URL</string>
+    <string name="offer_create">Create Trade Offer</string>
+    <string name="offer_create_prompt">Please enter a sharable trade offer URL to create a trade offer.\n\nAlternatively, tap on a friend in your friends list and select \"Offer Trade\".</string>
+    <string name="offer_invalid_url">Invalid trade offer URL.</string>
+    <string name="offer_confirm_decline">Are you sure you want to decline this trade offer?</string>
+    <string name="offer_confirm_cancel">Are you sure you want to cancel this trade offer?</string>
+    <string name="offer_successful">The trade offer was successful.</string>
+    <string name="offer_confirm_email">In order to complete this trade offer, you must complete an additional verification step. An email has been sent to your address (ending in "%1$s") with additional instructions.</string>
+    <string name="offer_must_counter">You must make a counteroffer to change the offer.</string>
+
+</resources>

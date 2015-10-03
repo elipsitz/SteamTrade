@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Изображение предмета</string>
+
+    <string name="inv_error_private">Этот инвентарь скрыт.</string>
+    <string name="inventory">Инвентарь</string>
+
+    <string name="search_inventory">Search Inventory</string>
+    <string name="search_result_count">Displaying %1$d of %2$d</string>
+    <string name="toggle_view_mode">Toggle View Mode</string>
+    <string name="inv_error_loading">Unknown error loading inventory.</string>
+
+    <string name="craft_x_items">Craft %1$d TF2 Item(s)</string>
+    <string name="craft_noncraftable">One or more of the items you have selected cannot be crafted.</string>
+    <string name="craft_nontradable">One or more of the items you have selected are untradable. The result will also be untradable. Proceed anyway?</string>
+    <string name="craft_failed">Crafting failed.</string>
+    <string name="craft_successful">Crafting successful: %1$d items created. Loading…</string>
+    <string name="craft_completed">Craft Completed</string>
+    <string name="craft_crafting">Crafting…</string>
+    <string name="craft_enable">Enable Crafting</string>
+
+    <string name="market_item_notfound">Информация маркета не найдена</string>
+    <string name="market_info_loading">Загрузка информации маркета…</string>
+    <string name="market_low">Начинается с: %1$s</string>
+    <string name="market_median">Average Price: %1$s</string>
+    <string name="market_volume">%1$s штук продано за последние 24 часа</string>
+</resources>
