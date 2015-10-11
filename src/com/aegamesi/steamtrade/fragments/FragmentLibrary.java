@@ -1,18 +1,22 @@
 package com.aegamesi.steamtrade.fragments;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
@@ -118,6 +122,31 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 			case R.id.menu_library_sort_playtime:
 				if (adapterLibrary != null && adapterLibrary.currentSort != LibraryAdapter.SORT_PLAYTIME)
 					adapterLibrary.setGames(games, LibraryAdapter.SORT_PLAYTIME);
+				return true;
+
+			case R.id.menu_library_add:
+				AlertDialog.Builder alert = new AlertDialog.Builder(activity());
+				alert.setTitle(activity().getString(R.string.library_activate_product));
+				alert.setMessage(activity().getString(R.string.library_enter_key));
+				final EditText input = new EditText(activity());
+				input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+				alert.setView(input);
+				alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						String key = input.getText().toString().toUpperCase().trim();
+						if (key.length() != 0 && activity() != null) {
+							// send this to steam for activation
+							activity().steamUser.registerProductKey(key);
+							// show a toast
+							Toast.makeText(activity(), R.string.library_validating_key, Toast.LENGTH_SHORT).show();
+						}
+					}
+				});
+				alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+					}
+				});
+				alert.show();
 				return true;
 
 			default:

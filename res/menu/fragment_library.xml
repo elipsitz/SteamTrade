@@ -13,4 +13,11 @@
         </menu>
     </item>
 
+    <item
+        android:id="@+id/menu_library_add"
+        android:icon="@drawable/ic_plus"
+        android:title="@string/library_activate_product"
+        app:showAsAction="always">
+    </item>
+
 </menu>

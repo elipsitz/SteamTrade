@@ -139,4 +139,12 @@
     <string name="time_in_future">In the future</string>
     <string name="time_just_now">Just now</string>
     <string name="time_now">Now</string>
+    <string name="library_activate_product">Ein Produkt aktivieren</string>
+    <string name="library_enter_key">Bitte geben Sie den Produktschlüssel ein, den Sie aktivieren möchten. </string>
+    <string name="library_validating_key">Verifying product code</string>
+    <string name="library_activation_code_used">Product code already redeemed.</string>
+    <string name="library_activation_error">Unknown error.</string>
+    <string name="library_activation_failed">Activation Failed</string>
+    <string name="library_activation_invalid_code">Invalid product code.</string>
+    <string name="library_activation_successful">Activation Successful</string>
 </resources>
