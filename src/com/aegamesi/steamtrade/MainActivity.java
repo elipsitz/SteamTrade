@@ -58,6 +58,7 @@ import org.acra.ACRA;
 
 import java.util.Locale;
 
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPaymentMethod;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
@@ -71,8 +72,10 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.SessionStar
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeProposedCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeResultCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
+import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.PurchaseResponseCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
+import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 
 public class MainActivity extends AppCompatActivity implements SteamMessageHandler, BillingProcessor.IBillingHandler, OnNavigationItemSelectedListener {
@@ -380,6 +383,41 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 			@Override
 			public void call(NotificationUpdateCallback obj) {
 				updateDrawerProfile();
+			}
+		});
+
+		// we've redeemed (or failed to redeem) a cd key
+		msg.handle(PurchaseResponseCallback.class, new ActionT<PurchaseResponseCallback>() {
+			@Override
+			public void call(PurchaseResponseCallback obj) {
+				if (obj.getResult() == EResult.OK) {
+					KeyValue kv = obj.getPurchaseReceiptInfo().getKeyValues();
+					if (kv.get("PaymentMethod").asInteger(0) == EPaymentMethod.ActivationCode.v()) {
+						String productName = "";
+						int itemCount = kv.get("LineItemCount").asInteger(0);
+						for (int i = 0; i < itemCount; i++) {
+							productName += kv.get("lineitems").get(i + "").get("ItemDescription").asString() + "\n";
+						}
+
+						(new AlertDialog.Builder(MainActivity.this))
+								.setTitle(R.string.library_activation_successful)
+								.setMessage(productName)
+								.setNeutralButton(R.string.ok, null)
+								.show();
+					}
+				} else {
+					int error = R.string.library_activation_error;
+					if (obj.getPurchaseResultDetails() == 14)
+						error = R.string.library_activation_invalid_code;
+					if (obj.getPurchaseResultDetails() == 9)
+						error = R.string.library_activation_code_used;
+
+					(new AlertDialog.Builder(MainActivity.this))
+							.setTitle(R.string.library_activation_failed)
+							.setMessage(error)
+							.setNeutralButton(R.string.ok, null)
+							.show();
+				}
 			}
 		});
 

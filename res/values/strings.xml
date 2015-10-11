@@ -100,6 +100,14 @@
     <string name="library_sort">Change sorting</string>
     <string name="library_sort_name">Sort alphabetically</string>
     <string name="library_sort_playtime">Sort by playtime</string>
+    <string name="library_activate_product">Activate a Product</string>
+    <string name="library_enter_key">Please enter the product code you wish to activate.</string>
+    <string name="library_validating_key">Verifying product code.</string>
+    <string name="library_activation_successful">Activation Successful</string>
+    <string name="library_activation_failed">Activation Failed</string>
+    <string name="library_activation_invalid_code">Invalid product code.</string>
+    <string name="library_activation_error">Unknown error.</string>
+    <string name="library_activation_code_used">Product code already redeemed.</string>
 
     <string-array name="store_tabs">
         <item>Catalog</item>
