@@ -276,6 +276,23 @@ public class LoginActivity extends AppCompatActivity {
 		SteamService.connectionListener = connectionListener;
 	}
 
+	private void showAndFillManualLogin(String username) {
+		headerNew.setVisibility(View.GONE);
+		viewNew.setVisibility(View.VISIBLE);
+		((LayoutParams) cardNew.getLayoutParams()).weight = 1;
+
+		headerSaved.setVisibility(View.VISIBLE);
+		viewSaved.setVisibility(View.GONE);
+		((LayoutParams) cardSaved.getLayoutParams()).weight = 0;
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+		String password = prefs.getString("password_" + username, "");
+
+		textUsername.setText(SteamService.extras.getString("username"));
+		textPassword.setText(password);
+		rememberInfoCheckbox.setChecked(true);
+	}
+
 	private class ConnectionListener implements SteamConnectionListener {
 		private boolean handle_result = true;
 
@@ -300,15 +317,11 @@ public class LoginActivity extends AppCompatActivity {
 					if (result == EResult.InvalidPassword) {
 						// maybe change error to "login key expired, log in again" if using loginkey
 						if (SteamService.extras != null && SteamService.extras.getBoolean("loginkey", false)) {
-							headerNew.performClick();
-							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-							String password = prefs.getString("password_" + SteamService.extras.getString("username"), "");
-
 							Toast.makeText(LoginActivity.this, R.string.error_loginkey_expired, Toast.LENGTH_LONG).show();
 							textPassword.setError(getString(R.string.error_loginkey_expired));
-							textUsername.setText(SteamService.extras.getString("username"));
-							textPassword.setText(password);
-							rememberInfoCheckbox.setChecked(true);
+
+							String username = SteamService.extras.getString("username");
+							showAndFillManualLogin(username);
 						} else {
 							textPassword.setError(getString(R.string.error_incorrect_password));
 							textPassword.requestFocus();
@@ -323,11 +336,17 @@ public class LoginActivity extends AppCompatActivity {
 						textSteamguard.requestFocus();
 						Toast.makeText(LoginActivity.this, "SteamGuard: " + result.name(), Toast.LENGTH_LONG).show();
 
+						String username = SteamService.extras.getString("username");
+						showAndFillManualLogin(username);
+
 						need_twofactor = result == EResult.AccountLoginDeniedNeedTwoFactor;
 					} else if (result == EResult.InvalidLoginAuthCode || result == EResult.TwoFactorCodeMismatch) {
 						textSteamguard.setVisibility(View.VISIBLE);
 						textSteamguard.setError(getString(R.string.error_incorrect_steamguard));
 						textSteamguard.requestFocus();
+
+						String username = SteamService.extras.getString("username");
+						showAndFillManualLogin(username);
 
 						need_twofactor = result == EResult.TwoFactorCodeMismatch;
 					} else if (result != EResult.OK) {

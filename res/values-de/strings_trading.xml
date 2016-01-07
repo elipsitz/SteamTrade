@@ -40,27 +40,6 @@
     <string name="trade_confirm_email">Du und/oder dein Partner muss(t) den Handeln per E-Mail best�tigen.</string>
     <string name="trade_status_unknown">Status unbekannt.</string>
 
-    <!-- market -->
-    <string-array name="steam_currency">
-        <item>US Dollar (USD)</item>
-        <item>British Pound (GBP)</item>
-        <item>Euro (EUR)</item>
-        <item>Russian Ruble (RUB)</item>
-        <item>Brazilian Real (BRL)</item>
-        <item>Japanese Yen (JPN)</item>
-        <item>Norwegian Krone (NOK)</item>
-        <item>Indonesian Rupiah (IDR)</item>
-        <item>Malaysian Ringgit (RM)</item>
-        <item>Philippine Peso (PHP)</item>
-        <item>Singapore Dollar (SGD)</item>
-        <item>Thai Baht (THB)</item>
-        <item>Turkish Lira (TRY)</item>
-        <item>Mexican Peso (MXN)</item>
-        <item>Canadian Dollar (CDN)</item>
-        <item>New Zealand Dollar (NZD)</item>
-    </string-array>
-
-
     <!-- offers -->
     <string name="trade_offers">Handelsanfragen</string>
     <string name="trade_offer">Handelsanfrage</string>
@@ -82,6 +61,7 @@
         <item>Ung�ltige Gegenst�nde</item>
         <item>Warte auf E-Mailbest�tigung</item>
         <item>Abgebrochen durch E-Mail</item>
+        <item>Held in Escrow</item>
     </string-array>
     <string name="offer_radio_incoming">Erhaltene Angebote</string>
     <string name="offer_radio_sent">Gesendete Angebote</string>

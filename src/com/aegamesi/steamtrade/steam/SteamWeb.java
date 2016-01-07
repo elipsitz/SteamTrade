@@ -113,7 +113,7 @@ public class SteamWeb {
 
 			conn.setRequestProperty("User-Agent", USER_AGENT);
 
-			conn.setRequestProperty("Host", "steamcommunity.com");
+			//conn.setRequestProperty("Host", "steamcommunity.com");
 			conn.setRequestProperty("Content-type",
 					"application/x-www-form-urlencoded; charset=UTF-8");
 			conn.setRequestProperty("Accept",

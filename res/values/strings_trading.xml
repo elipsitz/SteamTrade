@@ -45,7 +45,7 @@
     <string name="trade_status_unknown">Status unknown.</string>
 
     <!-- market -->
-    <string-array name="steam_currency">
+    <string-array name="steam_currency" translatable="false">
         <item>US Dollar (USD)</item>
         <item>British Pound (GBP)</item>
         <item>Euro (EUR)</item>
@@ -62,6 +62,16 @@
         <item>Mexican Peso (MXN)</item>
         <item>Canadian Dollar (CDN)</item>
         <item>New Zealand Dollar (NZD)</item>
+        <item>Chinese Yuan (CNY)</item>
+        <item>Indian Rupee (INR)</item>
+        <item>Chilean Peso (CLP)</item>
+        <item>Peruvian Nuevo (PEN)</item>
+        <item>Colombian Peso (COP)</item>
+        <item>South African Rand (ZAR)</item>
+        <item>Hong Kong Dollar (HKD)</item>
+        <item>New Taiwan Dollar (TWD)</item>
+        <item>Saudi Riyal (SAR)</item>
+        <item>United Arab Emirates Dirham (AED)</item>
     </string-array>
     <string-array name="steam_currency_val" translatable="false">
         <item>1</item>
@@ -80,6 +90,16 @@
         <item>19</item>
         <item>20</item>
         <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
     </string-array>
 
     <!-- offers -->
@@ -103,6 +123,7 @@
         <item>Invalid Items</item>
         <item>Awaiting Email Confirmation</item>
         <item>Canceled via Email</item>
+        <item>Held In Escrow</item>
     </string-array>
     <string name="offer_radio_incoming">Incoming Offers</string>
     <string name="offer_radio_sent">Sent Offers</string>

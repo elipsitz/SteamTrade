@@ -57,7 +57,7 @@ public class TradeOfferInfo {
 	 * Canceled			6	The sender cancelled the offer
 	 * Declined			7	The recipient declined the offer
 	 * InvalidItems		8	Some of the items in the offer are no longer available (indicated by the missing flag in the output)
-	 * EmailCanceled	10	The receiver cancelled the offer via email
+	 * CancelledBySecondFactor	10	The receiver cancelled the offer via email
 	 */
 	@Getter
 	ETradeOfferState trade_offer_state;
@@ -91,6 +91,18 @@ public class TradeOfferInfo {
 	 */
 	@Getter
 	boolean from_real_time_trade;
+
+	/**
+	 * Unix timestamp of when the escrow period ends. 0 if not applicable.
+	 */
+	@Getter
+	long escrow_end_date;
+
+	/**
+	 * the confirmation method that applies to the user asking about the offer.
+	 */
+	@Getter
+	ETradeOfferConfirmationMethod confirmation_method;
 
 	/**
 	 * Takes a JSONObject from IEconService/GetTradeOffer[s]
@@ -192,6 +204,8 @@ public class TradeOfferInfo {
 		time_created = json.getLong("time_created");
 		time_updated = json.getLong("time_updated");
 		from_real_time_trade = json.getBoolean("from_real_time_trade");
+		escrow_end_date = json.getLong("escrow_end_date");
+		confirmation_method = ETradeOfferConfirmationMethod.f(json.getInt("confirmation_method"));
 
 		// Convenience map to associate class/instance to description.
 		Map<TradeInternalInventory.ClassInstancePair, JSONObject> descriptions = new HashMap<>();
@@ -254,7 +268,7 @@ public class TradeOfferInfo {
 	 * Enum representing possible trade offer states
 	 */
 	public enum ETradeOfferState {
-		Invalid(1), Active(2), Accepted(3), Countered(4), Expired(5), Canceled(6), Declined(7), InvalidItems(8), EmailPending(9), EmailCanceled(10);
+		Unknown(0), Invalid(1), Active(2), Accepted(3), Countered(4), Expired(5), Canceled(6), Declined(7), InvalidItems(8), CreatedNeedsConfirmation(9), CancelledBySecondFactor(10), InEscrow(11);
 
 		private static HashMap<Integer, ETradeOfferState> values = new HashMap<Integer, ETradeOfferState>();
 
@@ -272,6 +286,35 @@ public class TradeOfferInfo {
 
 		public static ETradeOfferState f(int code) {
 			return ETradeOfferState.values.get(code);
+		}
+
+		public int v() {
+			return code;
+		}
+	}
+
+	/**
+	 * Enum representing possible trade offer states
+	 */
+	public enum ETradeOfferConfirmationMethod {
+		Invalid(0), Email(1), MobileApp(2);
+
+		private static HashMap<Integer, ETradeOfferConfirmationMethod> values = new HashMap<Integer, ETradeOfferConfirmationMethod>();
+
+		static {
+			for (final ETradeOfferConfirmationMethod type : ETradeOfferConfirmationMethod.values()) {
+				ETradeOfferConfirmationMethod.values.put(type.v(), type);
+			}
+		}
+
+		private int code;
+
+		ETradeOfferConfirmationMethod(int code) {
+			this.code = code;
+		}
+
+		public static ETradeOfferConfirmationMethod f(int code) {
+			return ETradeOfferConfirmationMethod.values.get(code);
 		}
 
 		public int v() {
