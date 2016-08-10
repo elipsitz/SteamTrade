@@ -29,7 +29,7 @@
     <string name="nav_about">Über Ice</string>
     <string name="nav_signout">Abmelden</string>
 
-    <string name="purchase_pending">Kauf bevorstehend...</string>
+    <string name="purchase_pending">Kauf bevorstehend…</string>
     <string name="purchase_complete">Kauf erfolgreich! Danke dir!</string>
     <string name="signed_out">Abgemeldet</string>
     <string name="send_button">Senden</string>
@@ -65,11 +65,11 @@
 
     <string-array name="connection_status">
         <item>Unbekannter Status</item>
-        <item>Initialisierung...</item>
-        <item>Verbinde...</item>
-        <item>Melde an...</item>
-        <item>Authentifiziere...</item>
-        <item>Schlüssel abrufen...</item>
+        <item>Initialisierung…</item>
+        <item>Verbinde…</item>
+        <item>Melde an…</item>
+        <item>Authentifiziere…</item>
+        <item>Schlüssel abrufen…</item>
         <item>Verbunden</item>
         <item>Getrennt</item>
     </string-array>
@@ -104,14 +104,8 @@
         <item>Warenkorb</item>
         <item>Suche</item>
         <item>Wunschliste</item>
+        <item>News</item>
         <item>Account</item>
-    </string-array>
-    <string-array name="store_urls">
-        <item>https://store.steampowered.com/mobilestorefront/main</item>
-        <item>https://store.steampowered.com/mobilecart/</item>
-        <item>https://store.steampowered.com/mobilestorefront/search</item>
-        <item>https://steamcommunity.com/my/wishlist/</item>
-        <item>https://store.steampowered.com/mobileaccount/</item>
     </string-array>
 
 
@@ -147,4 +141,24 @@
     <string name="library_activation_failed">Activation Failed</string>
     <string name="library_activation_invalid_code">Invalid product code.</string>
     <string name="library_activation_successful">Activation Successful</string>
+    <string name="offer_status_escrow_date">On Hold Until\n%1$s</string>
+    <string name="profile_playing_game">Playing %1$s</string>
+    <string name="steamguard_code">Your Steam Guard Code:</string>
+    <string name="steamguard_enable_authenticator">Enable Authenticator</string>
+    <string name="steamguard_enable_failure">Failed to enable mobile authenticator: %1$s</string>
+    <string name="steamguard_enable_success">Successfully enabled mobile authentication.\n\nPlease write down your emergency recovery code: %1$s</string>
+    <string name="steamguard_get_revocation_code">View Revocation Code</string>
+    <string name="steamguard_instructions_finalize">To finalize adding the Mobile Authenticator, please enter the code sent to you by Steam via SMS.</string>
+    <string name="steamguard_manage_authenticator">Manage Authenticator</string>
+    <string name="steamguard_mobile_authenticator">Mobile Authenticator</string>
+    <string name="steamguard_not_enabled">Steam Guard Mobile Authenticator is not set up on this device.</string>
+    <string name="steamguard_revocation_code">Your revocation code is:\n%1$s</string>
+    <string name="steamguard_unavailable">You can only enable Mobile Authenticator on a saved account.</string>
+    <string name="offer_confirmations">Trade\nConfirmations</string>
+    <string name="error">Error</string>
+    <string name="steamguard_export">Export Mobile Authenticator</string>
+    <string name="steamguard_import">Import Mobile Authenticator</string>
+    <string name="steamguard_export_authenticator">Export Authenticator</string>
+    <string name="steamguard_import_authenticator">Import Authenticator</string>
+    <string name="steamguard_duplicate">Your account is already using the Official Mobile Authenticator. You cannot use two authenticators at the same time.</string>
 </resources>

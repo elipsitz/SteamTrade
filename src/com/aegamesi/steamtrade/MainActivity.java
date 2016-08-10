@@ -18,6 +18,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aegamesi.steamtrade.fragments.FragmentAbout;
+import com.aegamesi.steamtrade.fragments.FragmentBase;
 import com.aegamesi.steamtrade.fragments.FragmentFriends;
 import com.aegamesi.steamtrade.fragments.FragmentInventory;
 import com.aegamesi.steamtrade.fragments.FragmentLibrary;
@@ -154,12 +156,13 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 			drawerLayout.setDrawerListener(drawerToggle);
 
 			// set up
-			drawerAvatar = (ImageView) findViewById(R.id.drawer_avatar);
-			drawerName = (TextView) findViewById(R.id.drawer_name);
-			drawerStatus = (TextView) findViewById(R.id.drawer_status);
-			drawerNotifyCard = (CardView) findViewById(R.id.notify_card);
-			drawerNotifyText = (TextView) findViewById(R.id.notify_text);
-			findViewById(R.id.drawer_profile).setOnClickListener(new View.OnClickListener() {
+			View drawerHeaderView = navigationView.getHeaderView(0);
+			drawerAvatar = (ImageView) drawerHeaderView.findViewById(R.id.drawer_avatar);
+			drawerName = (TextView) drawerHeaderView.findViewById(R.id.drawer_name);
+			drawerStatus = (TextView) drawerHeaderView.findViewById(R.id.drawer_status);
+			drawerNotifyCard = (CardView) drawerHeaderView.findViewById(R.id.notify_card);
+			drawerNotifyText = (TextView) drawerHeaderView.findViewById(R.id.notify_text);
+			drawerHeaderView.findViewById(R.id.drawer_profile).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
 					browseToFragment(new FragmentMe(), true);
@@ -170,8 +173,9 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		// set up the nav drawer
 		updateDrawerProfile();
 
-		if (savedInstanceState == null)
-			browseToFragment(new FragmentMe(), true);
+		if (savedInstanceState == null) {
+			browseToFragment(new FragmentMe(), false);
+		}
 		SteamService.singleton.tradeManager.setupTradeStatus();
 		SteamService.singleton.tradeManager.updateTradeStatus();
 
@@ -213,11 +217,7 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 				browseToFragment(fragment, true);
 			} else {
 				// default to steam browser
-				Fragment fragment = new FragmentWeb();
-				Bundle bundle = new Bundle();
-				bundle.putString("url", url);
-				fragment.setArguments(bundle);
-				browseToFragment(fragment, true);
+				FragmentWeb.openPage(this, url, false);
 			}
 		}
 
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		final int num_launches = prefs.getInt("num_launches", 0) + 1;
 		prefs.edit().putInt("num_launches", num_launches).apply();
 		boolean rated = prefs.getBoolean("rated", false);
-		if(num_launches > 0 && (num_launches % 10 == 0) && !rated && num_launches <= (10 * 5)) {
+		if (num_launches > 0 && (num_launches % 10 == 0) && !rated && num_launches <= (10 * 5)) {
 			// show the snackbar
 			Snackbar.make(findViewById(android.R.id.content), R.string.rate_snackbar_text, Snackbar.LENGTH_LONG)
 					.setAction(R.string.rate_snackbar_action, new View.OnClickListener() {
@@ -300,12 +300,12 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 
 		drawerName.setText(name);
 		drawerStatus.setText(getResources().getStringArray(R.array.persona_states)[state.v()]);
-		drawerName.setTextColor(getResources().getColor(R.color.steam_online));
-		drawerStatus.setTextColor(getResources().getColor(R.color.steam_online));
+		drawerName.setTextColor(ContextCompat.getColor(this, R.color.steam_online));
+		drawerStatus.setTextColor(ContextCompat.getColor(this, R.color.steam_online));
 
 		int notifications = steamNotifications.getTotalNotificationCount();
-		drawerNotifyText.setText("" + notifications);
-		drawerNotifyCard.setCardBackgroundColor(getResources().getColor(notifications == 0 ? R.color.notification_off : R.color.notification_on));
+		drawerNotifyText.setText(String.format("%1$d", notifications));
+		drawerNotifyCard.setCardBackgroundColor(ContextCompat.getColor(this, notifications == 0 ? R.color.notification_off : R.color.notification_on));
 
 		drawerAvatar.setImageResource(R.drawable.default_avatar);
 		if (!avatar.equals("0000000000000000000000000000000000000000")) {
@@ -489,22 +489,11 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 				browseToFragment(new FragmentLibrary(), true);
 				break;
 			case R.id.nav_market: {
-				Bundle args = new Bundle();
-				args.putBoolean("headless", true);
-				args.putString("url", "https://steamcommunity.com/market/");
-				FragmentWeb fragment = new FragmentWeb();
-				fragment.setArguments(args);
-				browseToFragment(fragment, true);
+				FragmentWeb.openPage(this, "https://steamcommunity.com/market/", true);
 				break;
 			}
 			case R.id.nav_store: {
-				Bundle args = new Bundle();
-				args.putBoolean("headless", true);
-				args.putStringArray("tabs", getResources().getStringArray(R.array.store_tabs));
-				args.putStringArray("tabUrls", getResources().getStringArray(R.array.store_urls));
-				FragmentWeb fragment = new FragmentWeb();
-				fragment.setArguments(args);
-				browseToFragment(fragment, true);
+				FragmentWeb.openPageWithTabs(this, null, true, getResources().getStringArray(R.array.store_tabs), getResources().getStringArray(R.array.store_urls));
 				break;
 			}
 			case R.id.nav_browser:
@@ -603,12 +592,17 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		boolean handled = false;
-		handled |= billingProcessor.handleActivityResult(requestCode, resultCode, data);
+		boolean handled = billingProcessor.handleActivityResult(requestCode, resultCode, data);
 
 		FragmentSettings fragmentSettings = getFragmentByClass(FragmentSettings.class);
 		if (fragmentSettings != null)
 			handled |= fragmentSettings.handleActivityResult(requestCode, resultCode, data);
+
+		for (Fragment f : getSupportFragmentManager().getFragments()) {
+			if (f instanceof FragmentBase) {
+				handled |= ((FragmentBase) f).handleActivityResult(requestCode, resultCode, data);
+			}
+		}
 
 		if (!handled)
 			super.onActivityResult(requestCode, resultCode, data);

@@ -95,8 +95,10 @@ public class FragmentSettings extends PreferenceFragment {
 
 	public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
 		// workaround for Ringtone Fragment not saving data
-		if (pref_notification_sound != null && pref_notification_sound.onActivityResult(requestCode, resultCode, data))
-			return true;
+		if (pref_notification_sound != null) {
+			if (pref_notification_sound.onActivityResult(requestCode, resultCode, data))
+				return true;
+		}
 
 		return false;
 	}

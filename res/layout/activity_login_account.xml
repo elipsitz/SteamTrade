@@ -16,8 +16,8 @@
         android:layout_width="40dip"
         android:layout_height="40dip"
         android:layout_margin="8dip"
-        app:border_color="@color/steam_offline"
-        app:border_width="2dip"
+        app:civ_border_color="@color/steam_offline"
+        app:civ_border_width="2dip"
         />
 
     <TextView
@@ -33,6 +33,15 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:textStyle="bold"
         tools:text="Name"/>
+
+    <ImageButton
+        android:id="@+id/account_key"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_margin="8dip"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/steamguard_mobile_authenticator"
+        android:src="@drawable/ic_key"/>
 
     <ImageButton
         android:id="@+id/account_delete"

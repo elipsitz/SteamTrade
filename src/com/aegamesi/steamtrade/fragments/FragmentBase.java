@@ -1,5 +1,6 @@
 package com.aegamesi.steamtrade.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -57,5 +58,9 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 	@Override
 	public void handleSteamMessage(CallbackMsg msg) {
 		// by default, do nothing
+	}
+
+	public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
+		return false;
 	}
 }

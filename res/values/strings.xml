@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ice</string>
+    <string name="error">Error</string>
     <string name="error_disconnected">Disconnected from the Steam Network</string>
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
@@ -14,6 +15,7 @@
     <string name="action_successful">Action successful.</string>
     <string name="action_failed">Action failed.</string>
     <string name="search">Search</string>
+    <string name="quote" translatable="false">“%1$s”</string>
 
     <string name="steamguard_new">This is the first time you are logging into this account on this device.\n\nAs per Valve restrictions, you may not be allowed to trade or send trade offers from this device for the next 7 days.</string>
     <string name="api_key_not_loaded">A WebAPI key was not properly retrieved. This feature will not work.</string>
@@ -109,19 +111,38 @@
     <string name="library_activation_error">Unknown error.</string>
     <string name="library_activation_code_used">Product code already redeemed.</string>
 
+    <string name="steamguard_mobile_authenticator">Mobile Authenticator</string>
+    <string name="steamguard_unavailable">You can only enable Mobile Authenticator on a saved account.</string>
+    <string name="steamguard_not_enabled">Steam Guard Mobile Authenticator is not set up on this device.</string>
+    <string name="steamguard_code">Your Steam Guard Code:</string>
+    <string name="steamguard_enable_authenticator">Enable Authenticator</string>
+    <string name="steamguard_manage_authenticator">Manage Authenticator</string>
+    <string name="steamguard_import_authenticator">Import Authenticator</string>
+    <string name="steamguard_export_authenticator">Export Authenticator</string>
+    <string name="steamguard_get_revocation_code">View Revocation Code</string>
+    <string name="steamguard_revocation_code">Your revocation code is:\n%1$s</string>
+    <string name="steamguard_instructions_finalize">To finalize adding the Mobile Authenticator, please enter the code sent to you by Steam via SMS.</string>
+    <string name="steamguard_enable_success">Successfully enabled mobile authentication.\n\nPlease write down your emergency recovery code: %1$s</string>
+    <string name="steamguard_enable_failure">Failed to enable mobile authenticator: %1$s</string>
+    <string name="steamguard_export">Export Mobile Authenticator</string>
+    <string name="steamguard_import">Import Mobile Authenticator</string>
+    <string name="steamguard_duplicate">Your account is already using the Official Mobile Authenticator. You cannot use two authenticators at the same time.</string>
+
     <string-array name="store_tabs">
         <item>Catalog</item>
         <item>Cart</item>
         <item>Search</item>
         <item>Wishlist</item>
+        <item>News</item>
         <item>Account</item>
     </string-array>
-    <string-array name="store_urls">
-        <item>https://store.steampowered.com/mobilestorefront/main</item>
-        <item>https://store.steampowered.com/mobilecart/</item>
-        <item>https://store.steampowered.com/mobilestorefront/search</item>
+    <string-array name="store_urls" translatable="false">
+        <item>https://store.steampowered.com/</item>
+        <item>https://store.steampowered.com/cart/</item>
+        <item>https://store.steampowered.com/search</item>
         <item>https://steamcommunity.com/my/wishlist/</item>
-        <item>https://store.steampowered.com/mobileaccount/</item>
+        <item>https://store.steampowered.com/news</item>
+        <item>https://store.steampowered.com/account/</item>
     </string-array>
 
     <color name="notification_on">#5C7E10</color>

@@ -1,13 +1,13 @@
 package com.aegamesi.steamtrade.fragments;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -80,7 +80,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		//time_last_read = System.currentTimeMillis();
 		time_last_read = activity().getPreferences(Context.MODE_PRIVATE).getLong("chat_read_" + ourID.convertToLong() + "_" + chatID.convertToLong(), 0);
 
-		chatParticipants = new ArrayList<SteamID>();
+		chatParticipants = new ArrayList<>();
 		if (isGroupChat) {
 			// TODO Figure out how to actually get the list of people in the chat.
 			// let's add us, for good measure
@@ -142,6 +142,10 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 
 			@Override
 			public void onTabUnselected(TabLayout.Tab tab) {
+				if (tab == null) {
+					return;
+				}
+
 				int i = tab.getPosition();
 				View tabView = null;
 
@@ -285,7 +289,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 				fragment.setArguments(bundle);
 				activity().browseToFragment(fragment, true);
 			}
-		}, chatParticipants, false);
+		}, chatParticipants, false, false);
 		chatViewParticipants.setAdapter(chatParticipantsAdapter); // user list adapter
 
 		updateView();
@@ -376,9 +380,7 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		adapter.setPersonaNames(activity().steamFriends.getPersonaName(), friendPersonaName);
 
 		// do colors for profile view
-		Resources resources = getResources();
-		int color = resources.getColor(R.color.steam_online);
-		adapter.color_default = color;
+		adapter.color_default = ContextCompat.getColor(getContext(), R.color.steam_online);
 
 	}
 

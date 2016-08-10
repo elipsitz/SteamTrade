@@ -150,7 +150,7 @@ public class SteamTradeManager implements OnClickListener {
 		// create notification
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
 		boolean enableNotification = prefs.getBoolean("pref_notification_trade", true);
-		if(enableNotification) {
+		if (enableNotification) {
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(activity());
 			builder.setSmallIcon(R.drawable.ic_notify_trade);
 			builder.setContentTitle(activity().getString(R.string.trade_new_request));

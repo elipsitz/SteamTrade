@@ -3,7 +3,6 @@ package com.aegamesi.steamtrade.fragments;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -159,12 +158,7 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 		if (view.getId() == R.id.game_card) {
 			int appid = (Integer) view.getTag();
 			String url = String.format("http://store.steampowered.com/app/%d/", appid);
-			Fragment fragment = new FragmentWeb();
-			Bundle bundle = new Bundle();
-			bundle.putString("url", url);
-			bundle.putBoolean("headless", true);
-			fragment.setArguments(bundle);
-			activity().browseToFragment(fragment, true);
+			FragmentWeb.openPage(activity(), url, true);
 		}
 	}
 
@@ -174,7 +168,7 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 		String response = SteamWeb.fetch(webapi_url, "GET", null, "");
 
 		try {
-			List<LibraryEntry> games = new ArrayList<LibraryEntry>();
+			List<LibraryEntry> games = new ArrayList<>();
 			JSONObject json = new JSONObject(response);
 			if (json.has("response")) {
 				JSONArray json_games = json.getJSONObject("response").getJSONArray("games");
@@ -185,7 +179,7 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 			return games;
 		} catch (JSONException e) {
 			e.printStackTrace();
-			return new ArrayList<LibraryEntry>();
+			return new ArrayList<>();
 		}
 	}
 

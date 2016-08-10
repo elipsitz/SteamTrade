@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dip"
         android:layout_marginLeft="4dip"
@@ -30,7 +30,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
@@ -53,7 +53,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dip"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    tools:text="Status"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -61,7 +62,8 @@
                     android:layout_marginBottom="8dip"
                     android:singleLine="true"
                     android:text="@string/offer_will_give"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:id="@+id/offer_label_give"/>
 
                 <com.aegamesi.lib.android.ExpandableHeightGridView
                     android:id="@+id/offer_items_give"
@@ -82,7 +84,8 @@
                     android:layout_marginTop="16dip"
                     android:singleLine="true"
                     android:text="@string/offer_will_receive"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:id="@+id/offer_label_receive"/>
 
                 <com.aegamesi.lib.android.ExpandableHeightGridView
                     android:id="@+id/offer_items_receive"

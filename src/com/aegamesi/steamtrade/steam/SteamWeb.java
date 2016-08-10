@@ -21,11 +21,8 @@ public class SteamWeb {
 	/**
 	 * The user-agent string to use when making requests.
 	 */
-	final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36";/*"SteamTrade-Java/1.0 "
-				+ "(Windows; U; Windows NT 6.1; en-US; "
-                + "Valve Steam Client/1392853084; SteamTrade-Java Client; ) "
-                + "AppleWebKit/535.19 (KHTML, like Gecko) "
-                + "Chrome/18.0.1025.166 Safari/535.19";*/
+	final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36";
+	final static String USER_AGENT_MOBILE = "Mozilla/5.0 (Linux; U; Android 4.1.1; en-us; Google Nexus 4 - 4.1.1 - API 16 - 768x1280 Build/JRO03S) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30";
 
 	/**
 	 * Fetches an api key from /dev/registerkey.

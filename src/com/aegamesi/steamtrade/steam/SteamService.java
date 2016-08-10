@@ -84,6 +84,7 @@ public class SteamService extends Service {
 	public String tokenSecure = null;
 	public String webapiUserNonce = null;
 	public String sentryHash = null;
+	public String username;
 	public long timeLogin = 0L;
 	Timer myTimer;
 	private DBHelper db_helper = null;
@@ -303,12 +304,13 @@ public class SteamService extends Service {
 					buildNotification(SteamConnectionListener.STATUS_LOGON, true);
 
 					// log in
+					SteamService.this.username = extras.getString("username");
 					LogOnDetails details = new LogOnDetails();
 					details.username(extras.getString("username"));
-					if (extras.getBoolean("loginkey", false)) {
+					if (extras.containsKey("loginkey")) {
 						// login key
-						String loginkey = PreferenceManager.getDefaultSharedPreferences(SteamService.this).getString("loginkey_" + extras.getString("username"), "");
-						if (loginkey.length() > 0)
+						String loginkey = extras.getString("loginkey");
+						if (loginkey != null && loginkey.length() > 0)
 							details.loginkey = loginkey;
 					} else {
 						details.password(extras.getString("password"));
@@ -329,21 +331,21 @@ public class SteamService extends Service {
 						sentryHash = prefSentry.trim();
 					} else {
 						File file = new File(getFilesDir(), "sentry");
-						if (!file.exists())
-							file.mkdir();
-						file = new File(file, extras.getString("username") + ".sentry");
-						if (file.exists()) {
-							try {
-								RandomAccessFile raf = new RandomAccessFile(file, "r");
-								byte[] data = new byte[(int) raf.length()];
-								raf.readFully(data);
-								raf.close();
-								details.sentryFileHash = SteamUtil.calculateSHA1(data);
-								//details.authCode = "";
+						if (file.exists() || file.mkdir()) {
+							file = new File(file, extras.getString("username") + ".sentry");
+							if (file.exists()) {
+								try {
+									RandomAccessFile raf = new RandomAccessFile(file, "r");
+									byte[] data = new byte[(int) raf.length()];
+									raf.readFully(data);
+									raf.close();
+									details.sentryFileHash = SteamUtil.calculateSHA1(data);
+									//details.authCode = "";
 
-								sentryHash = SteamUtil.bytesToHex(details.sentryFileHash);
-							} catch (IOException e) {
-								e.printStackTrace();
+									sentryHash = SteamUtil.bytesToHex(details.sentryFileHash);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 					}
@@ -369,9 +371,11 @@ public class SteamService extends Service {
 					// if there's a loginkey saved and it's an InvalidPassword, scrap it
 					if (callback.getResult() == EResult.InvalidPassword) {
 						if (extras != null && extras.containsKey("username")) {
-							SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
-							prefs.remove("loginkey_" + extras.getString("username"));
-							prefs.apply();
+							AccountLoginInfo account = AccountLoginInfo.readAccount(SteamService.this, extras.getString("username"));
+							if (account != null) {
+								account.loginkey = null;
+								AccountLoginInfo.writeAccount(SteamService.this, account);
+							}
 						}
 					}
 
@@ -390,9 +394,11 @@ public class SteamService extends Service {
 					// save password (it's valid!)
 					if (extras != null && extras.getBoolean("remember", false) && extras.containsKey("password")) {
 						Log.d("SteamService", "Saving password.");
-						SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
-						prefs.putString("password_" + extras.getString("username"), extras.getString("password"));
-						prefs.apply();
+						AccountLoginInfo account = AccountLoginInfo.readAccount(SteamService.this, extras.getString("username"));
+						if (account != null) {
+							account.password = extras.getString("password");
+							AccountLoginInfo.writeAccount(SteamService.this, account);
+						}
 					}
 
 					if (connectionListener != null)
@@ -411,12 +417,12 @@ public class SteamService extends Service {
 					try {
 						Log.i("Steam", "Received updated sentry file: " + authCallback.getFileName());
 						File file = new File(getFilesDir(), "sentry");
-						if (!file.exists())
-							file.mkdir();
-						file = new File(file, extras.getString("username") + ".sentry");
-						FileOutputStream fos = new FileOutputStream(file);
-						fos.write(authCallback.getData());
-						fos.close();
+						if (file.exists() || file.mkdir()) {
+							file = new File(file, extras.getString("username") + ".sentry");
+							FileOutputStream fos = new FileOutputStream(file);
+							fos.write(authCallback.getData());
+							fos.close();
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -548,10 +554,17 @@ public class SteamService extends Service {
 				Log.d("SteamService", "Got loginkey " + callback.getLoginKey() + "| uniqueid: " + callback.getUniqueId());
 				if (extras != null && extras.getBoolean("remember", false)) {
 					Log.d("SteamService", "Saving loginkey.");
-					SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.this).edit();
-					prefs.putString("loginkey_" + extras.getString("username"), callback.getLoginKey());
-					prefs.putInt("uniqueid_" + extras.getString("username"), callback.getUniqueId());
-					prefs.commit();
+
+					AccountLoginInfo account = AccountLoginInfo.readAccount(SteamService.this, extras.getString("username"));
+					if (account == null) {
+						account = new AccountLoginInfo();
+						account.username = extras.getString("username");
+						account.password = extras.getString("password");
+						Log.d("SteamService", "New AccountLoginInfo entry");
+					}
+					account.loginkey = callback.getLoginKey();
+					account.unique_id = callback.getUniqueId();
+					AccountLoginInfo.writeAccount(SteamService.this, account);
 				}
 			}
 		});
@@ -599,6 +612,17 @@ public class SteamService extends Service {
 				buildNotification(SteamConnectionListener.STATUS_CONNECTED, true);
 			}
 		});
+	}
+
+	public void kill() {
+		running = false;
+		connectionListener = null;
+
+		stopSelf();
+
+		if (steamClient != null) {
+			steamClient.disconnect();
+		}
 	}
 
 	public void disconnect() {

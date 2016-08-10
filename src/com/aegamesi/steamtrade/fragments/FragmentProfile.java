@@ -2,11 +2,11 @@ package com.aegamesi.steamtrade.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -83,17 +83,19 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		} else {
 			String url = getArguments().getString("url");
 
-			Matcher matcher = Pattern.compile("steamcommunity.com/id/([a-zA-Z0-9]+)").matcher(url);
-			if (matcher.find()) {
-				id = null;
-				String vanity = matcher.group(1);
-				(new ResolveVanityURLTask()).execute(vanity);
-			} else {
-				matcher = Pattern.compile("steamcommunity.com/profiles/([0-9]+)").matcher(url);
-				if (matcher.find())
-					id = new SteamID(Long.parseLong(matcher.group(1)));
-				else
+			if (url != null) {
+				Matcher matcher = Pattern.compile("steamcommunity.com/id/([a-zA-Z0-9]+)").matcher(url);
+				if (matcher.find()) {
 					id = null;
+					String vanity = matcher.group(1);
+					(new ResolveVanityURLTask()).execute(vanity);
+				} else {
+					matcher = Pattern.compile("steamcommunity.com/profiles/([0-9]+)").matcher(url);
+					if (matcher.find())
+						id = new SteamID(Long.parseLong(matcher.group(1)));
+					else
+						id = null;
+				}
 			}
 		}
 
@@ -222,7 +224,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		if (steam_level == -1) {
 			levelView.setText(R.string.unknown);
 		} else {
-			levelView.setText(steam_level + "");
+			levelView.setText(String.valueOf(steam_level));
 		}
 
 		setTitle(name);
@@ -233,18 +235,17 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 			ImageLoader.getInstance().displayImage("http://media.steampowered.com/steamcommunity/public/images/avatars/" + avatar.substring(0, 2) + "/" + avatar + "_full.jpg", avatarView);
 
 		if (game != null && game.length() > 0)
-			statusView.setText("Playing " + game);
+			statusView.setText(String.format(getString(R.string.profile_playing_game), game));
 		else
 			statusView.setText(state.toString());
 
-		Resources resources = getResources();
-		int color = resources.getColor(R.color.steam_online);
+		int color = ContextCompat.getColor(getContext(), R.color.steam_online);
 		if (relationship == EFriendRelationship.Blocked || relationship == EFriendRelationship.Ignored || relationship == EFriendRelationship.IgnoredFriend)
-			color = resources.getColor(R.color.steam_blocked);
+			color = ContextCompat.getColor(getContext(), R.color.steam_blocked);
 		else if (game != null && game.length() > 0)
-			color = resources.getColor(R.color.steam_game);
+			color = ContextCompat.getColor(getContext(), R.color.steam_game);
 		else if (state == EPersonaState.Offline || state == null)
-			color = resources.getColor(R.color.steam_offline);
+			color = ContextCompat.getColor(getContext(), R.color.steam_offline);
 
 		nameView.setTextColor(color);
 		statusView.setTextColor(color);
@@ -273,14 +274,22 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 
 	private void requestInfo() {
 		if (id != null) {
-			if (profile_info == null)
+			if (profile_info == null) {
 				activity().steamFriends.requestProfileInfo(id);
+			}
+
 			int request_flags = 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024;
 			relationship = activity().steamFriends.getFriendRelationship(id);
-			if (relationship != EFriendRelationship.Friend && persona_info == null)
-				activity().steamFriends.requestFriendInfo(id, request_flags);
-			if (steam_level == -1)
+			if (relationship != EFriendRelationship.Friend && persona_info == null) {
+				SteamID myId = SteamService.singleton.steamClient.getSteamId();
+				if (!id.equals(myId)) {
+					activity().steamFriends.requestFriendInfo(id, request_flags);
+				}
+			}
+
+			if (steam_level == -1) {
 				activity().steamFriends.requestSteamLevel(id);
+			}
 		}
 	}
 
@@ -338,11 +347,7 @@ public class FragmentProfile extends FragmentBase implements View.OnClickListene
 		}
 		if (view == viewSteamButton) {
 			String url = "http://steamcommunity.com/profiles/" + id.convertToLong();
-			Fragment fragment = new FragmentWeb();
-			Bundle bundle = new Bundle();
-			bundle.putString("url", url);
-			fragment.setArguments(bundle);
-			activity().browseToFragment(fragment, true);
+			FragmentWeb.openPage(activity(), url, false);
 		}
 		if (view == viewSteamRepButton) {
 			String steamRepUrl = "http://steamrep.com/profiles/" + id.convertToLong() + "/";

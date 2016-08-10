@@ -54,7 +54,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 	public List<AppContextPair> appContextPairs;
 
 	// crafting support
-	public Set<TradeInternalAsset> craftingItems = new HashSet<TradeInternalAsset>();
+	public Set<TradeInternalAsset> craftingItems = new HashSet<>();
 	public long[] craftingResult = null;
 
 	public Spinner selectInventory;
@@ -77,7 +77,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 
 		setHasOptionsMenu(true);
 
-		appContextPairs = new ArrayList<AppContextPair>();
+		appContextPairs = new ArrayList<>();
 		appContextPairs.add(new AppContextPair(440, 2, "Team Fortress 2"));
 		appContextPairs.add(new AppContextPair(570, 2, "Dota 2"));
 		appContextPairs.add(new AppContextPair(730, 2, "Counter-Strike: Global Offensive"));
@@ -128,7 +128,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 		// create inventory select spinner
 		selectInventory = (Spinner) view.findViewById(R.id.inventory_select);
 		selectInventory.setOnItemSelectedListener(this);
-		inventorySelectAdapter = new ArrayAdapter<AppContextPair>(activity(), android.R.layout.simple_spinner_item);
+		inventorySelectAdapter = new ArrayAdapter<>(activity(), android.R.layout.simple_spinner_item);
 		inventorySelectAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 		for (AppContextPair pair : appContextPairs)
 			inventorySelectAdapter.add(pair);
@@ -390,7 +390,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 					if (success) {
 						if (craftingResult != null && appContext.getAppid() == 440) {
 							// show the crafting results
-							List<TradeInternalAsset> items = new ArrayList<TradeInternalAsset>();
+							List<TradeInternalAsset> items = new ArrayList<>();
 							for (long item : craftingResult) {
 								TradeInternalAsset asset = inventories.getInventory(appContext).getItem(item);
 								if (asset != null)

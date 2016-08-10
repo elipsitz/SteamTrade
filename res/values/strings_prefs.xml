@@ -25,6 +25,7 @@
     <string name="pref_notification_chat">Chat Notifications</string>
     <string name="pref_notification_friendrequest">Friend Request Notifications</string>
     <string name="pref_notification_trade">Trade Notifications</string>
+    <string name="pref_hide_blocked_users">Hide Blocked Users</string>
 
     <string-array name="pref_recent_chats_entries">
         <item>Within 7 days</item>

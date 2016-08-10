@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -22,6 +24,9 @@ import android.widget.Toast;
 
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.support.OffersListAdapter;
+import com.aegamesi.steamtrade.steam.AccountLoginInfo;
+import com.aegamesi.steamtrade.steam.SteamService;
+import com.aegamesi.steamtrade.steam.SteamTwoFactor;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.aegamesi.steamtrade.steam.SteamWeb;
 import com.aegamesi.steamtrade.steam.tradeoffers.TradeOfferInfo;
@@ -51,6 +56,7 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 	public TextView offers_status;
 	public RadioButton radio_incoming;
 	public RadioButton radio_sent;
+	public Button buttonConfirmations;
 
 	public long queued_cancel = 0;
 	public long queued_decline = 0;
@@ -102,6 +108,11 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 		radio_incoming.setOnClickListener(this);
 		radio_sent = (RadioButton) view.findViewById(R.id.offers_radio_sent);
 		radio_sent.setOnClickListener(this);
+
+		buttonConfirmations = (Button) view.findViewById(R.id.offers_confirmations);
+		buttonConfirmations.setOnClickListener(this);
+		AccountLoginInfo loginInfo = AccountLoginInfo.readAccount(activity(), SteamService.singleton.username);
+		buttonConfirmations.setEnabled(loginInfo != null && loginInfo.has_authenticator);
 
 		listOffers = (RecyclerView) view.findViewById(R.id.offers_list);
 		adapterOffers = new OffersListAdapter(this);
@@ -209,6 +220,16 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 			new FetchOffersTask().execute();
 		}
 
+		if (view == buttonConfirmations) {
+			// okay, this is where we generate the code for confirmations and stuff...
+			String tag = "conf";
+			String url = "https://steamcommunity.com/mobileconf/conf?";
+			url += SteamTwoFactor.generateConfirmationParameters(activity(), tag);
+
+			Log.d("FragmentOffersList", url);
+			FragmentWeb.openPage(activity(), url, true);
+		}
+
 		if (view.getId() == R.id.offer_button_respond || view.getId() == R.id.offer_button_cancel || view.getId() == R.id.offer_button_decline || view.getId() == R.id.offer_button_profile) {
 			final TradeOfferInfo offerInfo = offers.get((int) view.getTag());
 			switch (view.getId()) {
@@ -314,7 +335,7 @@ public class FragmentOffersList extends FragmentBase implements View.OnClickList
 				// now let's get all the names of people we *don't* know
 				SteamFriends steamFriends = activity().steamFriends;
 				if (steamFriends != null) {
-					Set<SteamID> steamIdList = new HashSet<SteamID>();
+					Set<SteamID> steamIdList = new HashSet<>();
 					for (TradeOfferInfo offer : offers) {
 						SteamID otherID = new SteamID((int) offer.getAccountid_other(), EUniverse.Public, EAccountType.Individual);
 						if (steamFriends.getFriendPersonaName(otherID).equals("[unknown]"))

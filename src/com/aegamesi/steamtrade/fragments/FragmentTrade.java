@@ -135,6 +135,10 @@ public class FragmentTrade extends FragmentBase implements OnClickListener, Adap
 
 			@Override
 			public void onTabUnselected(Tab tab) {
+				if (tab == null) {
+					return;
+				}
+
 				int i = tab.getPosition();
 				if (i < 0 || i >= tab_views.length)
 					return;

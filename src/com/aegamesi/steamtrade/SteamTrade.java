@@ -33,7 +33,6 @@ import uk.co.thomasc.steamkit.util.logging.DebugLog;
 		formUriBasicAuthLogin = "erandstuntryouldertencer",
 		formUriBasicAuthPassword = "Ht7cJlLh28flt5SnBlX0Dr0u",
 		mode = ReportingInteractionMode.TOAST,
-		forceCloseDialogAfterToast = false,
 		resToastText = R.string.app_crashed_toast)
 
 public class SteamTrade extends Application {

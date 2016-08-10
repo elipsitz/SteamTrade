@@ -41,14 +41,16 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	private String filter = null;
 
 	private boolean hasSections = true;
+	private boolean hideBlockedUsers = false;
 
 	public FriendsListAdapter(View.OnClickListener clickListener) {
-		this(clickListener, null, true);
+		this(clickListener, null, true, false);
 	}
 
-	public FriendsListAdapter(View.OnClickListener clickListener, List<SteamID> listFriends, boolean hasSections) {
+	public FriendsListAdapter(View.OnClickListener clickListener, List<SteamID> listFriends, boolean hasSections, boolean hideBlockedUsers) {
 		this.clickListener = clickListener;
 		this.hasSections = hasSections;
+		this.hideBlockedUsers = hideBlockedUsers;
 
 		if (listFriends == null && SteamService.singleton != null && SteamService.singleton.steamClient != null) {
 			SteamFriends steamFriends = SteamService.singleton.steamClient.getHandler(SteamFriends.class);
@@ -76,8 +78,12 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		if (hasSections) {
 			// add section headers
 			for (Entry<FriendListCategory, Integer> categoryEntry : categoryCounts.entrySet()) {
-				if (categoryEntry.getValue() > 0)
+				if (hideBlockedUsers && categoryEntry.getKey() == FriendListCategory.BLOCKED)
+					continue;
+
+				if (categoryEntry.getValue() > 0) {
 					dataset.add(new FriendListItem(categoryEntry.getKey()));
+				}
 			}
 
 			Collections.sort(dataset);
@@ -87,8 +93,12 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	public void updateList(List<SteamID> listFriends) {
 		for (SteamID id : listFriends) {
 			FriendListItem item = new FriendListItem(id);
-			dataset.add(item);
 
+			if (item.category == FriendListCategory.BLOCKED && hideBlockedUsers) {
+				continue;
+			}
+
+			dataset.add(item);
 			categoryCounts.put(item.category, categoryCounts.get(item.category) + 1);
 		}
 	}
@@ -113,6 +123,9 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		if (!hasSections)
 			return;
 
+		if (hideBlockedUsers && category == FriendListCategory.BLOCKED)
+			return;
+
 		int categoryCount = categoryCounts.get(category);
 		categoryCounts.put(category, ++categoryCount);
 
@@ -126,6 +139,9 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	private void deincrementCategoryCount(FriendListCategory category) {
 		if (!hasSections)
+			return;
+
+		if (hideBlockedUsers && category == FriendListCategory.BLOCKED)
 			return;
 
 		int categoryCount = categoryCounts.get(category);

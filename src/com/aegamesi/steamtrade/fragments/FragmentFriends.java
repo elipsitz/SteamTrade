@@ -100,7 +100,8 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(activity()));
 
-		adapter = new FriendsListAdapter(this);
+		boolean hideBlockedUsers = PreferenceManager.getDefaultSharedPreferences(activity()).getBoolean("pref_hide_blocked_users", false);
+		adapter = new FriendsListAdapter(this, null, true, hideBlockedUsers);
 		recyclerView.setAdapter(adapter);
 
 		return view;
@@ -132,8 +133,8 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 		switch (item.getItemId()) {
 			case R.id.menu_friends_add_friend:
 				AlertDialog.Builder alert = new AlertDialog.Builder(activity());
-				alert.setTitle(activity().getString(R.string.friend_add));
-				alert.setMessage(activity().getString(R.string.friend_add_prompt));
+				alert.setTitle(R.string.friend_add);
+				alert.setMessage(R.string.friend_add_prompt);
 				final EditText input = new EditText(activity());
 				input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 				alert.setView(input);

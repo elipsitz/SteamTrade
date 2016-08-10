@@ -25,6 +25,7 @@
     <string name="friend_request_multi">You have %1$d pending requests.</string>
     <string name="friend_block">Block</string>
     <string name="friend_unblock">Unblock</string>
+    <string name="profile_playing_game">Playing %1$s</string>
 
     <string name="chat_group">Group Chat</string>
     <string name="chat_with">Chat with %1$s</string>

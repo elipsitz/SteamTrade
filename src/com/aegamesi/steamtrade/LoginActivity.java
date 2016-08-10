@@ -31,15 +31,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aegamesi.steamtrade.fragments.FragmentEula;
+import com.aegamesi.steamtrade.fragments.support.SteamGuardCodeView;
+import com.aegamesi.steamtrade.steam.AccountLoginInfo;
 import com.aegamesi.steamtrade.steam.SteamConnectionListener;
 import com.aegamesi.steamtrade.steam.SteamService;
+import com.aegamesi.steamtrade.steam.SteamTwoFactor;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
@@ -70,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		handleLegacy();
 		setContentView(R.layout.activity_login);
 		if (getSupportActionBar() != null)
 			getSupportActionBar().hide();
@@ -151,25 +157,47 @@ public class LoginActivity extends AppCompatActivity {
 		});
 	}
 
-	public void loginWithSavedAccount(String username) {
-		// start the logging in progess
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-		if (prefs.contains("loginkey_" + username)) {
-			Bundle bundle = new Bundle();
-			bundle.putString("username", username);
-			bundle.putBoolean("loginkey", true);
-			bundle.putBoolean("remember", true);
-			connectionListener.handle_result = true;
-			SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
-		} else {
-			String password = prefs.getString("password_" + username, "");
-			Bundle bundle = new Bundle();
-			bundle.putString("username", username);
-			bundle.putString("password", password);
-			bundle.putBoolean("remember", true);
-			connectionListener.handle_result = true;
-			SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
+	private void handleLegacy() {
+		// from version 0.10.4 onwards:
+		// convert from old account storage to new account storage
+		Set<String> savedAccounts = new HashSet<>();
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+		Map<String, ?> allPrefs = sharedPreferences.getAll();
+		for (String key : allPrefs.keySet()) {
+			if (key.startsWith("loginkey_"))
+				savedAccounts.add(key.substring("loginkey_".length()));
+			if (key.startsWith("password_"))
+				savedAccounts.add(key.substring("password_".length()));
 		}
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		for (String savedAccount : savedAccounts) {
+			AccountLoginInfo loginInfo = new AccountLoginInfo();
+			loginInfo.username = savedAccount;
+			loginInfo.password = sharedPreferences.getString("password_" + savedAccount, null);
+			loginInfo.loginkey = sharedPreferences.getString("loginkey_" + savedAccount, null);
+			loginInfo.avatar = sharedPreferences.getString("avatar_" + savedAccount, null);
+			AccountLoginInfo.writeAccount(this, loginInfo);
+			editor.remove("loginkey_" + savedAccount);
+			editor.remove("password_" + savedAccount);
+		}
+		editor.apply();
+		// end
+	}
+
+	public void loginWithSavedAccount(AccountLoginInfo account) {
+		// start the logging in progess
+		Bundle bundle = new Bundle();
+		bundle.putString("username", account.username);
+		bundle.putBoolean("remember", true);
+
+		if (account.loginkey != null) {
+			bundle.putString("loginkey", account.loginkey);
+		} else {
+			bundle.putString("password", account.password);
+		}
+
+		connectionListener.handle_result = true;
+		SteamService.attemptLogon(LoginActivity.this, connectionListener, bundle, true);
 	}
 
 	public void attemptLogin() {
@@ -285,11 +313,17 @@ public class LoginActivity extends AppCompatActivity {
 		viewSaved.setVisibility(View.GONE);
 		((LayoutParams) cardSaved.getLayoutParams()).weight = 0;
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-		String password = prefs.getString("password_" + username, "");
 
-		textUsername.setText(SteamService.extras.getString("username"));
-		textPassword.setText(password);
+		AccountLoginInfo info = AccountLoginInfo.readAccount(this, username);
+		if (info != null) {
+			textUsername.setText(info.username);
+			textPassword.setText(info.password);
+
+			if (info.has_authenticator) {
+				String code = SteamTwoFactor.generateAuthCodeForTime(info.tfa_sharedSecret, SteamTwoFactor.getCurrentTime());
+				textSteamguard.setText(code);
+			}
+		}
 		rememberInfoCheckbox.setChecked(true);
 	}
 
@@ -316,7 +350,7 @@ public class LoginActivity extends AppCompatActivity {
 
 					if (result == EResult.InvalidPassword) {
 						// maybe change error to "login key expired, log in again" if using loginkey
-						if (SteamService.extras != null && SteamService.extras.getBoolean("loginkey", false)) {
+						if (SteamService.extras != null && SteamService.extras.getString("loginkey") != null) {
 							Toast.makeText(LoginActivity.this, R.string.error_loginkey_expired, Toast.LENGTH_LONG).show();
 							textPassword.setError(getString(R.string.error_loginkey_expired));
 
@@ -379,7 +413,15 @@ public class LoginActivity extends AppCompatActivity {
 					if (status != STATUS_CONNECTED && status != STATUS_FAILURE) {
 						if (progressDialog == null || !progressDialog.isShowing()) {
 							progressDialog = new ProgressDialog(LoginActivity.this);
-							progressDialog.setCancelable(false);
+							progressDialog.setCancelable(true);
+							progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+								@Override
+								public void onCancel(DialogInterface dialog) {
+									if (SteamService.singleton != null) {
+										SteamService.singleton.kill();
+									}
+								}
+							});
 							progressDialog.show();
 						}
 					}
@@ -393,26 +435,10 @@ public class LoginActivity extends AppCompatActivity {
 	}
 
 	private class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.AccountViewHolder> {
-		public List<String> accountNames = new ArrayList<String>();
-		private SharedPreferences prefs;
+		public List<AccountLoginInfo> accounts = new ArrayList<>();
 
 		public AccountListAdapter() {
-			prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-			Map<String, ?> allPrefs = prefs.getAll();
-			for (String key : allPrefs.keySet()) {
-				if (key.startsWith("loginkey_")) {
-					String accountName = key.substring("loginkey_".length());
-					if (!accountNames.contains(accountName))
-						accountNames.add(accountName);
-				}
-				if (key.startsWith("password_")) {
-					String accountName = key.substring("password_".length());
-					if (!accountNames.contains(accountName))
-						accountNames.add(accountName);
-				}
-			}
-
-
+			accounts = AccountLoginInfo.getAccountList(LoginActivity.this);
 			notifyDataSetChanged();
 		}
 
@@ -423,27 +449,29 @@ public class LoginActivity extends AppCompatActivity {
 
 		@Override
 		public void onBindViewHolder(AccountViewHolder holder, int position) {
-			String name = accountNames.get(position);
-			holder.name.setText(name);
+			AccountLoginInfo account = accounts.get(position);
+			holder.name.setText(account.username);
 
-			String avatarURL = prefs.getString("avatar_" + name, null);
+			holder.buttonKey.setVisibility(account.has_authenticator ? View.VISIBLE : View.GONE);
 			holder.avatar.setImageResource(R.drawable.default_avatar);
-			if (avatarURL != null)
-				ImageLoader.getInstance().displayImage(avatarURL, holder.avatar);
+			if (account.avatar != null)
+				ImageLoader.getInstance().displayImage(account.avatar, holder.avatar);
 
 			holder.buttonRemove.setTag(position);
 			holder.itemView.setTag(position);
+			holder.buttonKey.setTag(position);
 		}
 
 		@Override
 		public int getItemCount() {
-			return accountNames == null ? 0 : accountNames.size();
+			return accounts == null ? 0 : accounts.size();
 		}
 
 		class AccountViewHolder extends ViewHolder implements OnClickListener {
 			public CircleImageView avatar;
 			public TextView name;
 			public ImageButton buttonRemove;
+			public ImageButton buttonKey;
 
 			public AccountViewHolder(ViewGroup parent) {
 				super(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_login_account, parent, false));
@@ -451,33 +479,46 @@ public class LoginActivity extends AppCompatActivity {
 				name = (TextView) itemView.findViewById(R.id.account_name);
 				avatar = (CircleImageView) itemView.findViewById(R.id.account_avatar);
 				buttonRemove = (ImageButton) itemView.findViewById(R.id.account_delete);
+				buttonKey = (ImageButton) itemView.findViewById(R.id.account_key);
 
 				itemView.setOnClickListener(this);
 				buttonRemove.setOnClickListener(this);
+				buttonKey.setOnClickListener(this);
 			}
 
 			@Override
 			public void onClick(View view) {
-				String name = accountNames.get(getAdapterPosition());
+				final AccountLoginInfo account = accounts.get(getAdapterPosition());
 
 				if (view.getId() == R.id.account_delete) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
 					builder.setNegativeButton(R.string.cancel, null);
 					builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
-							String name = accountNames.remove(getAdapterPosition());
+							accounts.remove(getAdapterPosition());
 							notifyItemRemoved(getAdapterPosition());
 
-							PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().remove("loginkey_" + name).apply();
+							AccountLoginInfo.removeAccount(LoginActivity.this, account.username);
 						}
 					});
-					builder.setMessage(String.format(getString(R.string.login_confirm_delete_account), name));
+					builder.setMessage(String.format(getString(R.string.login_confirm_delete_account), account.username));
 					builder.show();
 				}
 				if (view.getId() == R.id.account) {
-					loginWithSavedAccount(name);
+					loginWithSavedAccount(account);
+				}
+				if (view.getId() == R.id.account_key) {
+					SteamGuardCodeView codeView = new SteamGuardCodeView(LoginActivity.this);
+					codeView.setSharedSecret(account.tfa_sharedSecret);
+
+					AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+					builder.setNeutralButton(R.string.ok, null);
+					builder.setCancelable(true);
+					builder.setView(codeView);
+					builder.show();
 				}
 			}
 		}
 	}
+
 }

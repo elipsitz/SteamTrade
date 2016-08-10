@@ -123,8 +123,9 @@
         <item>Invalid Items</item>
         <item>Awaiting Email Confirmation</item>
         <item>Canceled via Email</item>
-        <item>Held In Escrow</item>
+        <item>On Hold</item>
     </string-array>
+    <string name="offer_status_escrow_date">On Hold Until\n%1$s</string>
     <string name="offer_radio_incoming">Incoming Offers</string>
     <string name="offer_radio_sent">Sent Offers</string>
     <string name="offer_inventory_us">Your Inventory</string>
@@ -167,5 +168,6 @@
     <string name="offer_successful">The trade offer was successful.</string>
     <string name="offer_confirm_email">In order to complete this trade offer, you must complete an additional verification step. An email has been sent to your address (ending in "%1$s") with additional instructions.</string>
     <string name="offer_must_counter">You must make a counteroffer to change the offer.</string>
+    <string name="offer_confirmations">Trade\nConfirmations</string>
 
 </resources>

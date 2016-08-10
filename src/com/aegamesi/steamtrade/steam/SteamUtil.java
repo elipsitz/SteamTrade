@@ -58,6 +58,19 @@ public class SteamUtil {
 		return new String(hexChars);
 	}
 
+	public static byte[] hexToBytes(String s) {
+		if (s.length() % 2 == 1)
+			return new byte[0];
+
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+					+ Character.digit(s.charAt(i + 1), 16));
+		}
+		return data;
+	}
+
 	public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
 		Map<String, String> query_pairs = new LinkedHashMap<String, String>();
 		String query = url.getQuery();
@@ -88,6 +101,6 @@ public class SteamUtil {
 	}
 
 	public static String parseEmoticons(String source) {
-		return source.replaceAll("\u02D0([a-zA-Z_]+)\u02D0", "<img src=\"http://steamcommunity-a.akamaihd.net/economy/emoticon/$1\">").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>");
+		return source.replaceAll("\u02D0([a-zA-Z0-9_]+)\u02D0", "<img src=\"http://steamcommunity-a.akamaihd.net/economy/emoticon/$1\">").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>");
 	}
 }

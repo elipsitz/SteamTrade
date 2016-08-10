@@ -3,6 +3,7 @@ package com.aegamesi.steamtrade.fragments;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ public class FragmentAbout extends FragmentBase {
 		super.onCreate(savedInstanceState);
 		if (abort)
 			return;
+
+		Log.i("FragmentAbout", "created");
 	}
 
 	@Override

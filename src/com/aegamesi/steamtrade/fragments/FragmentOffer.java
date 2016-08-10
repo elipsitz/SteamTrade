@@ -127,6 +127,10 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 
 			@Override
 			public void onTabUnselected(Tab tab) {
+				if (tab == null) {
+					return;
+				}
+
 				int i = tab.getPosition();
 				if (i < 0 || i >= tab_views.length)
 					return;
@@ -180,14 +184,14 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		tabInventoryRadioThem.setOnClickListener(this);
 		tabInventorySelect = (Spinner) tab_views[0].findViewById(R.id.inventory_select);
 		tabInventorySelect.setOnItemSelectedListener(this);
-		tabInventorySelectAdapter = new ArrayAdapter<AppContextPair>(activity(), android.R.layout.simple_spinner_item);
+		tabInventorySelectAdapter = new ArrayAdapter<>(activity(), android.R.layout.simple_spinner_item);
 		tabInventorySelectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tabInventorySelect.setAdapter(tabInventorySelectAdapter);
 		tabInventoryList = (ItemListView) tab_views[0].findViewById(R.id.itemlist);
 		tabInventoryList.setProvider(new ItemListView.IItemListProvider() {
 			@Override
 			public boolean onItemChecked(TradeInternalAsset item, boolean checked) {
-				if(!offer.counterOffer && !offer.newOffer) {
+				if (!offer.counterOffer && !offer.newOffer) {
 					Toast.makeText(activity(), R.string.offer_must_counter, Toast.LENGTH_LONG).show();
 					return false;
 				}
@@ -368,8 +372,8 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 		if (offer == null || activity() == null)
 			return;
 
-		tabOfferMeOfferAdapter.setItemList(new ArrayList<TradeInternalAsset>(offer.TRADE_USER_SELF.getOffer()));
-		tabOfferOtherOfferAdapter.setItemList(new ArrayList<TradeInternalAsset>(offer.TRADE_USER_PARTNER.getOffer()));
+		tabOfferMeOfferAdapter.setItemList(new ArrayList<>(offer.TRADE_USER_SELF.getOffer()));
+		tabOfferOtherOfferAdapter.setItemList(new ArrayList<>(offer.TRADE_USER_PARTNER.getOffer()));
 		updateUITabButton(1);
 	}
 
@@ -404,10 +408,12 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	public void updateUITabButton(int num) {
 		if (activity() != null && activity().tabs != null && activity().tabs.getTabCount() > num) {
 			Tab tab = activity().tabs.getTabAt(num);
-			String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
-			if (tab_notifications[num] > 0)
-				text += " (" + tab_notifications[num] + ")";
-			tab.setText(text);
+			if (tab != null) {
+				String text = activity().getResources().getStringArray(R.array.offer_tabs)[num];
+				if (tab_notifications[num] > 0)
+					text += " (" + tab_notifications[num] + ")";
+				tab.setText(text);
+			}
 		}
 	}
 
@@ -477,9 +483,10 @@ public class FragmentOffer extends FragmentBase implements OnClickListener, Adap
 	public void onCompleted() {
 		if (activity() == null || getView() == null)
 			return;
-		((ViewGroup) getView()).removeAllViews();
-		View result = activity().getLayoutInflater().inflate(R.layout.offer_result, null, false);
-		((ViewGroup) getView()).addView(result);
+		ViewGroup viewGroup = ((ViewGroup) getView());
+		viewGroup.removeAllViews();
+		View result = activity().getLayoutInflater().inflate(R.layout.offer_result, viewGroup, false);
+		viewGroup.addView(result);
 		TextView resultHeader = (TextView) result.findViewById(R.id.trade_result_header);
 		TextView resultText = (TextView) result.findViewById(R.id.trade_result_text);
 

@@ -8,15 +8,31 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.text.format.DateFormat;
+import android.util.Base64;
 
 import com.aegamesi.steamtrade.R;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 public class AndroidUtil {
+	public static final int STORE_UNKNOWN = 0;
+	public static final int STORE_GOOGLEPLAY = 1;
+	public static final int STORE_AMAZON = 2;
+
 	// return install time from package manager, or apk file modification time,
 	// or null if not found
 	public static Date getInstallTime(
@@ -25,7 +41,6 @@ public class AndroidUtil {
 				installTimeFromPackageManager(packageManager, packageName),
 				apkUpdateTime(packageManager, packageName));
 	}
-
 
 	public static int numCompare(double x, double y) {
 		return (x < y) ? -1 : ((x == y) ? 0 : 1);
@@ -131,14 +146,11 @@ public class AndroidUtil {
 		return DateFormat.format("MMM d yyyy, h:mm a", time_then);
 	}
 
-	public static final int STORE_UNKNOWN = 0;
-	public static final int STORE_GOOGLEPLAY = 1;
-	public static final int STORE_AMAZON = 2;
-	public int getAppStore(Context context) {
+	public static int getAppStore(Context context) {
 		PackageManager pkgManager = context.getPackageManager();
 		String installerPackageName = pkgManager.getInstallerPackageName(context.getPackageName());
 
-		if(installerPackageName.startsWith("com.amazon")) {
+		if (installerPackageName.startsWith("com.amazon")) {
 			return STORE_AMAZON;
 		} else if ("com.android.vending".equals(installerPackageName)) {
 			return STORE_GOOGLEPLAY;
@@ -146,4 +158,36 @@ public class AndroidUtil {
 
 		return 0;
 	}
+
+	public static String createURIDataString(Map<String, Object> data) {
+
+		StringBuilder dataStringBuffer = new StringBuilder();
+		if (data != null) {
+			try {
+				for (Map.Entry<String, Object> entry : data.entrySet()) {
+					dataStringBuffer.append(
+							URLEncoder.encode(entry.getKey(), "UTF-8"))
+							.append("=").append(
+							URLEncoder.encode(String.valueOf(entry.getValue()), "UTF-8"))
+							.append("&");
+				}
+			} catch (UnsupportedEncodingException e) {
+				return "";
+			}
+		}
+		return dataStringBuffer.toString();
+	}
+
+
+	// From https://gist.github.com/orip/3635246
+	public static class ByteArrayToBase64TypeAdapter implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+		public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			return Base64.decode(json.getAsString(), Base64.NO_WRAP);
+		}
+
+		public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+			return new JsonPrimitive(Base64.encodeToString(src, Base64.NO_WRAP));
+		}
+	}
+
 }

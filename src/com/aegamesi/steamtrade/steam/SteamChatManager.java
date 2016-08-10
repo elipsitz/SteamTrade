@@ -81,7 +81,7 @@ public class SteamChatManager {
 	public void updateNotification() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SteamService.singleton);
 		boolean enableNotification = prefs.getBoolean("pref_notification_chat", true);
-		if(!enableNotification)
+		if (!enableNotification)
 			return;
 
 		NotificationManager notificationManager = (NotificationManager) SteamService.singleton.getSystemService(Context.NOTIFICATION_SERVICE);

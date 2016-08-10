@@ -122,7 +122,7 @@ public class ItemListView extends RecyclerView implements OnClickListener {
 			if (provider != null)
 				allowed = provider.onItemChecked(item, checked);
 
-			if(!allowed) {
+			if (!allowed) {
 				((CheckBox) view).setChecked(!checked);
 			}
 		}

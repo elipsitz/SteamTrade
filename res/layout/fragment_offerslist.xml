@@ -4,27 +4,41 @@
               android:divider="@null"
               android:orientation="vertical">
 
-    <RadioGroup
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:padding="4dp">
 
-        <RadioButton
-            android:id="@+id/offers_radio_incoming"
-            android:layout_width="0dip"
+        <RadioGroup
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:checked="true"
-            android:text="@string/offer_radio_incoming"/>
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_weight="1">
 
-        <RadioButton
-            android:id="@+id/offers_radio_sent"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/offer_radio_sent"/>
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/offers_radio_incoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/offer_radio_incoming"/>
+
+            <RadioButton
+                android:id="@+id/offers_radio_sent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/offer_radio_sent"/>
+        </RadioGroup>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/offer_confirmations"
+            android:id="@+id/offers_confirmations"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/offers_status"

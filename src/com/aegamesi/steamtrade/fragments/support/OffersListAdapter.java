@@ -2,6 +2,7 @@ package com.aegamesi.steamtrade.fragments.support;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,10 +45,18 @@ public class OffersListAdapter extends RecyclerView.Adapter<ViewHolderOffer> {
 		h.textHeading.setText(String.format(fragment.getString(info.is_our_offer() ? R.string.offer_sent_heading : R.string.offer_received_heading), partner_name));
 		h.textSubtitle.setText(fragment.getResources().getStringArray(R.array.offer_status)[info.getTrade_offer_state().v()]);
 		if (info.getMessage() != null) {
+			String quoteString = fragment.getString(R.string.quote);
 			h.textMessage.setVisibility(View.VISIBLE);
-			h.textMessage.setText("\"" + info.getMessage() + "\"");
+			h.textMessage.setText(String.format(quoteString, info.getMessage()));
 		} else {
 			h.textMessage.setVisibility(View.GONE);
+		}
+
+		// special escrow date
+		if (info.getTrade_offer_state() == ETradeOfferState.InEscrow) {
+			CharSequence formattedDate = DateFormat.format("MMM d @ h:m a", info.getEscrow_end_date() * 1000);
+			String subtitle = String.format(fragment.getString(R.string.offer_status_escrow_date), formattedDate);
+			h.textSubtitle.setText(subtitle);
 		}
 
 		// buttons
@@ -63,17 +72,31 @@ public class OffersListAdapter extends RecyclerView.Adapter<ViewHolderOffer> {
 		h.buttonDecline.setVisibility(info.is_our_offer() ? View.GONE : View.VISIBLE);
 		h.buttonCancel.setVisibility(info.is_our_offer() ? View.VISIBLE : View.GONE);
 
+		if (info.getItems_to_give().size() > 0) {
+			ItemListAdapter adapter_will_give = new ItemListAdapter(fragment.activity(), h.itemListWillGive, false, null);
+			adapter_will_give.setItemList(info.getItems_to_give());
+			adapter_will_give.setListMode(ItemListAdapter.MODE_GRID);
+			h.itemListWillGive.setAdapter(adapter_will_give);
+			h.itemListWillGive.setExpanded(true);
+			h.itemListWillGive.setVisibility(View.VISIBLE);
+			h.textLabelWillGive.setVisibility(View.VISIBLE);
+		} else {
+			h.itemListWillGive.setVisibility(View.GONE);
+			h.textLabelWillGive.setVisibility(View.GONE);
+		}
 
-		ItemListAdapter adapter_will_give = new ItemListAdapter(fragment.activity(), h.itemListWillGive, false, null);
-		adapter_will_give.setItemList(info.getItems_to_give());
-		adapter_will_give.setListMode(ItemListAdapter.MODE_GRID);
-		h.itemListWillGive.setAdapter(adapter_will_give);
-		h.itemListWillGive.setExpanded(true);
-		ItemListAdapter adapter_will_receive = new ItemListAdapter(fragment.activity(), h.itemListWillReceive, false, null);
-		adapter_will_receive.setItemList(info.getItems_to_receive());
-		adapter_will_receive.setListMode(ItemListAdapter.MODE_GRID);
-		h.itemListWillReceive.setAdapter(adapter_will_receive);
-		h.itemListWillReceive.setExpanded(true);
+		if (info.getItems_to_receive().size() > 0) {
+			ItemListAdapter adapter_will_receive = new ItemListAdapter(fragment.activity(), h.itemListWillReceive, false, null);
+			adapter_will_receive.setItemList(info.getItems_to_receive());
+			adapter_will_receive.setListMode(ItemListAdapter.MODE_GRID);
+			h.itemListWillReceive.setAdapter(adapter_will_receive);
+			h.itemListWillReceive.setExpanded(true);
+			h.itemListWillReceive.setVisibility(View.VISIBLE);
+			h.textLabelWillReceive.setVisibility(View.VISIBLE);
+		} else {
+			h.itemListWillReceive.setVisibility(View.GONE);
+			h.textLabelWillReceive.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -91,6 +114,8 @@ public class OffersListAdapter extends RecyclerView.Adapter<ViewHolderOffer> {
 		public TextView textHeading;
 		public TextView textSubtitle;
 		public TextView textMessage;
+		public TextView textLabelWillGive;
+		public TextView textLabelWillReceive;
 		public Button buttonRespond;
 		public Button buttonCancel;
 		public Button buttonDecline;
@@ -104,6 +129,8 @@ public class OffersListAdapter extends RecyclerView.Adapter<ViewHolderOffer> {
 			textHeading = (TextView) itemView.findViewById(R.id.offer_heading);
 			textSubtitle = (TextView) itemView.findViewById(R.id.offer_subtitle);
 			textMessage = (TextView) itemView.findViewById(R.id.offer_message);
+			textLabelWillGive = (TextView) itemView.findViewById(R.id.offer_label_give);
+			textLabelWillReceive = (TextView) itemView.findViewById(R.id.offer_label_receive);
 			buttonRespond = (Button) itemView.findViewById(R.id.offer_button_respond);
 			buttonCancel = (Button) itemView.findViewById(R.id.offer_button_cancel);
 			buttonDecline = (Button) itemView.findViewById(R.id.offer_button_decline);

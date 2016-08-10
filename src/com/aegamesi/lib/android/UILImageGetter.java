@@ -4,116 +4,100 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.io.InputStream;
-
 
 public class UILImageGetter implements Html.ImageGetter {
-	Context c;
-	TextView container;
+	Context context;
+	TextView textView;
+	float pixelsToDp;
 
-	/**
-	 * Construct the UILImageGetter which will execute AsyncTask and refresh the container
-	 *
-	 * @param t
-	 * @param c
-	 */
-	public UILImageGetter(View t, Context c) {
-		this.c = c;
-		this.container = (TextView) t;
+	public UILImageGetter(View t, Context context) {
+		this.context = context;
+		this.textView = (TextView) t;
+
+		Resources resources = context.getResources();
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		pixelsToDp = ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
 	}
 
 	@Override
 	public Drawable getDrawable(String source) {
-		UrlImageDownloader urlDrawable = new UrlImageDownloader(c.getResources(), source);
-		//urlDrawable.drawable = c.getResources().getDrawable(R.drawable.image_loader_stub);
+		int size = (int) (18.0f * pixelsToDp);
 
-		ImageLoader.getInstance().loadImage(source, new SimpleListener(urlDrawable));
-		return urlDrawable;
+		ContainerDrawable container = new ContainerDrawable(Color.WHITE, size, size);
+
+		Log.d("UILImageGetter", "Loading...");
+		ImageLoader.getInstance().loadImage(source, new SimpleListener(container));
+		return container;
 	}
 
 	private class SimpleListener extends SimpleImageLoadingListener {
-		UrlImageDownloader urlImageDownloader;
+		ContainerDrawable containerDrawable;
 
-		public SimpleListener(UrlImageDownloader downloader) {
+		public SimpleListener(ContainerDrawable downloader) {
 			super();
-			urlImageDownloader = downloader;
+			containerDrawable = downloader;
 		}
 
 		@Override
 		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-			int width = loadedImage.getWidth();
-			int height = loadedImage.getHeight();
+			Log.d("UILImageGetter", "Done loading " + imageUri);
 
-			int newWidth = width;
-			int newHeight = height;
+			containerDrawable.setBitmap(loadedImage);
 
-			if (width > container.getWidth()) {
-				newWidth = container.getWidth();
-				newHeight = (newWidth * height) / width;
-			}
-
-			//view.getLayoutParams().width = newWidth;
-			//view.getLayoutParams().height = newHeight;
-
-			Drawable result = new BitmapDrawable(c.getResources(), loadedImage);
-			result.setBounds(0, 0, newWidth, newHeight);
-
-			urlImageDownloader.setBounds(0, 0, newWidth, newHeight);
-			urlImageDownloader.drawable = result;
-
-			container.invalidate();
+			textView.getParent().requestLayout();
+			textView.invalidate();
+			textView.invalidateDrawable(containerDrawable);
+			textView.setText(null);
+			textView.setText(textView.getText());
 		}
 	}
 
-	private class UrlImageDownloader extends BitmapDrawable {
-		public Drawable drawable;
+	private class ContainerDrawable extends ColorDrawable {
+		private Drawable innerDrawable = null;
 
-		/**
-		 * Create a drawable by decoding a bitmap from the given input stream.
-		 *
-		 * @param res
-		 * @param is
-		 */
-		public UrlImageDownloader(Resources res, InputStream is) {
-			super(res, is);
+		public ContainerDrawable(int w, int h, int color) {
+			super(color);
+
+			setBounds(0, 0, w, h);
 		}
 
-		/**
-		 * Create a drawable by opening a given file path and decoding the bitmap.
-		 *
-		 * @param res
-		 * @param filepath
-		 */
-		public UrlImageDownloader(Resources res, String filepath) {
-			super(res, filepath);
-			drawable = new BitmapDrawable(res, filepath);
-		}
+		private void setBitmap(Bitmap bitmap) {
+			int width = bitmap.getWidth();
+			int height = bitmap.getHeight();
 
-		/**
-		 * Create drawable from a bitmap, setting initial target density based on
-		 * the display metrics of the resources.
-		 *
-		 * @param res
-		 * @param bitmap
-		 */
-		public UrlImageDownloader(Resources res, Bitmap bitmap) {
-			super(res, bitmap);
+			int newWidth = (int)(width * pixelsToDp);
+			int newHeight = (int)(height * pixelsToDp);
+
+			if (width > textView.getWidth()) {
+				newWidth = textView.getWidth();
+				newHeight = (newWidth * height) / width;
+			}
+
+			innerDrawable = new BitmapDrawable(context.getResources(), bitmap);
+			innerDrawable.setFilterBitmap(false);
+			innerDrawable.setBounds(0, 0, newWidth, newHeight);
+			setBounds(0, 0, newWidth, newHeight);
 		}
 
 		@Override
 		public void draw(Canvas canvas) {
-			// override the draw to facilitate refresh function later
-			if (drawable != null) {
-				drawable.draw(canvas);
+			if (innerDrawable != null) {
+				innerDrawable.draw(canvas);
+			} else {
+				super.draw(canvas);
 			}
 		}
 	}

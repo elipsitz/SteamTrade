@@ -61,7 +61,7 @@
         <item>Ung�ltige Gegenst�nde</item>
         <item>Warte auf E-Mailbest�tigung</item>
         <item>Abgebrochen durch E-Mail</item>
-        <item>Held in Escrow</item>
+        <item>Zurückgehalten</item>
     </string-array>
     <string name="offer_radio_incoming">Erhaltene Angebote</string>
     <string name="offer_radio_sent">Gesendete Angebote</string>

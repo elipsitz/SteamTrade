@@ -15,14 +15,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamService;
+import com.aegamesi.steamtrade.steam.SteamTwoFactor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +39,25 @@ public class FragmentWeb extends FragmentBase {
 	private boolean forceDesktop = false;
 	private boolean hasTabs = false;
 	private int last_tab = -1;
+
+	private SteamGuardJavascriptInterface steamGuardJavascriptInterface;
+
+	public static void openPage(MainActivity activity, String url, boolean headless) {
+		openPageWithTabs(activity, url, headless, null, null);
+	}
+
+	public static void openPageWithTabs(MainActivity activity, String url, boolean headless, String[] tabs, String[] tab_urls) {
+		Bundle args = new Bundle();
+		args.putBoolean("headless", headless);
+		if (tabs != null && tab_urls != null) {
+			args.putStringArray("tabs", tabs);
+			args.putStringArray("tabUrls", tab_urls);
+		}
+		args.putString("url", url);
+		FragmentWeb fragment = new FragmentWeb();
+		fragment.setArguments(args);
+		activity.browseToFragment(fragment, true);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -102,7 +124,9 @@ public class FragmentWeb extends FragmentBase {
 
 			if (!loaded_page) {
 				if (hasTabs) {
-					activity().tabs.getTabAt(0).select();
+					Tab tab = activity().tabs.getTabAt(0);
+					if (tab != null)
+						tab.select();
 				} else {
 					if (url == null)
 						web_view.loadUrl("https://steamcommunity.com/profiles/" + SteamService.singleton.steamClient.getSteamId().convertToLong());
@@ -122,6 +146,7 @@ public class FragmentWeb extends FragmentBase {
 
 		web_view.setWebViewClient(new SteamWebViewClient());
 		web_view.setWebChromeClient(new SteamWebChromeClient());
+		web_view.addJavascriptInterface(steamGuardJavascriptInterface = new SteamGuardJavascriptInterface(), "SGHandler");
 		WebSettings web_settings = web_view.getSettings();
 		web_settings.setJavaScriptEnabled(true);
 		web_settings.setBuiltInZoomControls(true);
@@ -192,11 +217,13 @@ public class FragmentWeb extends FragmentBase {
 	}
 
 	public void updateCookies() {
-		List<String> cookies = new ArrayList<String>();
+		List<String> cookies = new ArrayList<>();
 		Collections.addAll(cookies, SteamService.generateSteamWebCookies().split(";"));
 		cookies.add("forceMobile=" + ((!forceDesktop || headless) ? 1 : 0));
 		cookies.add("dob=1"); // age check
 		cookies.add("mobileClient=" + (headless ? "android" : ""));
+		if(headless)
+			cookies.add("mobileClientVersion=3125579+%282.1.4%29");
 
 		CookieManager cookieManager = CookieManager.getInstance();
 		for (String cookie : cookies) {
@@ -232,6 +259,18 @@ public class FragmentWeb extends FragmentBase {
 				if (command.equalsIgnoreCase("reloadpage")) {
 					view.reload();
 				}
+				if (command.equalsIgnoreCase("steamguard") || Uri.parse(view.getUrl()).getHost().equalsIgnoreCase("steamcommunity")) {
+					String op = uri.getQueryParameter("op");
+					if(op.equalsIgnoreCase("conftag")) {
+						String tag = uri.getQueryParameter("arg1");
+						String go = SteamTwoFactor.generateConfirmationParameters(activity(), tag);
+
+						if(go.length() == 0)
+							steamGuardJavascriptInterface.setResultError("", -1);
+						else
+							steamGuardJavascriptInterface.setResultOkay(go);
+					}
+				}
 				return true;
 			}
 
@@ -251,6 +290,43 @@ public class FragmentWeb extends FragmentBase {
 
 				loading_bar.setProgress(progress);
 			}
+		}
+	}
+
+	private class SteamGuardJavascriptInterface {
+		private String returnCode = "";
+		private String returnStatus = "";
+		private String returnValue = "";
+
+		public void setResultOkay(String value) {
+			returnStatus = "ok";
+			returnValue = value == null ? "" : value;
+		}
+		public void setResultError(String value, int code) {
+			returnStatus = "error";
+			returnValue = value == null ? "" : value;
+			returnCode = "" + code;
+		}
+		public void setResultBusy() {
+			returnValue = "";
+			returnStatus = "busy";
+		}
+
+		@JavascriptInterface
+		public String getResultCode() {
+			return returnCode;
+		}
+
+		@JavascriptInterface
+		public String getResultStatus() {
+			return returnStatus;
+		}
+
+		@JavascriptInterface
+		public String getResultValue() {
+			String val = returnValue;
+			setResultBusy();
+			return val;
 		}
 	}
 }
