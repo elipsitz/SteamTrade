@@ -36,19 +36,19 @@
         android:visibility="gone"
         app:tabMode="fixed"/>
 
-    <fragment
-        android:id="@+id/adFragment"
-        android:name="com.aegamesi.steamtrade.AdFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout="@layout/ad_fragment"/>
-
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1">
     </FrameLayout>
+
+    <fragment
+        android:id="@+id/adFragment"
+        android:name="com.aegamesi.steamtrade.AdFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/ad_fragment"/>
 
     <include
         android:id="@+id/trade_status"

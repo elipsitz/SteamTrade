@@ -2,10 +2,14 @@ package com.aegamesi.steamtrade.fragments.support;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.HapticFeedbackConstants;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.aegamesi.lib.android.AndroidUtil;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamTwoFactor;
 
@@ -56,6 +60,16 @@ public class SteamGuardCodeView extends LinearLayout {
 				}
 
 				postDelayed(this, 50);
+			}
+		});
+
+		textCode.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View view) {
+				// view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+				AndroidUtil.copyToClipboard(view.getContext(), textCode.getText().toString());
+				Toast.makeText(view.getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+				return true;
 			}
 		});
 	}

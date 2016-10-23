@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aegamesi.steamtrade"
     android:versionCode="76"
-    android:versionName="0.11.7" >
+    android:versionName="0.11.8" >
 
     <!--
         <uses-sdk
