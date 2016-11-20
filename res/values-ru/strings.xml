@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error_disconnected">Отключен от сети Steam</string>
+    <string name="drawer_open">Open Drawer</string>
+    <string name="drawer_close">Close Drawer</string>
+    <string name="steam_avatar">Аватарка</string>
+    <string name="chat">Чат</string>
+    <string name="trade">Обмен</string>
+    <string name="friends">Друзья</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="unknown">\?</string>
+    <string name="action_successful">Action successful.</string>
+    <string name="action_failed">Action failed.</string>
+    <string name="search">Поиск</string>
+
+    <string name="steamguard_new">This is the first time you are logging into this account on this device.\n\nAs per Valve restrictions, you may not be allowed to trade or send trade offers from this device for the next 7 days.</string>
+    <string name="api_key_not_loaded">A WebAPI key was not properly retrieved. This feature will not work.</string>
+    <string name="rate_snackbar_text">Вам нравится Ice?</string>
+    <string name="rate_snackbar_action">ОЦЕНИТЬ</string>
+
+    <string name="nav_friends">Друзья</string>
+    <string name="nav_inventory">Инвентарь</string>
+    <string name="nav_offers">Предложения обмена</string>
+    <string name="nav_games">Библиотека</string>
+    <string name="nav_store">Магазин Steam</string>
+    <string name="nav_market">Торговая площадка</string>
+    <string name="nav_browser">Браузер Steam</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_about">О Ice</string>
+    <string name="nav_signout">Выйти</string>
+
+    <string name="purchase_pending">Purchase pending…</string>
+    <string name="purchase_complete">Purchase successful! Спасибо!</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="send_button">Send</string>
+    <string name="chat_hint">Tap to chat</string>
+    <string name="app_crashed_toast">Ice Client сломался, но репорт был отправлен разработчику, чтобу помочь решить проблему!</string>
+    <string name="playing">Playing</string>
+    <string name="cancel">Cancel</string>
+    <string name="accept">Accept</string>
+    <string name="add">Add</string>
+    <string name="change_display_name">Change Display Name</string>
+    <string name="change_display_name_prompt">Please enter your new display name:</string>
+    <string name="set_currently_playing_game">Set Currently Playing Game</string>
+
+    <string name="x_new_messages">%1$d messages</string>
+
+    <string-array name="allowed_states">
+        <item>В сети</item>
+        <item>Нет на месте</item>
+        <item>Не беспокоить</item>
+        <item>Спит</item>
+        <item>Хочет обменяться</item>
+        <item>Хочет играть</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>Не в сети</item>
+        <item>В сети</item>
+        <item>Не беспокоить</item>
+        <item>Нет на месте</item>
+        <item>Спит</item>
+        <item>Хочет обменяться</item>
+        <item>Хочет играть</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>Unknown Status</item>
+        <item>Initializing…</item>
+        <item>Connecting…</item>
+        <item>Logging on…</item>
+        <item>Authenticating…</item>
+        <item>Fetching Key…</item>
+        <item>Connected</item>
+        <item>Disconnected</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">Copied to clipboard.</string>
+
+    <string name="change">Change</string>
+    <string name="baa">moo</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="feature_not_implemented">Feature not implemented</string>
+    <string name="error_getting_key">Error fetching WebAPI key. Some features (like trade offers) may not work properly.</string>
+    <string name="error_steamapi">Error accessing SteamAPI.</string>
+    <string name="ok">ОК</string>
+
+    <string name="action_settings">Настройки</string>
+
+    <string name="web_back">Назад</string>
+    <string name="web_forward">Вперёд</string>
+    <string name="web_reload">Перезагрузить страницу</string>
+    <string name="web_community">Сообщество Steam</string>
+    <string name="web_store">Магазин Steam</string>
+    <string name="web_toggle_view">Полная версия</string>
+
+    <string name="library_playtime">%1$.1f hrs on record</string>
+    <string name="library_playtime_full">%1$.1f hrs past two weeks\n%2$.1f hrs on record</string>
+    <string name="library_sort">Change sorting</string>
+    <string name="library_sort_name">Sort alphabetically</string>
+    <string name="library_sort_playtime">Sort by playtime</string>
+
+    <string-array name="store_tabs">
+        <item>Каталог</item>
+        <item>Корзина</item>
+        <item>Поиск</item>
+        <item>Желаемое</item>
+        <item>Аккаунт</item>
+    </string-array>
+    <string-array name="store_urls">
+        <item>https://store.steampowered.com/mobilestorefront/main</item>
+        <item>https://store.steampowered.com/mobilecart/</item>
+        <item>https://store.steampowered.com/mobilestorefront/search</item>
+        <item>https://steamcommunity.com/my/wishlist/</item>
+        <item>https://store.steampowered.com/mobileaccount/</item>
+    </string-array>
+
+	
+    <plurals name="notification_comments">
+        <item quantity="one">%d новый комментарий</item>
+        <item quantity="other">%d новых комментариев</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d новый предмет в вашем инвентаре</item>
+        <item quantity="other">%d новых предметов в вашем инвентаре</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d непрочитанное сообщение</item>
+        <item quantity="other">%d непрочитанных сообщений</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d новый обмен</item>
+        <item quantity="other">%d новых обменов</item>
+    </plurals>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="friend_add">Добавить в друзья</string>
+    <string name="friend_accept">Принять запрос</string>
+    <string name="friend_ignore">Отклонить запрос</string>
+    <string name="friend_add_prompt">Пожалуйста, введите SteamID64 или адрес электронной почты друга, которого вы хотите добавить:</string>
+    <string name="friend_add_fail">Не удалось добавить в друзья: %1$s</string>
+    <string name="friend_add_success">Добавлен в друзья.</string>
+    <string name="friend_remove">Удалить из друзей</string>
+    <string name="friend_remove_message">Вы уверены, что хотите удалить \'%1$s\' из списка друзей?</string>
+    <string name="friend_removed">\'%1$s\' удалён.</string>
+    <string name="friend_search">Поиск списка друзей</string>
+    <string name="friend_request_accept">Accepted Friend Request</string>
+    <string name="friend_request_ignore">Ignored Friend Request</string>
+    <string name="friend_view_steam">Посмотреть в Steam</string>
+    <string name="friend_view_steamrep">Посмотреть на SteamRep</string>
+    <string name="friend_view_library">Посмотреть игры</string>
+    <string name="friend_is_typing">Other user is typing…</string>
+    <string name="profile_view">Просмотреть профиль</string>
+    <string name="profile_summary">Краткое описание</string>
+    <string name="profile_loading_summary">Загрузка описания…</string>
+    <string name="friend_request">Запрос в друзья</string>
+    <string name="friend_request_text">%1$s добавил вас.</string>
+    <string name="friend_request_multi">У вас %1$d запросов в друзья.</string>
+    <string name="friend_block">Заблокировать</string>
+    <string name="friend_unblock">Разблокировать</string>
+
+    <string name="chat_group">Групповой чат</string>
+    <string name="chat_with">Чат с %1$s</string>
+    <string name="friend_invite_to_chat">Приглашение в чат…</string>
+    <string name="friend_invite_to_trade">Предложить обмен</string>
+    <string name="friend_send_trade_offer">Отправить предложение обмена</string>
+    <string name="chat_you">Вам</string>
+    <string name="chat_them">Им</string>
+    <string name="chat_chat">Чат</string>
+    <string name="chat_participants">Участники</string>
+</resources>
