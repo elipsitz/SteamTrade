@@ -86,6 +86,7 @@ public class SteamService extends Service {
 	public String sentryHash = null;
 	public String username;
 	public long timeLogin = 0L;
+	public int idling_app = 0;
 	Timer myTimer;
 	private DBHelper db_helper = null;
 	private SQLiteDatabase _db = null;
@@ -627,7 +628,9 @@ public class SteamService extends Service {
 
 	public void disconnect() {
 		stopSelf();
-		steamClient.disconnect();
+		if (steamClient != null) {
+			steamClient.disconnect();
+		}
 		resetAuthentication();
 	}
 

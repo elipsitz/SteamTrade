@@ -50,6 +50,8 @@
         <item>British Pound (GBP)</item>
         <item>Euro (EUR)</item>
         <item>Russian Ruble (RUB)</item>
+        <item>Swiss Franc (CHF)</item>
+        <item>Polish Zloty (PLN)</item>
         <item>Brazilian Real (BRL)</item>
         <item>Japanese Yen (JPN)</item>
         <item>Norwegian Krone (NOK)</item>
@@ -58,9 +60,13 @@
         <item>Philippine Peso (PHP)</item>
         <item>Singapore Dollar (SGD)</item>
         <item>Thai Baht (THB)</item>
+        <item>Vietnamese Dong (VND)</item>
+        <item>South Korean Won (KRW)</item>
         <item>Turkish Lira (TRY)</item>
+        <item>Ukrainian Hryvnia (UAH)</item>
         <item>Mexican Peso (MXN)</item>
         <item>Canadian Dollar (CDN)</item>
+        <item>Australian Dollar (AUD)</item>
         <item>New Zealand Dollar (NZD)</item>
         <item>Chinese Yuan (CNY)</item>
         <item>Indian Rupee (INR)</item>
@@ -72,12 +78,15 @@
         <item>New Taiwan Dollar (TWD)</item>
         <item>Saudi Riyal (SAR)</item>
         <item>United Arab Emirates Dirham (AED)</item>
+        <item>Swedish Krona (SEK)</item>
     </string-array>
     <string-array name="steam_currency_val" translatable="false">
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
         <item>5</item>
+        <item>6</item>
         <item>7</item>
         <item>8</item>
         <item>9</item>
@@ -86,9 +95,13 @@
         <item>12</item>
         <item>13</item>
         <item>14</item>
+        <item>15</item>
+        <item>16</item>
         <item>17</item>
+        <item>18</item>
         <item>19</item>
         <item>20</item>
+        <item>21</item>
         <item>22</item>
         <item>23</item>
         <item>24</item>
@@ -100,6 +113,7 @@
         <item>30</item>
         <item>31</item>
         <item>32</item>
+        <item>33</item>
     </string-array>
 
     <!-- offers -->

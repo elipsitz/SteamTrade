@@ -57,13 +57,13 @@
                     tools:text="Status"/>
 
                 <TextView
+                    android:id="@+id/offer_label_give"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dip"
                     android:singleLine="true"
                     android:text="@string/offer_will_give"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:id="@+id/offer_label_give"/>
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
                 <com.aegamesi.lib.android.ExpandableHeightGridView
                     android:id="@+id/offer_items_give"
@@ -78,14 +78,14 @@
                     />
 
                 <TextView
+                    android:id="@+id/offer_label_receive"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dip"
                     android:layout_marginTop="16dip"
                     android:singleLine="true"
                     android:text="@string/offer_will_receive"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:id="@+id/offer_label_receive"/>
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
                 <com.aegamesi.lib.android.ExpandableHeightGridView
                     android:id="@+id/offer_items_receive"

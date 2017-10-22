@@ -103,4 +103,8 @@ public class SteamUtil {
 	public static String parseEmoticons(String source) {
 		return source.replaceAll("\u02D0([a-zA-Z0-9_]+)\u02D0", "<img src=\"http://steamcommunity-a.akamaihd.net/economy/emoticon/$1\">").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>");
 	}
+
+	public static boolean iapOverride() {
+		return SteamService.singleton != null && SteamService.singleton.steamClient != null && SteamService.singleton.steamClient.getSteamId().convertToLong() == 76561198000739785L;
+	}
 }

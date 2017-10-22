@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="friend_add">친구 추가</string>
+    <string name="friend_accept">요청 수락</string>
+    <string name="friend_ignore">요청 거절</string>
+    <string name="friend_add_prompt">친구로 추가하고 싶은 계정의 SteamID64 혹은 이메일 등을 입력해주세요:</string>
+    <string name="friend_add_fail">친구 추가 실패: %1$s</string>
+    <string name="friend_add_success">친구를 추가함</string>
+    <string name="friend_remove">친구를 제거함</string>
+    <string name="friend_remove_message">정말로 \'%1$s\'을(를) 친구 목록에서 삭제할까요?</string>
+    <string name="friend_removed">\'%1$s\'을(를) 친구 목록에서 삭제하였습니다.</string>
+    <string name="friend_search">친구 목록 검색</string>
+    <string name="friend_request_accept">친구 추가 요청을 수락하였습니다.</string>
+    <string name="friend_request_ignore">친구 추가 요청을 거절하였습니다.</string>
+    <string name="friend_view_steam">Steam 에서 보기</string>
+    <string name="friend_view_steamrep">SteamRep 에서 보기</string>
+    <string name="friend_view_library">라이브러리 보기</string>
+    <string name="friend_is_typing">상대방이 입력 중입니다....</string>
+    <string name="profile_view">프로필 보기</string>
+    <string name="profile_summary">요약</string>
+    <string name="profile_loading_summary">요약 불러오는 중...</string>
+    <string name="friend_request">친구 요청</string>
+    <string name="friend_request_text">%1$s가 친구 요청을 보내셨습니다.</string>
+    <string name="friend_request_multi">%1$d개의 새로운 친구 요청이 있습니다.</string>
+    <string name="friend_block">차단</string>
+    <string name="friend_unblock">차단 해제</string>
+    <string name="profile_playing_game">게임 중 %1$s</string>
+
+    <string name="chat_group">그룹 채팅</string>
+    <string name="chat_with">%1$s님과 채팅 중</string>
+    <string name="friend_invite_to_chat">채팅으로 초대…</string>
+    <string name="friend_invite_to_trade">거래 요청</string>
+    <string name="friend_send_trade_offer">거래 제안 보내기</string>
+    <string name="chat_you">당신</string>
+    <string name="chat_them">상대(들)</string>
+    <string name="chat_chat">채팅</string>
+    <string name="chat_participants">대화 상대</string>
+</resources>

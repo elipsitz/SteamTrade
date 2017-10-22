@@ -185,7 +185,9 @@ public class FragmentChat extends FragmentBase implements ChatReceiver {
 		// set up the cursor
 		adapter.changeCursor(cursor = fetchCursor());
 
-		activity().getPreferences(Context.MODE_PRIVATE).edit().putLong("chat_read_" + ourID.convertToLong() + "_" + chatID.convertToLong(), System.currentTimeMillis()).apply();
+		if (ourID != null && chatID != null) {
+			activity().getPreferences(Context.MODE_PRIVATE).edit().putLong("chat_read_" + ourID.convertToLong() + "_" + chatID.convertToLong(), System.currentTimeMillis()).apply();
+		}
 
 		if (SteamService.singleton != null && SteamService.singleton.chatManager != null && SteamService.singleton.chatManager.receivers != null)
 			SteamService.singleton.chatManager.receivers.add(0, this);

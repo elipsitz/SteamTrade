@@ -52,11 +52,10 @@ import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.appodeal.ads.Appodeal;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
-import org.acra.ACRA;
 
 import java.util.Locale;
 
@@ -244,9 +243,11 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		}
 
 
-		// setup amazon ads
-		//AdRegistration.enableLogging(debug_amazon_ads);
-		//AdRegistration.enableTesting(debug_amazon_ads);
+		// setup Appodeal
+		Appodeal.disableLocationPermissionCheck();
+		Appodeal.disableWriteExternalStoragePermissionCheck();
+		Appodeal.setBannerViewId(R.id.appodealBannerView);
+		Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.BANNER);
 	}
 
 	@Override
@@ -406,11 +407,11 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 								.show();
 					}
 				} else {
-					int error = R.string.library_activation_error;
-					if (obj.getPurchaseResultDetails() == 14)
-						error = R.string.library_activation_invalid_code;
-					if (obj.getPurchaseResultDetails() == 9)
-						error = R.string.library_activation_code_used;
+					String error = obj.getPurchaseResultDetails().name();
+					if (obj.getPurchaseResultDetails().v() == 14)
+						error = getString(R.string.library_activation_invalid_code);
+					if (obj.getPurchaseResultDetails().v() == 9)
+						error = getString(R.string.library_activation_code_used);
 
 					(new AlertDialog.Builder(MainActivity.this))
 							.setTitle(R.string.library_activation_failed)
@@ -525,11 +526,10 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 			protected Void doInBackground(Void... params) {
 				// this is really goddamn slow
 				steamUser.logOff();
-				SteamService.singleton.steamClient.disconnect();
 				SteamService.attemptReconnect = false;
-				if (SteamService.singleton != null)
+				if (SteamService.singleton != null) {
 					SteamService.singleton.disconnect();
-
+				}
 
 				return null;
 			}
@@ -621,9 +621,6 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 
 		if (!assertSteamConnection())
 			return;
-
-		if (SteamService.singleton.steamClient.getSteamId() != null)
-			ACRA.getErrorReporter().putCustomData("steamid64", SteamService.singleton.steamClient.getSteamId().render());
 	}
 
 	@Override

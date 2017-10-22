@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time_now">现在</string>
+    <string name="time_just_now">刚才</string>
+    <string name="time_in_future">未来</string>
+
+    <plurals name="time_mins">
+        <item quantity="one">%1$d 分钟</item>
+        <item quantity="other">%1$d 分钟</item>
+    </plurals>
+</resources>

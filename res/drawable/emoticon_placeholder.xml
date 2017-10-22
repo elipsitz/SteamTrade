@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/listview_background_shape">
-    <padding android:left="9dp"
-             android:top="9dp"
-             android:right="9dp"
-             android:bottom="9dp" />
-    <corners android:radius="2dp" />
-    <solid android:color="#ffffffff" />
+<shape android:id="@+id/listview_background_shape"
+       xmlns:android="http://schemas.android.com/apk/res/android">
+    <padding
+        android:bottom="9dp"
+        android:left="9dp"
+        android:right="9dp"
+        android:top="9dp"/>
+    <corners android:radius="2dp"/>
+    <solid android:color="#ffffffff"/>
 </shape>

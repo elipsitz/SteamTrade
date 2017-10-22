@@ -21,6 +21,14 @@ import java.util.Map;
  *         project by Jessecar96)
  */
 public class TradeInternalInventory {
+	/**
+	 * The appid-contextid pair this inventory represents.
+	 */
+	final AppContextPair appContext;
+	/**
+	 * The AssetBuilder instance used to load this inventory.
+	 */
+	final AssetBuilder assetBuilder;
 	boolean inventoryValid;
 	String errorMessage;
 	/**
@@ -36,14 +44,6 @@ public class TradeInternalInventory {
 	 * Should be fine as a list, but for now.
 	 */
 	Map<Long, TradeInternalCurrency> currencyItems;
-	/**
-	 * The appid-contextid pair this inventory represents.
-	 */
-	final AppContextPair appContext;
-	/**
-	 * The AssetBuilder instance used to load this inventory.
-	 */
-	final AssetBuilder assetBuilder;
 	/**
 	 * Whether or not there is more to load in the inventory.
 	 */
@@ -236,7 +236,7 @@ public class TradeInternalInventory {
 				JSONObject rgDescriptionItem =
 						rgDescriptions.getJSONObject(rgDescriptionKey);
 
-				int classid = rgDescriptionItem.getInt("classid");
+				long classid = rgDescriptionItem.getLong("classid");
 				long instanceid = rgDescriptionItem.getLong("instanceid");
 
 				descriptions.put(new ClassInstancePair(classid, instanceid),
@@ -254,7 +254,7 @@ public class TradeInternalInventory {
 						rgInventory.getJSONObject(rgInventoryItem);
 
 				ClassInstancePair itemCI = new ClassInstancePair(
-						Integer.parseInt(invInstance.getString("classid")),
+						Long.parseLong(invInstance.getString("classid")),
 						Long.parseLong(
 								invInstance.optString("instanceid", "0")));
 
@@ -280,7 +280,7 @@ public class TradeInternalInventory {
 						rgCurrency.getJSONObject(rgCurrencyItem);
 
 				ClassInstancePair itemCI = new ClassInstancePair(
-						Integer.parseInt(invInstance.getString("classid")),
+						Long.parseLong(invInstance.getString("classid")),
 						Long.parseLong(invInstance.optString("instanceid", "0")));
 
 				try {
@@ -320,7 +320,7 @@ public class TradeInternalInventory {
 	 * @author nosoop < nosoop at users.noreply.github.com >
 	 */
 	public static class ClassInstancePair {
-		int classid;
+		long classid;
 		long instanceid;
 
 		/**
@@ -329,14 +329,14 @@ public class TradeInternalInventory {
 		 * @param classid
 		 * @param instanceid
 		 */
-		public ClassInstancePair(int classid, long instanceid) {
+		public ClassInstancePair(long classid, long instanceid) {
 			this.classid = classid;
 			this.instanceid = instanceid;
 		}
 
 		@Override
 		public int hashCode() {
-			return 497 * classid + (int) instanceid;
+			return 497 * (int) classid + (int) instanceid;
 		}
 
 		@Override

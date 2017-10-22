@@ -13,13 +13,13 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
             android:cropToPadding="false"
             android:padding="-16dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ice_logo"
-            android:layout_marginTop="16dp"/>
+            android:src="@drawable/ice_logo"/>
 
         <TextView
             android:id="@+id/ice_text_thanks"

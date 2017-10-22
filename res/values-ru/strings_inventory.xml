@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Изображение предмета</string>
+
+    <string name="inv_error_private">Этот инвентарь скрыт.</string>
+    <string name="inventory">Инвентарь</string>
+
+    <string name="search_inventory">Поиск</string>
+    <string name="search_result_count">Отображается %1$d из %2$d</string>
+    <string name="toggle_view_mode">Переключить режим просмотра</string>
+    <string name="inv_error_loading">Ошибка загрузки инвентаря:\n%1$s</string>
+
+    <string name="craft_x_items">Создание %1$d TF2 Предмет(ов)</string>
+    <string name="craft_noncraftable">Один или несколько из выбранных предметов не могут быть созданы.</string>
+    <string name="craft_nontradable">Один или несколько предметов нельзя обменять. 
+Полученные предметы будет также нельзя обменять. Продолжить в любом случае?</string>
+    <string name="craft_failed">Crafting failed.</string>
+    <string name="craft_successful">Создание успешно: %1$d предметов создано. ЗагрузкавЂ¦</string>
+    <string name="craft_completed">Создание завершено</string>
+    <string name="craft_crafting">Создание вЂ¦</string>
+    <string name="craft_enable">Доступно создание</string>
+
+    <string name="market_item_notfound">Market info not found</string>
+    <string name="market_info_loading">Loading market infoвЂ¦</string>
+    <string name="market_low">Начиная с: %1$s</string>
+    <string name="market_median">Средняя цена: %1$s</string>
+    <string name="market_volume">%1$s продано за последние 24 часа</string>
+
+    <dimen name="itemlist_gridsize">72dp</dimen>
+    <color name="item_default_background">#292929</color>
+    <color name="item_default_border">#d2d2d2</color>
+</resources>

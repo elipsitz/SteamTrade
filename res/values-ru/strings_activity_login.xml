@@ -1,0 +1,29 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="prompt_steamguard">Код Steam Guard</string>
+    <string name="action_sign_in">Войти</string>
+    <string name="error_loginkey_expired">Ваш ключ входа в систему истек. Пожалуйста, войдите снова.</string>
+    <string name="error_incorrect_password">Неверный пароль</string>
+    <string name="error_field_required">Необходимо заполнить это поле</string>
+    <string name="error_incorrect_steamguard">Неверный код SteamGuard</string>
+    <string name="error_steamguard_required">Этот аккаунт под защитой SteamGuard</string>
+    <string name="prompt_remember">Запомнить</string>
+    <string name="description_logo">Logo</string>
+    <string name="authenticating">АутентификациявЂ¦</string>
+    <string name="cannot_auth_with_steamweb">Аутентификация с помощью SteamWeb недоступна.Серверы Steam могут быть недоступны.</string>
+    <string name="not_connected_to_internet">Отсутствует подключение к интернету.</string>
+    <string name="connected_via_mobiledata">Вы подключились к интернету через мобильную сеть.\nЭто может вызвать проблемы соединения со Steam.</string>
+    <string name="initializing">ИнициализациявЂ¦</string>
+    <string name="signingout">ВыходвЂ¦</string>
+    <string name="logging_on">ВходвЂ¦</string>
+    <string name="connecting">СоединениевЂ¦</string>
+    <string name="fetching_key">Получение API KeyвЂ¦</string>
+    <string name="cannot_connect_to_steam">Невозможно подключиться к Steam!</string>
+    <string name="login_saved">Войти с помощью сохраненного аккаунта</string>
+    <string name="login_different">Войти с помощью другого аккаунта</string>
+    <string name="login_confirm_delete_account">Вы уверены, что хотите удалить аккаунт \'%1$s\'?</string>
+
+</resources>

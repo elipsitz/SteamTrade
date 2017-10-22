@@ -8,8 +8,12 @@
         android:title="@string/library_sort"
         app:showAsAction="always">
         <menu>
-            <item android:id="@+id/menu_library_sort_name" android:title="@string/library_sort_name"/>
-            <item android:id="@+id/menu_library_sort_playtime" android:title="@string/library_sort_playtime"/>
+            <item
+                android:id="@+id/menu_library_sort_name"
+                android:title="@string/library_sort_name"/>
+            <item
+                android:id="@+id/menu_library_sort_playtime"
+                android:title="@string/library_sort_playtime"/>
         </menu>
     </item>
 

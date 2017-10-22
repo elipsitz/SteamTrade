@@ -222,7 +222,7 @@ public class FragmentWeb extends FragmentBase {
 		cookies.add("forceMobile=" + ((!forceDesktop || headless) ? 1 : 0));
 		cookies.add("dob=1"); // age check
 		cookies.add("mobileClient=" + (headless ? "android" : ""));
-		if(headless)
+		if (headless)
 			cookies.add("mobileClientVersion=3125579+%282.1.4%29");
 
 		CookieManager cookieManager = CookieManager.getInstance();
@@ -261,11 +261,11 @@ public class FragmentWeb extends FragmentBase {
 				}
 				if (command.equalsIgnoreCase("steamguard") || Uri.parse(view.getUrl()).getHost().equalsIgnoreCase("steamcommunity")) {
 					String op = uri.getQueryParameter("op");
-					if(op.equalsIgnoreCase("conftag")) {
+					if (op.equalsIgnoreCase("conftag")) {
 						String tag = uri.getQueryParameter("arg1");
 						String go = SteamTwoFactor.generateConfirmationParameters(activity(), tag);
 
-						if(go.length() == 0)
+						if (go.length() == 0)
 							steamGuardJavascriptInterface.setResultError("", -1);
 						else
 							steamGuardJavascriptInterface.setResultOkay(go);
@@ -302,11 +302,13 @@ public class FragmentWeb extends FragmentBase {
 			returnStatus = "ok";
 			returnValue = value == null ? "" : value;
 		}
+
 		public void setResultError(String value, int code) {
 			returnStatus = "error";
 			returnValue = value == null ? "" : value;
 			returnCode = "" + code;
 		}
+
 		public void setResultBusy() {
 			returnValue = "";
 			returnStatus = "busy";

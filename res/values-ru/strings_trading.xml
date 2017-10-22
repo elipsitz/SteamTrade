@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">Отправить запрос на обмен пользователю %1$s</string>
+    <string name="trade_got_request">%1$s  предложил вам обменяться.</string>
+    <string name="trade_new_request">Запрос обмена</string>
+    <string name="trade_currently_trading">Обмен с %1$s.</string>
+    <string name="trade_result_accepted">%1$s принял ваш запрос на обмен!</string>
+    <string name="trade_result_alreadytrading">%1$s в данный момент ведет обмен с другим пользователем.</string>
+    <string name="trade_result_timeout">%1$s не ответил на предложение вовремя.</string>
+    <string name="trade_result_declined">%1$s отменил обмен.</string>
+    <string name="trade_result_unknown">%1$s был недоступен для обмена по неизвестной причине: %2$s</string>
+    <string name="trade_result_cancelled">Предложение обмена отклонено.</string>
+    <string name="trade_result_targetcannotrade">%1$s недоступен для обмена. Больше информации будет показано, если пользователь предложит обменяться.</string>
+    <string name="trade_result_steamguard">SteamGuard должен быть активирован для того, чтобы обменяться.</string>
+    <string name="trade_result_steamguard_duration">SteamGuard должен быть активирован в течение 15 дней для обмена.</string>
+    <string name="trade_result_steamguard_newdevice">Вы не можете производить обмены на новом устройстве в течение 7 дней из-за ограничений Valve.</string>
+    <string name="trade_result_password_reset">Вы недавно изменили ваш пароль и не можете произвести обмен.</string>
+    <string name="trade_result_require_email">Вы должны подтвердить вашу электронную почту для проведения обмена.</string>
+    <string name="trade_result_tradeban_target">%1$s получил блокировку в системе обмена и не может обмениваться.</string>
+    <string name="trade_result_tradeban_initiator">Вы были заблокированы в системе обмена и не можете обмениваться.</string>
+
+    <color name="color_trade_white">#A3A099</color>
+    <color name="color_trade_blacktext">#282827</color>
+    <color name="color_trade_result_background">#1D1D1D</color>
+
+    <string name="trading_with">Trading with %1$s</string>
+
+    <string-array name="trade_tabs">
+        <item>Инвентарь</item>
+        <item>Предложения</item>
+        <item>Чат</item>
+    </string-array>
+
+    <string name="trade_ready">Готов</string>
+    <string name="trade_your_offerings">Ваши предложения</string>
+    <string name="trade_their_offerings">Их предложения</string>
+    <string name="trade_accept">Принять обмен</string>
+    <string name="trade_tap_to_view">Tap to view</string>
+    <string name="trade_error">Ошибка обмена</string>
+    <string name="trade_completed">Обмен завершен</string>
+    <string name="trade_new_items">%1$d новых предметов получено</string>
+    <string name="trade_cancel">Отмена</string>
+    <string name="trade_confirm_email">Вам и/или вашему оппоненту может потребоваться подтвердить этот обмен с помощью электронной почты.</string>
+    <string name="trade_status_unknown">Статус неизвестен.</string>
+
+
+    <!-- offers -->
+    <string name="trade_offers">Предложения обмена</string>
+    <string name="trade_offer">Предложение обмена</string>
+    <string name="offer_trade">Предложить обмен</string>
+    <string-array name="offer_tabs">
+        <item>Инвентари</item>
+        <item>Предложения</item>
+        <item>Обзор</item>
+    </string-array>
+    <string-array name="offer_status">
+        <item>Неизвестно</item>
+        <item>Недействительно</item>
+        <item>Активно</item>
+        <item>Принято</item>
+        <item>Countered</item>
+        <item>Истекло</item>
+        <item>Отменено</item>
+        <item>Отказано</item>
+        <item>Недоступны некоторые предметы</item>
+        <item>Ожидание подтверждения по электронной почте</item>
+        <item>Отменено по электронной почте</item>
+        <item>На удержании</item>
+    </string-array>
+    <string name="offer_status_escrow_date">На удержании до\n%1$s</string>
+    <string name="offer_radio_incoming">Полученные обмены</string>
+    <string name="offer_radio_sent">Отправленные</string>
+    <string name="offer_inventory_us">Ваш инвентарь</string>
+    <string name="offer_inventory_them">Инвентарь оппонента</string>
+    <string name="offer_message">Сообщение</string>
+    <string name="offer_accept">Принять предложение</string>
+    <string name="offer_decline">Отклонить предложение</string>
+    <string name="offer_button_respond">Ответить</string>
+    <string name="offer_button_decline">Отклонить</string>
+    <string name="offer_button_cancel">Отменить</string>
+    <string name="offer_counter">Встречное предложение</string>
+    <string name="offer_cancel">Отменить предложение</string>
+    <string name="offer_send">Отправить предложение</string>
+    <string name="offer_contents">Вы отдадите %1$d предметов и получите %2$d предметов.</string>
+    <string name="offer_will_give">Вы отдадите:</string>
+    <string name="offer_will_receive">Вы получите:</string>
+    <string name="offer_no_message">[Нет сообщения]</string>
+    <string name="offer_count">Показано %1$d активных предложений обмена.</string>
+    <string name="offer_error_loading">Ошибка загрузки деталей обмена.</string>
+    <string name="offers_error_loading">Ошибка загрузки предложений обмена.</string>
+    <string name="offer_with">Обмен с %1$s</string>
+    <string name="offer_received_heading">%1$s предложил вам обменяться:</string>
+    <string name="offer_sent_heading">Вы отправили %1$s предложение обмена:</string>
+    <string name="offer_cancelled">Предложение отменено.</string>
+    <string name="offer_declined">Предложение отклонено.</string>
+    <string name="offer_submitted">Предложение отправлено.</string>
+    <string name="offer_accepted">Предложение принято.</string>
+    <string name="offer_message_quote">Сообщение:\n\"%1$s\"</string>
+    <string name="offer_declining">Отклонение предложениявЂ¦</string>
+    <string name="offer_accepting">Принятие предложениявЂ¦</string>
+    <string name="offer_submitting">Отправление предложениявЂ¦</string>
+    <string name="offer_loading">Загрузка предложениявЂ¦</string>
+    <string name="offer_send_message">Отправить сообщение с вашим предложением\n(максимум 128 символов)</string>
+    <string name="offer_fromurl">Создать предложение по трейд-ссылке</string>
+    <string name="offer_create">Создать предложение обмена</string>
+    <string name="offer_create_prompt">Пожалуйста, введите трейд-ссылку, чтобы создать предложение обмена.\n\nИли нажмите на друга в вашем списке друзей и выберите \"Предложить обменяться\".</string>
+    <string name="offer_invalid_url">Недействительная ссылка на обмен.</string>
+    <string name="offer_confirm_decline">Вы уверены, что хотите отклонить это предложение обмена?</string>
+    <string name="offer_confirm_cancel">Вы уверены, что хотите отменить это предложение обмена?</string>
+    <string name="offer_successful">Предложение обмена успешно.</string>
+    <string name="offer_confirm_email">Чтобы завершить предложение вы должны пройти дополнительное подтверждение. Электронное письмо было отправлено вам на почтовый ящик (оканчивается на "%1$s") с дополнительными инструкциями.</string>
+    <string name="offer_must_counter">Вы должны создать встречное предложение, чтобы изменить предложение.</string>
+    <string name="offer_confirmations">Обмен\nПодтверждения</string>
+
+</resources>

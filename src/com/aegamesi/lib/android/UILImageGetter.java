@@ -29,7 +29,7 @@ public class UILImageGetter implements Html.ImageGetter {
 
 		Resources resources = context.getResources();
 		DisplayMetrics metrics = resources.getDisplayMetrics();
-		pixelsToDp = ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+		pixelsToDp = ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
 	}
 
 	@Override
@@ -78,8 +78,8 @@ public class UILImageGetter implements Html.ImageGetter {
 			int width = bitmap.getWidth();
 			int height = bitmap.getHeight();
 
-			int newWidth = (int)(width * pixelsToDp);
-			int newHeight = (int)(height * pixelsToDp);
+			int newWidth = (int) (width * pixelsToDp);
+			int newHeight = (int) (height * pixelsToDp);
 
 			if (width > textView.getWidth()) {
 				newWidth = textView.getWidth();

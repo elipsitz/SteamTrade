@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_vibrate">Вибрация на сообщения</string>
+    <string name="pref_vibrate_summ">Вибрировать, когда вы получите сообщение</string>
+    <string name="persist_notification">Постоянное уведомление</string>
+    <string name="persist_notification_summ">Если убрать этот флажок, Android сообщит, что Ice является низкоприоритетным.</string>
+    <string name="pref_reconnect">Автопереподключение</string>
+    <string name="pref_reconnect_summ">Переподключаться, когда произойдет отключение от сети Steam</string>
+    <string name="pref_advanced">Расширенные настройки</string>
+    <string name="pref_advanced_summ">Не используйте это, если в не знаете, что вы делаете.</string>
+    <string name="pref_machineauth">Override machineAuth</string>
+    <string name="pref_machineauth_prompt">Input machineAuth:</string>
+    <string name="pref_remove_ads">Убрать рекламу</string>
+    <string name="pref_remove_ads_summ">Поддержите Ice пожертвованием! &lt;3</string>
+    <string name="pref_notification_sound">Звук уведомлений</string>
+    <string name="pref_recent_chats">Недавние диалоги</string>
+    <string name="pref_recent_chats_summ">Отрегулируйте диапазон для недавних диалогов.</string>
+    <string name="pref_chat_compact">Компактное отображение диалогов</string>
+    <string name="pref_chat_compact_summ">Отображать компактные линии вместо больших пузырьков.</string>
+    <string name="pref_currency">Предпочтительная валюта</string>
+    <string name="pref_webapikey">Edit cached WebAPI Key</string>
+    <string name="pref_webapikey_prompt">Input WebAPI Key:</string>
+    <string name="pref_webapikey_summary">Requires this account\'s key for full functionality.</string>
+    <string name="pref_notification">Настройки уведомлений</string>
+    <string name="pref_notification_chat">Уведомления для диалогов</string>
+    <string name="pref_notification_friendrequest">Уведомления для запросов в друзья</string>
+    <string name="pref_notification_trade">Уведомления для запросов обмена</string>
+    <string name="pref_hide_blocked_users">Спрятать заблокированных пользователей</string>
+
+    <string-array name="pref_recent_chats_entries">
+        <item>7 дней</item>
+        <item>2 дня</item>
+        <item>24 часа</item>
+        <item>1 час</item>
+        <item>Не показывать недавние диалоги</item>
+    </string-array>
+</resources>

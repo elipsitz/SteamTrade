@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">向 %1$s 发送交易邀请</string>
+    <string name="trade_got_request">%1$s 已收到交易邀请。</string>
+    <string name="trade_new_request">交易邀请</string>
+    <string name="trade_currently_trading">与 %1$s 交易。</string>
+    <string name="trade_result_accepted">%1$s 接受了您的交易邀请!</string>
+    <string name="trade_result_alreadytrading">%1$s 正在与其他人交易。</string>
+    <string name="trade_result_timeout">%1$s 未及时响应。</string>
+    <string name="trade_result_declined">%1$s 谢绝交易。</string>
+    <string name="trade_result_unknown">%1$s 无法交易。原因未知: %2$s</string>
+    <string name="trade_result_cancelled">已取消交易邀请</string>
+    <string name="trade_result_targetcannotrade">%1$s 无法交易，他们发出交易邀请后悔显示更多信息。</string>
+    <string name="trade_result_steamguard">必须开启Steam令牌才能交易。</string>
+    <string name="trade_result_steamguard_duration">开启Steam令牌15天后才能交易。</string>
+    <string name="trade_result_steamguard_newdevice">根据 Valve 规定，您在新设备上7天内无法进行交易。</string>
+    <string name="trade_result_password_reset">您近期修改过密码所以无法交易。</string>
+    <string name="trade_result_require_email">必须验证邮箱才能交易。</string>
+    <string name="trade_result_tradeban_target">%1$s 已被封禁，无法交易。</string>
+    <string name="trade_result_tradeban_initiator">您已被封禁，无法交易。</string>
+
+    <string name="trading_with">与 %1$s 交易</string>
+
+    <string-array name="trade_tabs">
+        <item>库存</item>
+        <item>物品</item>
+        <item>聊天</item>
+    </string-array>
+
+    <string name="trade_ready">就绪</string>
+    <string name="trade_your_offerings">您的物品</string>
+    <string name="trade_their_offerings">他们的物品</string>
+    <string name="trade_accept">接受交易</string>
+    <string name="trade_tap_to_view">点击查看</string>
+    <string name="trade_error">交易错误</string>
+    <string name="trade_completed">交易完成</string>
+    <string name="trade_new_items">获得新物品 %1$d </string>
+    <string name="trade_cancel">取消</string>
+    <string name="trade_confirm_email">您和您的好友需要通过邮箱确认交易。</string>
+    <string name="trade_status_unknown">状态未知。</string>
+
+    <!-- offers -->
+    <string name="trade_offers">交易报价</string>
+    <string name="trade_offer">交易报价</string>
+    <string name="offer_trade">发送交易报价</string>
+    <string-array name="offer_tabs">
+        <item>库存</item>
+        <item>物品</item>
+        <item>检查</item>
+    </string-array>
+    <string-array name="offer_status">
+        <item>未知</item>
+        <item>无效</item>
+        <item>激活中</item>
+        <item>已接受</item>
+        <item>还价</item>
+        <item>过期</item>
+        <item>已取消</item>
+        <item>已拒绝</item>
+        <item>无效物品</item>
+        <item>等待邮箱确认</item>
+        <item>通过邮箱取消</item>
+        <item>交易暂挂</item>
+    </string-array>
+    <string name="offer_status_escrow_date">暂挂至\n%1$s</string>
+    <string name="offer_radio_incoming">收到的报价</string>
+    <string name="offer_radio_sent">发送报价</string>
+    <string name="offer_inventory_us">您的库存</string>
+    <string name="offer_inventory_them">好友的库存</string>
+    <string name="offer_message">消息</string>
+    <string name="offer_accept">接受报价</string>
+    <string name="offer_decline">拒绝报价</string>
+    <string name="offer_button_respond">回应</string>
+    <string name="offer_button_decline">拒绝</string>
+    <string name="offer_button_cancel">取消</string>
+    <string name="offer_counter">进行还价</string>
+    <string name="offer_cancel">取消交易报价</string>
+    <string name="offer_send">发送报价</string>
+    <string name="offer_contents">您将失去 %1$d 并获得 %2$d 。</string>
+    <string name="offer_will_give">您将失去:</string>
+    <string name="offer_will_receive">您将获得:</string>
+    <string name="offer_no_message">[无消息]</string>
+    <string name="offer_count">显示 %1$d 活动的交易报价。</string>
+    <string name="offer_error_loading">载入交易细节出错。</string>
+    <string name="offers_error_loading">载入交易报价出错。</string>
+    <string name="offer_with">您正在与 %1$s 交易</string>
+    <string name="offer_received_heading">%1$s 向您发送了交易报价:</string>
+    <string name="offer_sent_heading">您向 %1$s 发送了交易报价:</string>
+    <string name="offer_cancelled">报价取消。</string>
+    <string name="offer_declined">报价被拒绝。</string>
+    <string name="offer_submitted">报价已提交</string>
+    <string name="offer_accepted">报价已接受</string>
+    <string name="offer_message_quote">消息:\n\"%1$s\"</string>
+    <string name="offer_declining">拒绝报价</string>
+    <string name="offer_accepting">接受报价</string>
+    <string name="offer_submitting">提交报价</string>
+    <string name="offer_loading">载入报价...</string>
+    <string name="offer_send_message">在您的报价中附言\n(最多 128 个字母)</string>
+    <string name="offer_fromurl">使用URL发起交易报价</string>
+    <string name="offer_create">发起交易报价</string>
+    <string name="offer_create_prompt">请输入URL 来发起交易报价\n\n或者在好友列表中点击一名好友并选择 \"交易报价\".</string>
+    <string name="offer_invalid_url">无效的交易报价 URL。</string>
+    <string name="offer_confirm_decline">您确定要拒绝这条交易报价吗?</string>
+    <string name="offer_confirm_cancel">您确定要取消这条交易报价吗?</string>
+    <string name="offer_successful">交易报价成功。</string>
+    <string name="offer_confirm_email">为完成这条交易报价，您必须进行进一步验证。一封带有进一步操作指示的邮件已发送到您的邮箱(以 "%1$s" 结尾)。</string>
+    <string name="offer_must_counter">您必须还价来改变交易报价。</string>
+    <string name="offer_confirmations">交易\n确认</string>
+
+</resources>

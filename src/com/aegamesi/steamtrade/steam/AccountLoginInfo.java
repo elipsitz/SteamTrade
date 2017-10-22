@@ -36,7 +36,7 @@ public class AccountLoginInfo {
 
 	public boolean has_authenticator = false;
 	public byte[] tfa_sharedSecret;
-	public long tfa_serialNumber;
+	public String tfa_serialNumber;
 	public String tfa_revocationCode;
 	public String tfa_uri;
 	public long tfa_serverTime;
@@ -90,7 +90,7 @@ public class AccountLoginInfo {
 			obj.put("steamid", Long.toString(steamID.convertToLong()));
 			obj.put("account_name", tfa_accountName);
 			obj.put("shared_secret", Base64.encodeToString(tfa_sharedSecret, Base64.NO_WRAP));
-			obj.put("serial_number", Long.toString(tfa_serialNumber));
+			obj.put("serial_number", tfa_serialNumber);
 			obj.put("revocation_code", tfa_revocationCode);
 			obj.put("uri", tfa_uri);
 			obj.put("server_time", Long.toString(tfa_serverTime));
@@ -98,6 +98,20 @@ public class AccountLoginInfo {
 			obj.put("identity_secret", Base64.encodeToString(tfa_identitySecret, Base64.NO_WRAP));
 			obj.put("secret_1", Base64.encodeToString(tfa_secret1, Base64.NO_WRAP));
 			obj.put("status", 1);
+			obj.put("device_id", SteamTwoFactor.generateDeviceID(steamID));
+
+			// for compatibility with SteamAuth (desktop)
+			obj.put("fully_enrolled", true);
+			JSONObject session = new JSONObject();
+			session.put("SessionID", "");
+			session.put("SteamLogin", "");
+			session.put("SteamLoginSecure", "");
+			session.put("WebCookie", "");
+			session.put("OAuthToken", "");
+			session.put("SteamID", steamID.convertToLong());
+			obj.put("Session", session);
+			// device_id
+			// fully_enrolled
 			return obj.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -105,20 +119,16 @@ public class AccountLoginInfo {
 		}
 	}
 
-	public void importFromJson(String json) {
-		try {
-			JSONObject obj = new JSONObject(json);
-			tfa_accountName = obj.getString("account_name");
-			tfa_sharedSecret = Base64.decode(obj.getString("shared_secret"), Base64.DEFAULT);
-			tfa_serialNumber = Long.valueOf(obj.getString("serial_number"));
-			tfa_revocationCode = obj.getString("revocation_code");
-			tfa_uri = obj.getString("uri");
-			tfa_serverTime = Long.valueOf(obj.getString("server_time"));
-			tfa_tokenGid = obj.getString("token_gid");
-			tfa_identitySecret = Base64.decode(obj.getString("identity_secret"), Base64.DEFAULT);
-			tfa_secret1 = Base64.decode(obj.getString("secret_1"), Base64.DEFAULT);
-		} catch (JSONException | NumberFormatException e) {
-			e.printStackTrace();
-		}
+	public void importFromJson(String json) throws JSONException, NumberFormatException {
+		JSONObject obj = new JSONObject(json);
+		tfa_accountName = obj.getString("account_name");
+		tfa_sharedSecret = Base64.decode(obj.getString("shared_secret"), Base64.DEFAULT);
+		tfa_serialNumber = obj.getString("serial_number");
+		tfa_revocationCode = obj.getString("revocation_code");
+		tfa_uri = obj.getString("uri");
+		tfa_serverTime = Long.valueOf(obj.getString("server_time"));
+		tfa_tokenGid = obj.getString("token_gid");
+		tfa_identitySecret = Base64.decode(obj.getString("identity_secret"), Base64.DEFAULT);
+		tfa_secret1 = Base64.decode(obj.getString("secret_1"), Base64.DEFAULT);
 	}
 }

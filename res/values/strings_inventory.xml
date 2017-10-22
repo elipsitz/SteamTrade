@@ -9,7 +9,7 @@
     <string name="search_inventory">Search Inventory</string>
     <string name="search_result_count">Displaying %1$d of %2$d</string>
     <string name="toggle_view_mode">Toggle View Mode</string>
-    <string name="inv_error_loading">Unknown error loading inventory.</string>
+    <string name="inv_error_loading">Error loading inventory:\n%1$s</string>
 
     <string name="craft_x_items">Craft %1$d TF2 Item(s)</string>
     <string name="craft_noncraftable">One or more of the items you have selected cannot be crafted.</string>

@@ -15,13 +15,6 @@ import java.util.Map;
  * @author nosoop
  */
 public class TradeInternalInventories {
-	Map<AppContextPair, TradeInternalInventory> gameInventories;
-	/**
-	 * A list of AssetBuilder instances that can load inventories. First
-	 * AssetBuilder that accepts an inventory takes precedence over other
-	 * AssetBuilders that accept the inventory that are lower in the list.
-	 */
-	final List<AssetBuilder> inventoryLoaders;
 	/**
 	 * A default AssetBuilder instance. Accepts all inventories.
 	 */
@@ -31,6 +24,13 @@ public class TradeInternalInventories {
 			return true;
 		}
 	};
+	/**
+	 * A list of AssetBuilder instances that can load inventories. First
+	 * AssetBuilder that accepts an inventory takes precedence over other
+	 * AssetBuilders that accept the inventory that are lower in the list.
+	 */
+	final List<AssetBuilder> inventoryLoaders;
+	Map<AppContextPair, TradeInternalInventory> gameInventories;
 
 	/**
 	 * Creates a new TradeInternalInventories instance with an empty

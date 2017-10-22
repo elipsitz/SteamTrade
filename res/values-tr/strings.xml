@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error">Hata</string>
+    <string name="error_disconnected">Steam Ağına bağlı değilsiniz</string>
+    <string name="drawer_open">Çekmeceyi aç</string>
+    <string name="drawer_close">Çekmeceyi Kapat</string>
+    <string name="steam_avatar">Avatar</string>
+    <string name="chat">Sohbet</string>
+    <string name="trade">Takas</string>
+    <string name="friends">Arkadaşlar</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="action_successful">Hareket Başarılı.</string>
+    <string name="action_failed">Hareket Başarısız.</string>
+    <string name="search">Arama</string>
+    <string name="quote">“%1$s”</string>
+
+    <string name="steamguard_new"> Bu, bu cihaza ilk kez bu hesaba giriş yapmanızdır.\n\nAs Valve kısıtlamalarından dolayı, önümüzdeki 7 gün boyunca bu cihazdan takas teklifleri almanıza veya gönderme izniniz olmayabilir. </string>
+    <string name="api_key_not_loaded">Bir Web API anahtarı düzgün alınamadı. Bu özellik çalışmaz.</string>
+    <string name="rate_snackbar_text">Ice\'ı beğendiniz mi?</string>
+    <string name="rate_snackbar_action">DEĞERLENDİR</string>
+
+    <string name="nav_friends">Arkadaşlar</string>
+    <string name="nav_inventory">Envanter</string>
+    <string name="nav_offers">Takas Teklifleri</string>
+    <string name="nav_games">Kütüphane</string>
+    <string name="nav_store">Steam Mağazası</string>
+    <string name="nav_market">Steam Topluluk Marketi</string>
+    <string name="nav_browser">Steam Tarayıcı</string>
+    <string name="nav_settings">Ayarlar</string>
+    <string name="nav_about">Ice Hakkında</string>
+    <string name="nav_signout">Çıkış Yap</string>
+
+    <string name="purchase_pending">Satınalma doğrulanıyor…</string>
+    <string name="purchase_complete">Satınalma başarılı! Teşekkürler!</string>
+    <string name="signed_out">Çıkış Yapıldı</string>
+    <string name="send_button">Gönder</string>
+    <string name="chat_hint">Mesajlaşma için tıkla</string>
+    <string name="app_crashed_toast">Ice Client sorunla karşılaştı. Durumu geliştiriciye bildirin!</string>
+    <string name="playing">Oynuyor</string>
+    <string name="cancel">İptal</string>
+    <string name="accept">Kabul Et</string>
+    <string name="add">Ekle</string>
+    <string name="change_display_name">Görünen İsmi değiştir</string>
+    <string name="change_display_name_prompt">Lütfen yeni steam oyundaki adınızı giriniz:</string>
+    <string name="set_currently_playing_game">Şuanda oynadığınız oyunu ayarlayın</string>
+
+    <string name="x_new_messages">%1$d mesaj</string>
+
+    <string-array name="allowed_states">
+        <item>Çevrimiçi</item>
+        <item>Uzakta</item>
+        <item>Meşgul</item>
+        <item>Uykuda</item>
+        <item>Takas için Bakıyor</item>
+        <item>Oynamak için Bakıyor</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>Çevrimdışı</item>
+        <item>Çevrimiçi</item>
+        <item>Meşgul</item>
+        <item>Uzakta</item>
+        <item>Uykuda</item>
+        <item>Takas için Bakıyor</item>
+        <item>Oynamak için Bakıyor</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>Bilinmeyen Durum</item>
+        <item>Başlatılıyor…</item>
+        <item>Bağlanılıyor…</item>
+        <item>Giriş Yapılıyor…</item>
+        <item>Doğrulanıyor…</item>
+        <item>Anahtar Alınıyor…</item>
+        <item>Bağlandı</item>
+        <item>Bağlı Değil</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">Pano\'ya kopyalandı.</string>
+
+    <string name="change">Değiştir</string>
+    <string name="baa">moo</string>
+    <string name="dismiss">Reddet</string>
+    <string name="feature_not_implemented"> Özellik uygulanmadı</string>
+    <string name="error_getting_key"> WebAPI anahtarı getirilirken hata oluştu. Bazı özellikler (takas teklifleri gibi) düzgün çalışmayabilir.</string>
+    <string name="error_steamapi">SteamAPI\'ye ulaşılırken hata oluştu.</string>
+    <string name="ok">TAMAM</string>
+
+    <string name="action_settings">Ayarlar</string>
+
+    <string name="web_back">Geri Git</string>
+    <string name="web_forward">İleri Git</string>
+    <string name="web_reload">Sayfayı Yenile</string>
+    <string name="web_community">Steam Topluluğu</string>
+    <string name="web_store">Steam Mağazası</string>
+    <string name="web_toggle_view">Masaüstü görünümü</string>
+
+    <string name="library_playtime">%1$.1f saat kayıtlarda</string>
+    <string name="library_playtime_full">%1$.1f saat son iki hafta\n%2$.1f saat kayıtlarda</string>
+    <string name="library_sort">Sıralama değiştir</string>
+    <string name="library_sort_name">Alfabeye göre sınıflandır</string>
+    <string name="library_sort_playtime">Oynama süresine göre sınıflandır</string>
+    <string name="library_activate_product">Ürünü etkinleştir</string>
+    <string name="library_enter_key">Lütfen aktivite etmek istediğiniz ürün kodunu giriniz.</string>
+    <string name="library_validating_key">Ürün Kodu doğrulanıyor…</string>
+    <string name="library_activation_successful">Aktivasyon Başarılı</string>
+    <string name="library_activation_failed">Aktivasyon Başarısız</string>
+    <string name="library_activation_invalid_code">Gerçersiz ürün kodu.</string>
+    <string name="library_activation_error">Bilinmeyen Hata.</string>
+    <string name="library_activation_code_used">Ürün kodu zaten kullanılmış.</string>
+
+    <string name="steamguard_mobile_authenticator">Mobil Doğrulayıcı</string>
+    <string name="steamguard_unavailable">Mobil Doğrulayıcı\'yı sadece kayıtlı hesapta aktif edebilirsiniz.</string>
+    <string name="steamguard_not_enabled">Steam Guard Mobil Doğrulayıcı bu aygıtta ayarlanmamış.</string>
+    <string name="steamguard_code">Senin Steam Guard Kodun:</string>
+    <string name="steamguard_enable_authenticator">Doğrulayıcıyı Etkinleştir</string>
+    <string name="steamguard_manage_authenticator">Doğrulayıcıyı Yönet</string>
+    <string name="steamguard_import_authenticator_mafile">.mafile dosyasını içeri al</string>
+    <string name="steamguard_import_authenticator">Doğrulayıcıyı içeri al (.mafile)</string>
+    <string name="steamguard_export_authenticator">Doğrulayıcıyı dışarıya aktar (.mafile)</string>
+    <string name="steamguard_get_revocation_code"> İptal Kodu\'nu görüntüleme </string>
+    <string name="steamguard_revocation_code">Senin iptal kodun:\n%1$s</string>
+    <string name="steamguard_instructions_finalize">Mobil doğrulamacıyı eklemeyi bitirmek için, lütfen Steam tarafından gönderilen SMS\'teki kodu giriniz.</string>
+    <string name="steamguard_enable_success">Mobil Doğrulayıcı başarı ile aktif edilmiştir.\n\n Lütfen acil durum kurtarma kodunu yazın: %1$s</string>
+    <string name="steamguard_enable_failure">Mobil doğrulayıcı aktif edilemedi: %1$s</string>
+    <string name="steamguard_export">Mobil Doğrulayıcıyı dışa aktar.</string>
+    <string name="steamguard_import">Mobil Doğeulayıcıyı içeriye al.</string>
+    <string name="steamguard_duplicate"> Hesabınız zaten Resmi Mobil Kimlik Doğrulayıcı kullanıyor. Aynı anda iki kimlik doğrulayıcı kullanamazsınız.</string>
+    <string name="steamguard_import_password"> Lütfen hesabın şifresini girin \'%1$s\'.</string>
+    <string name="steamguard_select_mafile">Lütfen almak istediğiniz ".mafile" yi seçin.</string>
+
+    <string-array name="store_tabs">
+        <item>Katalog</item>
+        <item>Sepet</item>
+        <item>Arama</item>
+        <item>İstek Listesi</item>
+        <item>Haberler</item>
+        <item>Hesabım</item>
+    </string-array>
+
+    <color name="notification_on">#5C7E10</color>
+    <color name="notification_off">#777</color>
+    <color name="notification_text_on">#70ba24</color>
+    <color name="notification_text_off">#bfbfbf</color>
+    <plurals name="notification_comments">
+        <item quantity="one">%d yeni yorum</item>
+        <item quantity="other">%d yeni yorumlar</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">Senin envanterinde %d yeni eşya</item>
+        <item quantity="other">Senin envanterinde %d yeni eşyalar</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d okunmamış sohbet mesajı</item>
+        <item quantity="other">%d okunmamış sohbet mesajları</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d yeni takas bildirimi</item>
+        <item quantity="other">%d yeni takas bildirimleri</item>
+    </plurals>
+    <string name="steamguard_import_error_wrong_account">Hata: bu kimlik doğrulama bilgisi farklı bir steam hesabı içindir. : %1$s</string>
+    <string name="library_view_store_page">Mağaza Sayfasını Göster</string>
+    <string name="library_begin_idling">Idling Oturumu Başlat</string>
+    <string name="library_stop_idling"> Idling Oturumu sonlandır</string>
+    <string name="idling_started">Şuanda idling:  %1$s</string>
+    <string name="idling_stopped">Aktif idling yok.</string>
+    <string name="premium_only">Bu özellik Premium alanlara özeldir. </string>
+    <string name="premium_unlock">Premium Satın Al</string>
+</resources>

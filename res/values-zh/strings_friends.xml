@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_friend_unread">#555</color>
+    <string name="friend_add">添加好友</string>
+    <string name="friend_accept">接受邀请</string>
+    <string name="friend_ignore">忽略邀请</string>
+    <string name="friend_add_prompt">请输入您想要添加的好友的64位ID或电子邮箱:</string>
+    <string name="friend_add_fail">加好友失败: %1$s</string>
+    <string name="friend_add_success">已添加为好友。</string>
+    <string name="friend_remove">移除好友</string>
+    <string name="friend_remove_message">您确定要把 \'%1$s\' 从好友列表中移除吗?</string>
+    <string name="friend_removed">移除 \'%1$s\'.</string>
+    <string name="friend_search">搜索好友列表</string>
+    <string name="friend_request_accept">已接受的好友邀请</string>
+    <string name="friend_request_ignore">已忽略的好友邀请</string>
+    <string name="friend_view_steam">查看Steam个人主页</string>
+    <string name="friend_view_steamrep">查看SteamRep</string>
+    <string name="friend_view_library">游戏</string>
+    <string name="friend_is_typing">其他用户正在输入...</string>
+    <string name="profile_view">查看用户资料</string>
+    <string name="profile_summary">个人简介</string>
+    <string name="profile_loading_summary">载入个人简介...</string>
+    <string name="friend_request">好友邀请</string>
+    <string name="friend_request_text">%1$s 已加您为好友</string>
+    <string name="friend_request_multi">您还有 %1$d 个待定邀请。</string>
+    <string name="friend_block">屏蔽</string>
+    <string name="friend_unblock">取消屏蔽</string>
+    <string name="profile_playing_game">游戏中 %1$s</string>
+
+    <string name="chat_group">组聊天室</string>
+    <string name="chat_with">聊天 %1$s</string>
+    <string name="friend_invite_to_chat">邀请加入聊天</string>
+    <string name="friend_invite_to_trade">邀请交易</string>
+    <string name="friend_send_trade_offer">发送交易报价</string>
+    <string name="chat_you">您</string>
+    <string name="chat_them">他们</string>
+    <string name="chat_chat">聊天</string>
+    <string name="chat_participants">成员</string>
+</resources>

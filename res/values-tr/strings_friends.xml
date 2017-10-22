@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_friend_unread">#555</color>
+    <string name="friend_add">Arkadaş Ekle</string>
+    <string name="friend_accept">İsteği kabul et</string>
+    <string name="friend_ignore">İsteği yok say</string>
+    <string name="friend_add_prompt">Lütfen eklemek istediğiniz arkadaşınızın SteamID64\'ünü veya e-posta adresini girin:</string>
+    <string name="friend_add_fail">Arkadaş eklenirken hata oluştu: %1$s</string>
+    <string name="friend_add_success">Arkadaş eklendi.</string>
+    <string name="friend_remove">Arkadaşı kaldır</string>
+    <string name="friend_remove_message">\'%1$s\' yi arkadaş listenden kaldırmak istediğinize emin misin?</string>
+    <string name="friend_removed">Kaldırıldı \'%1$s\'.</string>
+    <string name="friend_search">Arkadaş listesini ara</string>
+    <string name="friend_request_accept">Kabul Edililen Arkadaşlık İsteği</string>
+    <string name="friend_request_ignore">Görmezden Gelinen Arkadaşlık İsteği</string>
+    <string name="friend_view_steam">Steam\'de aç</string>
+    <string name="friend_view_steamrep">SteamRep üzerinde görüntüle</string>
+    <string name="friend_view_library">Oyunları Görüntüle</string>
+    <string name="friend_is_typing">Diğer kullanıcı yazıyor…</string>
+    <string name="profile_view">Profil Görüntüle</string>
+    <string name="profile_summary">Özet</string>
+    <string name="profile_loading_summary">Özet yükleniyor…</string>
+    <string name="friend_request">Arkadaşlık İsteği</string>
+    <string name="friend_request_text">%1$s seni ekledi.</string>
+    <string name="friend_request_multi">Beklemede %1$d isteğiniz var</string>
+    <string name="friend_block">Blokla</string>
+    <string name="friend_unblock">Blok Kaldır</string>
+    <string name="profile_playing_game">Oynuyor %1$s</string>
+
+    <string name="chat_group">Grup Mesajlaşma</string>
+    <string name="chat_with">%1$s ile mesajlaşma</string>
+    <string name="friend_invite_to_chat">Mesajlaşmaya davet et…</string>
+    <string name="friend_invite_to_trade">Takas\'a davet et…</string>
+    <string name="friend_send_trade_offer">Takas Teklifi gönder…</string>
+    <string name="chat_you">Sen</string>
+    <string name="chat_them">Onlar</string>
+    <string name="chat_chat">Mesajlaşma</string>
+    <string name="chat_participants">Katılımcılar</string>
+    <color name="color_chat_left">#B3E5FC</color>
+    <color name="color_chat_right">#607D8B</color>
+    <color name="chat_divider">#22FFFFFF</color>
+    <dimen name="chat_margin_minor">4dp</dimen>
+    <dimen name="chat_margin_major">48dp</dimen>
+    <dimen name="chat_vertical_margin_major">14dp</dimen>
+    <dimen name="chat_vertical_margin_minor">-1dp</dimen>
+
+    <color name="steam_online">#9CC6FF</color>
+    <color name="steam_game">#AED04E</color>
+    <color name="steam_offline">#CFD2D3</color>
+    <color name="steam_blocked">#F26C4F</color>
+</resources>

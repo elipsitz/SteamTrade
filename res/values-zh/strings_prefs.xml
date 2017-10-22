@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_vibrate">振动提示</string>
+    <string name="pref_vibrate_summ">收到聊天消息时震动</string>
+    <string name="persist_notification">持续通知</string>
+    <string name="persist_notification_summ">关掉此选项将会告诉安卓系统 Ice 客户端处于低优先级</string>
+    <string name="pref_reconnect">自动重连</string>
+    <string name="pref_reconnect_summ">与Steam网络连线断开时自动重新连接</string>
+    <string name="pref_advanced">高级设置</string>
+    <string name="pref_advanced_summ">请谨慎使用</string>
+    <string name="pref_machineauth">覆盖 machineAuth</string>
+    <string name="pref_machineauth_prompt">输入 machineAuth:</string>
+    <string name="pref_remove_ads">去广告</string>
+    <string name="pref_remove_ads_summ">购买付费版来支持ICE! &lt;3</string>
+    <string name="pref_notification_sound">提示音</string>
+    <string name="pref_recent_chats">聊天记录</string>
+    <string name="pref_recent_chats_summ">设置聊天记录保留时间</string>
+    <string name="pref_chat_compact">简化聊天样式</string>
+    <string name="pref_chat_compact_summ">不显示聊天气泡</string>
+    <string name="pref_currency">设置货币种类</string>
+    <string name="pref_webapikey">编辑WebAPI Key</string>
+    <string name="pref_webapikey_prompt">输入 WebAPI Key:</string>
+    <string name="pref_webapikey_summary">请输入此帐号的密钥以开启全部功能。</string>
+    <string name="pref_notification">消息提醒</string>
+    <string name="pref_notification_chat">聊天提醒</string>
+    <string name="pref_notification_friendrequest">好友邀请提醒</string>
+    <string name="pref_notification_trade">交易提醒</string>
+    <string name="pref_hide_blocked_users">隐藏已屏蔽的用户</string>
+
+    <string-array name="pref_recent_chats_entries">
+        <item>7天内</item>
+        <item>2天内</item>
+        <item>24小时内</item>
+        <item>1小时内</item>
+        <item>不保留聊天记录</item>
+    </string-array>
+</resources>

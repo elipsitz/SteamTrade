@@ -427,7 +427,7 @@ public class FragmentInventory extends FragmentBase implements AdapterView.OnIte
 				if (activity() != null) {
 					viewError.setVisibility(View.VISIBLE);
 					TextView error_text = (TextView) viewError.findViewById(R.id.inventory_error_text);
-					error_text.setText(e.getMessage() == null ? getString(R.string.inv_error_loading) : e.getMessage());
+					error_text.setText(String.format(getString(R.string.inv_error_loading), e.toString()));
 				}
 			}
 		}

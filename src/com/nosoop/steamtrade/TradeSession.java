@@ -37,6 +37,10 @@ public class TradeSession implements Runnable {
 	public final static String STEAM_COMMUNITY_DOMAIN = "steamcommunity.com",
 			STEAM_TRADE_URL = "http://steamcommunity.com/trade/%s/";
 	/**
+	 * Timing variables to check for idle state.
+	 */
+	public final long TIME_TRADE_START;
+	/**
 	 * Object to lock while polling and handling updates.
 	 */
 	protected final Object POLL_LOCK = new Object();
@@ -45,11 +49,6 @@ public class TradeSession implements Runnable {
 	 */
 	private final TradeUser TRADE_USER_SELF, TRADE_USER_PARTNER;
 	/**
-	 * List of app-context pairs for the active client's inventory. (A list of
-	 * the inventories we have, basically.)
-	 */
-	public List<AppContextPair> myAppContextData;
-	/**
 	 * Collection of methods to interact with the current trade session.
 	 */
 	private final TradeCommands API;
@@ -57,6 +56,11 @@ public class TradeSession implements Runnable {
 	 * String values needed for the trade.
 	 */
 	private final String TRADE_URL, STEAM_LOGIN, SESSION_ID;
+	/**
+	 * List of app-context pairs for the active client's inventory. (A list of
+	 * the inventories we have, basically.)
+	 */
+	public List<AppContextPair> myAppContextData;
 	/**
 	 * Status values.
 	 */
@@ -67,10 +71,6 @@ public class TradeSession implements Runnable {
 	 * A TradeListener instance that listens for events fired by this session.
 	 */
 	private TradeListener tradeListener;
-	/**
-	 * Timing variables to check for idle state.
-	 */
-	public final long TIME_TRADE_START;
 	private long timeLastPartnerAction;
 
 	/**
@@ -149,7 +149,7 @@ public class TradeSession implements Runnable {
 				return;
 			}
 
-			if(status == null) {
+			if (status == null) {
 				// not quite sure why this happens, but it seems to happen, kind of a lot.
 				tradeListener.onError(TradeStatusCodes.TRADE_FAILED, "status = null");
 				tradeListener.onTradeClosed();
@@ -322,10 +322,14 @@ public class TradeSession implements Runnable {
 		final TradeInternalInventories inv = (isBot
 				? TRADE_USER_SELF : TRADE_USER_PARTNER).getInventories();
 
-		final TradeInternalItem item =
-				inv.getInventory(evt.appid, evt.contextid).getItem(evt.assetid); // risk of NPE here-- if getInventory returns null... but why?
+		final TradeInternalInventory specific_inv = inv.getInventory(evt.appid, evt.contextid);
 
-		(isBot ? TRADE_USER_SELF : TRADE_USER_PARTNER).getOffer().add(item);
+		if (specific_inv != null) {
+			// risk of NPE here-- if getInventory returns null... but why?
+
+			final TradeInternalItem item = specific_inv.getItem(evt.assetid);
+			(isBot ? TRADE_USER_SELF : TRADE_USER_PARTNER).getOffer().add(item);
+		}
 	}
 
 	private void eventUserRemovedItem(TradeEvent evt) {
@@ -493,6 +497,55 @@ public class TradeSession implements Runnable {
 	}
 
 	/**
+	 * A set of values associated with one of the two users currently in the
+	 * trade.
+	 *
+	 * @author nosoop
+	 */
+	public static class TradeUser {
+		final long STEAM_ID;
+		final Set<TradeInternalAsset> TRADE_OFFER;
+		final TradeInternalInventories INVENTORIES;
+		boolean ready;
+
+		public TradeUser(long steamid, List<AssetBuilder> assetBuilders) {
+			this.STEAM_ID = steamid;
+			this.TRADE_OFFER = new HashSet<>();
+			this.INVENTORIES = new TradeInternalInventories(assetBuilders);
+			this.ready = false;
+		}
+
+		/**
+		 * @return A set of TradeInternalAsset instances displaying the offer,
+		 * containing TradeInternalItem and TradeInternalCurrency instances.
+		 */
+		public Set<TradeInternalAsset> getOffer() {
+			return TRADE_OFFER;
+		}
+
+		/**
+		 * @return A 64-bit long representation of the instance Steam ID.
+		 */
+		public long getSteamID() {
+			return STEAM_ID;
+		}
+
+		/**
+		 * @return The selected user's TradeInternalInventories instance.
+		 */
+		public TradeInternalInventories getInventories() {
+			return INVENTORIES;
+		}
+
+		/**
+		 * @return Whether or not the selected user is ready.
+		 */
+		public boolean isReady() {
+			return ready;
+		}
+	}
+
+	/**
 	 * A utility class to hold all web-based 'fetch' actions when dealing with
 	 * Steam Trade in the current trading session.
 	 *
@@ -507,13 +560,13 @@ public class TradeSession implements Runnable {
 				"http://steamcommunity.com/profiles/%d/"
 						+ "inventory/json/%d/%d/?trading=1";
 		/**
-		 * A URL-decoded copy of SESSION_ID. Needed to make requests.
-		 */
-		final String DECODED_SESSION_ID;
-		/**
 		 * Quantity for an item with no transfer amount.
 		 */
 		private static final int NO_TRANSFER_AMOUNT = -1;
+		/**
+		 * A URL-decoded copy of SESSION_ID. Needed to make requests.
+		 */
+		final String DECODED_SESSION_ID;
 
 		/**
 		 * Initializes the instance and attempts to create a URL-decoded copy of
@@ -759,55 +812,6 @@ public class TradeSession implements Runnable {
 		 */
 		String fetch(String url, String method, Map<String, String> data) {
 			return SteamWeb.fetch(url, method, data, TRADE_URL);
-		}
-	}
-
-	/**
-	 * A set of values associated with one of the two users currently in the
-	 * trade.
-	 *
-	 * @author nosoop
-	 */
-	public static class TradeUser {
-		final long STEAM_ID;
-		final Set<TradeInternalAsset> TRADE_OFFER;
-		final TradeInternalInventories INVENTORIES;
-		boolean ready;
-
-		public TradeUser(long steamid, List<AssetBuilder> assetBuilders) {
-			this.STEAM_ID = steamid;
-			this.TRADE_OFFER = new HashSet<>();
-			this.INVENTORIES = new TradeInternalInventories(assetBuilders);
-			this.ready = false;
-		}
-
-		/**
-		 * @return A set of TradeInternalAsset instances displaying the offer,
-		 * containing TradeInternalItem and TradeInternalCurrency instances.
-		 */
-		public Set<TradeInternalAsset> getOffer() {
-			return TRADE_OFFER;
-		}
-
-		/**
-		 * @return A 64-bit long representation of the instance Steam ID.
-		 */
-		public long getSteamID() {
-			return STEAM_ID;
-		}
-
-		/**
-		 * @return The selected user's TradeInternalInventories instance.
-		 */
-		public TradeInternalInventories getInventories() {
-			return INVENTORIES;
-		}
-
-		/**
-		 * @return Whether or not the selected user is ready.
-		 */
-		public boolean isReady() {
-			return ready;
 		}
 	}
 }

@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="none" android:id="@+id/navgroup_1">
+    <group
+        android:id="@+id/navgroup_1"
+        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_friends"
-            android:title="@string/nav_friends" />
+            android:title="@string/nav_friends"/>
         <item
             android:id="@+id/nav_games"
             android:title="@string/nav_games"
             />
         <item
             android:id="@+id/nav_inventory"
-            android:title="@string/nav_inventory" />
+            android:title="@string/nav_inventory"/>
         <item
             android:id="@+id/nav_offers"
-            android:title="@string/nav_offers" />
+            android:title="@string/nav_offers"/>
     </group>
 
-    <group android:checkableBehavior="none" android:id="@+id/navgroup_2">
-        <item android:id="@+id/nav_market"
-              android:title="@string/nav_market" />
+    <group
+        android:id="@+id/navgroup_2"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_market"
+            android:title="@string/nav_market"/>
         <item
             android:id="@+id/nav_store"
-            android:title="@string/nav_store" />
+            android:title="@string/nav_store"/>
         <item
             android:id="@+id/nav_browser"
-            android:title="@string/nav_browser" />
+            android:title="@string/nav_browser"/>
     </group>
 
-    <group android:checkableBehavior="none" android:id="@+id/navgroup_3">
+    <group
+        android:id="@+id/navgroup_3"
+        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_settings"
-            android:title="@string/nav_settings" />
+            android:title="@string/nav_settings"/>
         <item
             android:id="@+id/nav_about"
-            android:title="@string/nav_about" />
+            android:title="@string/nav_about"/>
     </group>
 
-    <group android:checkableBehavior="none" android:id="@+id/navgroup_4">
+    <group
+        android:id="@+id/navgroup_4"
+        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_signout"
-            android:title="@string/nav_signout" />
+            android:title="@string/nav_signout"/>
     </group>
 </menu>
