@@ -54,16 +54,16 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="pref_chat_compact"
-        android:title="@string/pref_chat_compact"
         android:summary="@string/pref_chat_compact_summ"
+        android:title="@string/pref_chat_compact"
         />
     <ListPreference
-        android:key="pref_recent_chats"
-        android:title="@string/pref_recent_chats"
-        android:summary="@string/pref_recent_chats_summ"
+        android:defaultValue="48"
         android:entries="@array/pref_recent_chats_entries"
         android:entryValues="@array/pref_recent_chats_values"
-        android:defaultValue="48"
+        android:key="pref_recent_chats"
+        android:summary="@string/pref_recent_chats_summ"
+        android:title="@string/pref_recent_chats"
         />
     <CheckBoxPreference
         android:defaultValue="false"
@@ -71,11 +71,11 @@
         android:title="@string/pref_hide_blocked_users"
         />
     <ListPreference
-        android:key="pref_currency"
-        android:title="@string/pref_currency"
+        android:defaultValue="1"
         android:entries="@array/steam_currency"
         android:entryValues="@array/steam_currency_val"
-        android:defaultValue="1"
+        android:key="pref_currency"
+        android:title="@string/pref_currency"
         />
 
     <PreferenceScreen
@@ -89,9 +89,9 @@
             android:title="@string/pref_machineauth"/>
 
         <EditTextPreference
-            android:persistent="false"
             android:dialogTitle="@string/pref_webapikey_prompt"
             android:key="pref_webapikey"
+            android:persistent="false"
             android:summary="@string/pref_webapikey_summary"
             android:title="@string/pref_webapikey"/>
     </PreferenceScreen>

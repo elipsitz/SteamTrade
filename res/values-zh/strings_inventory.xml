@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">物品图标</string>
+
+    <string name="inv_error_private">他的库存已设为私密。</string>
+    <string name="inventory">库存</string>
+
+    <string name="search_inventory">搜索库存</string>
+    <string name="search_result_count">第 %1$d 页，共 %2$d 页</string>
+    <string name="toggle_view_mode">切换浏览模式</string>
+    <string name="inv_error_loading">载入库存时出错:\n%1$s</string>
+
+    <string name="craft_x_items">合成 %1$d TF2 道具</string>
+    <string name="craft_noncraftable">您所选的一个或两个道具无法合成。</string>
+    <string name="craft_nontradable">您所选的一个或两个道具无法交易,合成后也将无法交易。依然要合成吗?</string>
+    <string name="craft_failed">合成失败</string>
+    <string name="craft_successful">合成成功: %1$d 已合成。载入中...</string>
+    <string name="craft_completed">合成完成</string>
+    <string name="craft_crafting">合成中...</string>
+    <string name="craft_enable">允许合成</string>
+
+    <string name="market_item_notfound">未找到市场信息</string>
+    <string name="market_info_loading">载入市场信息...</string>
+    <string name="market_low">起价: %1$s</string>
+    <string name="market_median">均价: %1$s</string>
+    <string name="market_volume">在24小时内卖出 %1$s 个</string>
+</resources>

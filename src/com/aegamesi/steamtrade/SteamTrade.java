@@ -15,9 +15,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import org.acra.ACRA;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,15 +22,6 @@ import java.io.File;
 
 import uk.co.thomasc.steamkit.steam3.CMClient;
 import uk.co.thomasc.steamkit.util.logging.DebugLog;
-
-@ReportsCrashes(
-		formUri = "https://pickleman.cloudant.com/acra-steamtrade/_design/acra-storage/_update/report",
-		reportType = org.acra.sender.HttpSender.Type.JSON,
-		httpMethod = org.acra.sender.HttpSender.Method.PUT,
-		formUriBasicAuthLogin = "erandstuntryouldertencer",
-		formUriBasicAuthPassword = "Ht7cJlLh28flt5SnBlX0Dr0u",
-		mode = ReportingInteractionMode.TOAST,
-		resToastText = R.string.app_crashed_toast)
 
 public class SteamTrade extends Application {
 	public static File filesDir;
@@ -44,7 +32,6 @@ public class SteamTrade extends Application {
 		FixNoClassDefFoundError81083(); // code workaround for GPG bug #81083 -- remove later
 
 		super.onCreate();
-		ACRA.init(this);
 		getTracker().enableAdvertisingIdCollection(true);
 		filesDir = getFilesDir();
 

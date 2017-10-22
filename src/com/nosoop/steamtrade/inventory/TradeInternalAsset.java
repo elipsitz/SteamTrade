@@ -49,7 +49,7 @@ public abstract class TradeInternalAsset {
 	 * The class number of this object. Two similar items (e.g., a pair of Loose
 	 * Cannons) will have the same class number.
 	 */
-	int classid;
+	long classid;
 	/**
 	 * The number of items of this object has.
 	 */
@@ -107,18 +107,18 @@ public abstract class TradeInternalAsset {
 		this.background_color = rgDescriptionItem.optString("background_color", null);
 
 		classidString = rgInventoryItem.getString("classid");
-		this.classid = Integer.parseInt(classidString);
+		this.classid = Long.parseLong(classidString);
 
 		this.amount = Integer.parseInt(rgInventoryItem.optString("amount", "1"));
 		this.pos = rgInventoryItem.optInt("pos", -1);
 
 		this.marketable = rgDescriptionItem.optInt("marketable", 0) != 0;
 
-		if(rgInventoryItem.has("id"))
+		if (rgInventoryItem.has("id"))
 			this.assetid = Long.parseLong(rgInventoryItem.getString("id"));
-		else if(rgInventoryItem.has("assetid"))
+		else if (rgInventoryItem.has("assetid"))
 			this.assetid = Long.parseLong(rgInventoryItem.getString("assetid"));
-		else if(rgInventoryItem.has("currencyid"))
+		else if (rgInventoryItem.has("currencyid"))
 			this.assetid = Long.parseLong(rgInventoryItem.getString("currencyid"));
 
 		this.descriptions = new ArrayList<>();
@@ -237,7 +237,7 @@ public abstract class TradeInternalAsset {
 	 * and asserted to be equal to the similar value in the asset's
 	 * "rgInventory" entry.
 	 */
-	public final int getClassid() {
+	public final long getClassid() {
 		return classid;
 	}
 
@@ -250,6 +250,7 @@ public abstract class TradeInternalAsset {
 	public final int getAmount() {
 		return amount;
 	}
+
 	/**
 	 * Returns the position of this asset.
 	 *
@@ -279,7 +280,7 @@ public abstract class TradeInternalAsset {
 	public final int getNameColor() {
 		if (name_color == null || name_color.length() == 0)
 			return 0;
-		long color = Integer.parseInt(name_color, 16);
+		long color = Long.parseLong(name_color, 16);
 		color |= 0x00000000ff000000; // add 0xff alpha
 		return (int) color;
 	}
@@ -293,7 +294,7 @@ public abstract class TradeInternalAsset {
 	public final int getBackgroundColor() {
 		if (background_color == null || background_color.length() == 0)
 			return 0;
-		long color = Integer.parseInt(background_color, 16);
+		long color = Long.parseLong(background_color, 16);
 		color |= 0x00000000ff000000; // add 0xff alpha
 		return (int) color;
 	}
@@ -322,8 +323,11 @@ public abstract class TradeInternalAsset {
 			value = descriptions.getString("value");
 
 			String hexColor = descriptions.optString("color", "000000");
-
-			color = Integer.parseInt(hexColor, 16);
+			if (hexColor == null || hexColor.length() == 0) {
+				color = 0;
+			} else {
+				color = Integer.parseInt(hexColor, 16);
+			}
 		}
 
 		public int getColor() {

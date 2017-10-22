@@ -41,7 +41,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHold
 	public void onBindViewHolder(ViewHolderGame h, int position) {
 		FragmentLibrary.LibraryEntry entry = filteredList.get(position);
 
-		h.itemView.setTag(entry.appid);
+		h.itemView.setTag(entry);
 
 		h.imageHeader.setImageResource(R.drawable.default_game);
 		if (entry.img_logo_url.trim().length() > 0) {

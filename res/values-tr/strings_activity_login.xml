@@ -1,0 +1,29 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Kullanıcı Adı</string>
+    <string name="prompt_password">Şifre</string>
+    <string name="prompt_steamguard">Steam Guard Kodu</string>
+    <string name="action_sign_in">Giriş Yap</string>
+    <string name="error_loginkey_expired"> Giriş anahtarınız yanlış. Lütfen tekrar giriş yapın. </string>
+    <string name="error_incorrect_password">Bu şifre yanlıştır</string>
+    <string name="error_field_required">Bu alan gereklidir</string>
+    <string name="error_incorrect_steamguard">SteamGuard kimlik doğrulama kodu yanlış</string>
+    <string name="error_steamguard_required">Bu hesap SteamGuard tarafından korunmaktadır</string>
+    <string name="prompt_remember">Hatırla</string>
+    <string name="description_logo">Logo</string>
+    <string name="authenticating">Kimlik doğrulanıyor…</string>
+    <string name="cannot_auth_with_steamweb">SteamWeb ile kimlik doğrulaması yapılamıyor. Steam sunucuları şuanda çalışmıyor olabilir. </string>
+    <string name="not_connected_to_internet">İnternet\'e bağlı değilsiniz.</string>
+    <string name="connected_via_mobiledata">Mobil veriyle internete bağlandınız.\nIt Steam\'e bağlanmak daha zor olabilir.</string>
+    <string name="initializing">Başlatılıyor…</string>
+    <string name="signingout">Çıkış yapılıyor…</string>
+    <string name="logging_on">Giriş yapılıyor…</string>
+    <string name="connecting">Bağlanılıyor…</string>
+    <string name="fetching_key">API Anahtarı getiriliyor…</string>
+    <string name="cannot_connect_to_steam">Steam\'e bağlanılamıyor!</string>
+    <string name="login_saved">Kayıtlı hesap ile giriş yap</string>
+    <string name="login_different">Diğer hesap ile giriş yap</string>
+    <string name="login_confirm_delete_account"> Hesabı kaldırmak istediğinizden emin misiniz \'%1$s\'?</string>
+
+</resources>

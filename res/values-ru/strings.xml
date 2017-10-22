@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error">Ошибка</string>
+    <string name="error_disconnected">Отключено от сети Steam</string>
+    <string name="drawer_open">Open Drawer</string>
+    <string name="drawer_close">Close Drawer</string>
+    <string name="steam_avatar">Аватар</string>
+    <string name="chat">Чат</string>
+    <string name="trade">Обмен</string>
+    <string name="friends">Друзья</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="action_successful">Действие успешно.</string>
+    <string name="action_failed">Действие не выполнено.</string>
+    <string name="search">Поиск</string>
+    <string name="quote">вЂњ%1$sвЂќ</string>
+
+    <string name="steamguard_new">Это первый раз, когда вы вошли в аккаунт на этом устройстве.\n\nИз-за ограничений Valve вам могут быть недоступны обмены или отправления запросов на обмен с этого устройства в течение 7 дней.</string>
+    <string name="api_key_not_loaded">Не удалось извлечь WebAPI key. Эта функция недоступна.</string>
+    <string name="rate_snackbar_text">Вам нравится Ice?</string>
+    <string name="rate_snackbar_action">Оценить</string>
+
+    <string name="nav_friends">Друзья</string>
+    <string name="nav_inventory">Инвентарь</string>
+    <string name="nav_offers">Предложения обмена</string>
+    <string name="nav_games">Библиотека</string>
+    <string name="nav_store">Магазин Steam</string>
+    <string name="nav_market">Торговая площадка</string>
+    <string name="nav_browser">Браузер Steam</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_about">Об Ice</string>
+    <string name="nav_signout">Выйти</string>
+
+    <string name="purchase_pending">Ожидание оплатывЂ¦</string>
+    <string name="purchase_complete">Покупка успешна! Спасибо!</string>
+    <string name="signed_out">Вы вышли</string>
+    <string name="send_button">Отправить</string>
+    <string name="chat_hint">Нажмите, чтобы начать диалог</string>
+    <string name="app_crashed_toast">Ice клиент экстренно завершил свою работу, но отчет был отправлен разработчику, чтобы помочь исправить эту проблему!</string>
+    <string name="playing">В игре</string>
+    <string name="cancel">Отменить</string>
+    <string name="accept">Принять</string>
+    <string name="add">Добавить</string>
+    <string name="change_display_name">Изменить отображаемое имя</string>
+    <string name="change_display_name_prompt">Пожалуйста, введите ваше новое отображаемое имя:</string>
+    <string name="set_currently_playing_game">Set Currently Playing Game</string>
+
+    <string name="x_new_messages">%1$d непрочитанных сообщений</string>
+
+    <string-array name="allowed_states">
+        <item>В сети</item>
+        <item>Нет на месте</item>
+        <item>Не беспокоить</item>
+        <item>Спит</item>
+        <item>Хочет обменяться</item>
+        <item>Хочет играть</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>Не в сети</item>
+        <item>В сети</item>
+        <item>Не беспокоить</item>
+        <item>Нет на месте</item>
+        <item>Спит</item>
+        <item>Хочет обменяться</item>
+        <item>Хочет играть</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>Неизвестный статус</item>
+        <item>ИнициализациявЂ¦</item>
+        <item>ПодключениевЂ¦</item>
+        <item>ВходвЂ¦</item>
+        <item>АутентификациявЂ¦</item>
+        <item>Получение ключавЂ¦</item>
+        <item>Подключено</item>
+        <item>Отключено</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">Скопировано в буфер обмена.</string>
+
+    <string name="change">Change</string>
+    <string name="baa">moo</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="feature_not_implemented">Feature not implemented</string>
+    <string name="error_getting_key">Ошибка получения ключа WebAPI. Некоторые функции (такие, как предложения обмена) могут не работать должным образом.</string>
+    <string name="error_steamapi">Ошибка доступа SteamAPI.</string>
+    <string name="ok">OK</string>
+
+    <string name="action_settings">Настройки</string>
+
+    <string name="web_back">Назад</string>
+    <string name="web_forward">Вперед</string>
+    <string name="web_reload">Обновить страницу</string>
+    <string name="web_community">Сообщество Steam</string>
+    <string name="web_store">Магазин Steam</string>
+    <string name="web_toggle_view">Полная версия</string>
+
+    <string name="library_playtime">%1$.1f часов в игре</string>
+    <string name="library_playtime_full">%1$.1f часов за последние 2 недели\n%2$.1f часов в игре</string>
+    <string name="library_sort">Изменить сортировку</string>
+    <string name="library_sort_name">По алфавиту</string>
+    <string name="library_sort_playtime">По времени в игре</string>
+    <string name="library_activate_product">Активировать продукт</string>
+    <string name="library_enter_key">Пожалуйста, введите код продукта, который вы желаете активировать.</string>
+    <string name="library_validating_key">Проверка кода продукта.</string>
+    <string name="library_activation_successful">Активация успешна</string>
+    <string name="library_activation_failed">Активация не завершена</string>
+    <string name="library_activation_invalid_code">Неверный код продукта.</string>
+    <string name="library_activation_error">Неизвестная ошибка.</string>
+    <string name="library_activation_code_used">Код уже использован.</string>
+
+    <string name="steamguard_mobile_authenticator">Мобильный Аутентификатор</string>
+    <string name="steamguard_unavailable">Мобильный Аутентификатор доступен только на сохраненном аккаунте.</string>
+    <string name="steamguard_not_enabled">Мобильный Аутентификатор Steam Guard не установлен на этом устройстве.</string>
+    <string name="steamguard_code">Ваш код Steam Guard:</string>
+    <string name="steamguard_enable_authenticator">Enable Authenticator</string>
+    <string name="steamguard_manage_authenticator">Manage Authenticator</string>
+    <string name="steamguard_import_authenticator_mafile">Import .mafile</string>
+    <string name="steamguard_import_authenticator">Import Authenticator (.mafile)</string>
+    <string name="steamguard_export_authenticator">Export Authenticator (.mafile)</string>
+    <string name="steamguard_get_revocation_code">View Revocation Code</string>
+    <string name="steamguard_revocation_code">Your revocation code is:\n%1$s</string>
+    <string name="steamguard_instructions_finalize">To finalize adding the Mobile Authenticator, please enter the code sent to you by Steam via SMS.</string>
+    <string name="steamguard_enable_success">Successfully enabled mobile authentication.\n\nPlease write down your emergency recovery code: %1$s</string>
+    <string name="steamguard_enable_failure">Failed to enable mobile authenticator: %1$s</string>
+    <string name="steamguard_export">Export Mobile Authenticator</string>
+    <string name="steamguard_import">Import Mobile Authenticator</string>
+    <string name="steamguard_duplicate">Ваш аккаунт уже использует Официальный Мобильный Аутентификатор. Вы не можете использовать два аутентификатора одновременно.</string>
+    <string name="steamguard_import_password">Пожалуйста, введите пароль для аккаунта \'%1$s\'.</string>
+    <string name="steamguard_select_mafile">Пожалуйста, выберите .mafile, который вы хотите загрузить.</string>
+
+    <string-array name="store_tabs">
+        <item>Каталог</item>
+        <item>Корзина</item>
+        <item>Поиск</item>
+        <item>Список желаемого</item>
+        <item>Новости Steam</item>
+        <item>Об аккаунте</item>
+    </string-array>
+
+    <color name="notification_on">#5C7E10</color>
+    <color name="notification_off">#777</color>
+    <color name="notification_text_on">#70ba24</color>
+    <color name="notification_text_off">#bfbfbf</color>
+    <plurals name="notification_comments">
+        <item quantity="one">%d новый комментарий</item>
+        <item quantity="other">%d новых комментариев</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d новый предмет в вашем инвентаре</item>
+        <item quantity="other">%d новых предметов в вашем инвентаре</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d непрочитанное сообщение</item>
+        <item quantity="other">%d непрочитанных сообщений</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d новое предложение обмена</item>
+        <item quantity="other">%d новых предложений обмена</item>
+    </plurals>
+    <string name="steamguard_import_error_wrong_account">Error: this authentication information is for a different Steam account: %1$s</string>
+    <string name="library_view_store_page">Посмотреть страницу в магазине</string>
+    <string name="library_begin_idling">Начать симулирование запуска</string>
+    <string name="library_stop_idling">Остановить симулирование запуска</string>
+    <string name="idling_started">Сейчас симулируется:  %1$s</string>
+    <string name="idling_stopped">Больше не симулируется.</string>
+    <string name="premium_only">Эта возможность доступна только в премиум версии.</string>
+    <string name="premium_unlock">Приобрести премиум</string>
+</resources>

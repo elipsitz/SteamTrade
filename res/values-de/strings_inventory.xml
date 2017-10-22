@@ -9,7 +9,7 @@
     <string name="search_inventory">Inventar durchsuchen</string>
     <string name="search_result_count">Zeige %1$d von %2$d</string>
     <string name="toggle_view_mode">Anzeigemodus aktivieren</string>
-    <string name="inv_error_loading">Unbekannter Fehler beim Laden des Inventars.</string>
+    <string name="inv_error_loading">Fehler beim Laden des Inventars:\n%1$s</string>
 
     <string name="craft_x_items">Stelle %1$d Team-Fortress 2 Gegenstand her</string>
     <string name="craft_noncraftable">Ein oder mehrere der ausgewählten Gegenstände können nicht hergestellt werden.</string>

@@ -1,5 +1,6 @@
 package com.aegamesi.steamtrade;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,12 +13,14 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -39,6 +42,12 @@ import com.aegamesi.steamtrade.steam.SteamTwoFactor;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.json.JSONException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +59,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EUniverse;
 
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
+
 public class LoginActivity extends AppCompatActivity {
+	private static final int REQUEST_CODE_LOAD_MAFILE = 48399;
 	// Values for email and password at the time of the login attempt.
 	public static String username;
 	public static String password;
@@ -60,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
 	private EditText textUsername;
 	private EditText textPassword;
 	private EditText textSteamguard;
-
 	private View headerSaved;
 	private View headerNew;
 	private View viewSaved;
@@ -155,6 +167,88 @@ public class LoginActivity extends AppCompatActivity {
 				attemptLogin();
 			}
 		});
+
+		Button buttonOverflow = (Button) findViewById(R.id.button_overflow);
+		buttonOverflow.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				handleOverflowMenu(view);
+			}
+		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_CODE_LOAD_MAFILE) {
+			if (resultCode == Activity.RESULT_OK) {
+				try {
+					StringBuilder b = new StringBuilder();
+					InputStream is = getContentResolver().openInputStream(data.getData());
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+					String s;
+					while ((s = reader.readLine()) != null) {
+						b.append(s);
+						b.append("\n");
+					}
+
+					final AccountLoginInfo acc = new AccountLoginInfo();
+					acc.importFromJson(b.toString());
+					AccountLoginInfo existing_acc = AccountLoginInfo.readAccount(this, acc.tfa_accountName);
+					if (existing_acc != null) {
+						existing_acc.importFromJson(b.toString());
+						existing_acc.has_authenticator = true;
+						AccountLoginInfo.writeAccount(LoginActivity.this, existing_acc);
+						Toast.makeText(LoginActivity.this, R.string.action_successful, Toast.LENGTH_LONG).show();
+					} else {
+						acc.username = acc.tfa_accountName;
+						AlertDialog.Builder builder = new AlertDialog.Builder(this);
+						builder.setTitle(R.string.steamguard_mobile_authenticator);
+						builder.setMessage(String.format(getString(R.string.steamguard_import_password), acc.username));
+						builder.setCancelable(true);
+						final EditText passwordInput = new EditText(this);
+						builder.setView(passwordInput);
+						passwordInput.setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_PASSWORD);
+						builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i) {
+								acc.password = passwordInput.getText().toString();
+								acc.has_authenticator = true;
+								AccountLoginInfo.writeAccount(LoginActivity.this, acc);
+								Toast.makeText(LoginActivity.this, R.string.action_successful, Toast.LENGTH_LONG).show();
+								recreate();
+							}
+						});
+						builder.show();
+					}
+
+				} catch (IOException | JSONException | NumberFormatException e) {
+					e.printStackTrace();
+					AlertDialog.Builder builder = new AlertDialog.Builder(this);
+					builder.setTitle(R.string.error);
+					builder.setMessage(e.toString());
+					builder.setCancelable(true);
+					builder.setNeutralButton(R.string.ok, null);
+					builder.show();
+				}
+			}
+		}
+	}
+
+	private void handleOverflowMenu(View view) {
+		PopupMenu popup = new PopupMenu(this, view);
+		popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				switch (item.getItemId()) {
+					case R.id.item_import_authenticator:
+						SteamTwoFactor.promptForMafile(LoginActivity.this, REQUEST_CODE_LOAD_MAFILE);
+						break;
+				}
+				return true;
+			}
+		});
+		popup.inflate(R.menu.login);
+		popup.show();
 	}
 
 	private void handleLegacy() {

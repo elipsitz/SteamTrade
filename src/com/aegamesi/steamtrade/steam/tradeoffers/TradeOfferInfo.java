@@ -8,9 +8,11 @@ import com.nosoop.steamtrade.inventory.AssetBuilder;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nosoop.steamtrade.inventory.TradeInternalInventories;
 import com.nosoop.steamtrade.inventory.TradeInternalInventory;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -139,7 +141,7 @@ public class TradeOfferInfo {
 	 * @return A List[TradeOffer>][] with the trade offers (0 -- trade offers sent, 1 -- trade offers received)
 	 */
 	public static List<TradeOfferInfo>[] parseGetTradeOffers(String response) {
-		List<TradeOfferInfo>[] offers = new List[] {new ArrayList<TradeOfferInfo>(), new ArrayList<TradeOfferInfo>()};
+		List<TradeOfferInfo>[] offers = new List[]{new ArrayList<TradeOfferInfo>(), new ArrayList<TradeOfferInfo>()};
 		try {
 			JSONObject jsonResponse = new JSONObject(response);
 			if (jsonResponse.has("response")) {
@@ -147,11 +149,13 @@ public class TradeOfferInfo {
 				JSONArray descriptions = jsonResponse.optJSONArray("descriptions");
 				if (jsonResponse.has("trade_offers_sent")) {
 					JSONArray trade_offers_sent = jsonResponse.getJSONArray("trade_offers_sent");
-					for (int i = 0; i < trade_offers_sent.length(); i++) offers[0].add(new TradeOfferInfo(trade_offers_sent.getJSONObject(i), descriptions, null));
+					for (int i = 0; i < trade_offers_sent.length(); i++)
+						offers[0].add(new TradeOfferInfo(trade_offers_sent.getJSONObject(i), descriptions, null));
 				}
 				if (jsonResponse.has("trade_offers_received")) {
 					JSONArray trade_offers_received = jsonResponse.getJSONArray("trade_offers_received");
-					for (int i = 0; i < trade_offers_received.length(); i++) offers[1].add(new TradeOfferInfo(trade_offers_received.getJSONObject(i), descriptions, null));
+					for (int i = 0; i < trade_offers_received.length(); i++)
+						offers[1].add(new TradeOfferInfo(trade_offers_received.getJSONObject(i), descriptions, null));
 				}
 			}
 		} catch (JSONException e) {
@@ -207,77 +211,21 @@ public class TradeOfferInfo {
 		if (assetList != null) {
 			for (int i = 0; i < assetList.length(); i++) {
 				JSONObject invInstance = assetList.getJSONObject(i);
-				TradeInternalInventory.ClassInstancePair itemCI = new TradeInternalInventory.ClassInstancePair(Integer.parseInt(invInstance.getString("classid")), Long.parseLong(invInstance.optString("instanceid", "0")));
+				TradeInternalInventory.ClassInstancePair itemCI = new TradeInternalInventory.ClassInstancePair(Long.parseLong(invInstance.getString("classid")), Long.parseLong(invInstance.optString("instanceid", "0")));
 				AppContextPair itemAC = new AppContextPair(Integer.parseInt(invInstance.getString("appid")), Long.parseLong(invInstance.getString("contextid")));
 				try {
 					TradeInternalAsset generatedAsset = null;
 					if (descriptions.containsKey(itemCI)) {
-						if (invInstance.has("assetid")) generatedAsset = assetBuilder.generateItem(itemAC, invInstance, descriptions.get(itemCI));
-						 else if (invInstance.has("currencyid")) generatedAsset = assetBuilder.generateCurrency(itemAC, invInstance, descriptions.get(itemCI));
+						if (invInstance.has("assetid"))
+							generatedAsset = assetBuilder.generateItem(itemAC, invInstance, descriptions.get(itemCI));
+						else if (invInstance.has("currencyid"))
+							generatedAsset = assetBuilder.generateCurrency(itemAC, invInstance, descriptions.get(itemCI));
 					}
 					if (generatedAsset != null) resultList.add(generatedAsset);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
-		}
-	}
-
-
-	/**
-	 * Enum representing possible trade offer states
-	 */
-	public enum ETradeOfferState {
-		Unknown(0), Invalid(1), Active(2), Accepted(3), Countered(4), Expired(5), Canceled(6), Declined(7), InvalidItems(8), CreatedNeedsConfirmation(9), CancelledBySecondFactor(10), InEscrow(11);
-		private static HashMap<Integer, ETradeOfferState> values = new HashMap<Integer, ETradeOfferState>();
-
-		static {
-			for (final ETradeOfferState type : ETradeOfferState.values()) {
-				ETradeOfferState.values.put(type.v(), type);
-			}
-		}
-
-		private int code;
-
-		ETradeOfferState(int code) {
-			this.code = code;
-		}
-
-		public static ETradeOfferState f(int code) {
-			return ETradeOfferState.values.get(code);
-		}
-
-		public int v() {
-			return code;
-		}
-	}
-
-
-	/**
-	 * Enum representing possible trade offer states
-	 */
-	public enum ETradeOfferConfirmationMethod {
-		Invalid(0), Email(1), MobileApp(2);
-		private static HashMap<Integer, ETradeOfferConfirmationMethod> values = new HashMap<Integer, ETradeOfferConfirmationMethod>();
-
-		static {
-			for (final ETradeOfferConfirmationMethod type : ETradeOfferConfirmationMethod.values()) {
-				ETradeOfferConfirmationMethod.values.put(type.v(), type);
-			}
-		}
-
-		private int code;
-
-		ETradeOfferConfirmationMethod(int code) {
-			this.code = code;
-		}
-
-		public static ETradeOfferConfirmationMethod f(int code) {
-			return ETradeOfferConfirmationMethod.values.get(code);
-		}
-
-		public int v() {
-			return code;
 		}
 	}
 
@@ -407,5 +355,61 @@ public class TradeOfferInfo {
 	@javax.annotation.Generated("lombok")
 	public ETradeOfferConfirmationMethod getConfirmation_method() {
 		return this.confirmation_method;
+	}
+
+	/**
+	 * Enum representing possible trade offer states
+	 */
+	public enum ETradeOfferState {
+		Unknown(0), Invalid(1), Active(2), Accepted(3), Countered(4), Expired(5), Canceled(6), Declined(7), InvalidItems(8), CreatedNeedsConfirmation(9), CancelledBySecondFactor(10), InEscrow(11);
+		private static HashMap<Integer, ETradeOfferState> values = new HashMap<Integer, ETradeOfferState>();
+
+		static {
+			for (final ETradeOfferState type : ETradeOfferState.values()) {
+				ETradeOfferState.values.put(type.v(), type);
+			}
+		}
+
+		private int code;
+
+		ETradeOfferState(int code) {
+			this.code = code;
+		}
+
+		public static ETradeOfferState f(int code) {
+			return ETradeOfferState.values.get(code);
+		}
+
+		public int v() {
+			return code;
+		}
+	}
+
+	/**
+	 * Enum representing possible trade offer states
+	 */
+	public enum ETradeOfferConfirmationMethod {
+		Invalid(0), Email(1), MobileApp(2);
+		private static HashMap<Integer, ETradeOfferConfirmationMethod> values = new HashMap<Integer, ETradeOfferConfirmationMethod>();
+
+		static {
+			for (final ETradeOfferConfirmationMethod type : ETradeOfferConfirmationMethod.values()) {
+				ETradeOfferConfirmationMethod.values.put(type.v(), type);
+			}
+		}
+
+		private int code;
+
+		ETradeOfferConfirmationMethod(int code) {
+			this.code = code;
+		}
+
+		public static ETradeOfferConfirmationMethod f(int code) {
+			return ETradeOfferConfirmationMethod.values.get(code);
+		}
+
+		public int v() {
+			return code;
+		}
 	}
 }

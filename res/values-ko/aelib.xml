@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:ignore="MissingTranslation">
+    <string name="time_now">지금</string>
+    <string name="time_just_now">방금 전</string>
+    <string name="time_in_future">앞으로</string>
+
+    <plurals name="time_mins">
+        <item quantity="one">%1$d 분</item>
+        <item quantity="other">%1$d 분</item>
+    </plurals>
+</resources>

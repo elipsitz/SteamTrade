@@ -25,29 +25,6 @@ public class TradeEvent {
 	public long currencyid;
 	JSONObject jsonObject;
 
-	public static class TradeAction {
-		public static final int // Reference to trade action IDs
-				// Item added (itemid = "assetid")
-				ITEM_ADDED = 0,
-		// Item removed (itemid = "assetid")
-		ITEM_REMOVED = 1,
-		// Toggle ready
-		READY_TOGGLED = 2,
-		// Toggle not ready
-		READY_UNTOGGLED = 3,
-		// Trade accepted
-		TRADE_ACCEPTED = 4,
-		// ? - maybe some sort of cancel
-		UNKNOWN_EVENT_5 = 5,
-		// Add / remove currency.
-		// (SK Crowns / Energy are, other stackables are not.)
-		CURRENCY_CHANGED = 6,
-		// Chat (message = "text")
-		MESSAGE_ADDED = 7,
-		// Update stackable item count?  Initial add uses ITEM_ADDED.
-		STACKABLE_CHANGED = 8;
-	}
-
 	TradeEvent(JSONObject event) throws JSONException {
 		jsonObject = event;
 
@@ -74,5 +51,28 @@ public class TradeEvent {
 
 	public JSONObject getJSONObject() {
 		return jsonObject;
+	}
+
+	public static class TradeAction {
+		public static final int // Reference to trade action IDs
+				// Item added (itemid = "assetid")
+				ITEM_ADDED = 0,
+		// Item removed (itemid = "assetid")
+		ITEM_REMOVED = 1,
+		// Toggle ready
+		READY_TOGGLED = 2,
+		// Toggle not ready
+		READY_UNTOGGLED = 3,
+		// Trade accepted
+		TRADE_ACCEPTED = 4,
+		// ? - maybe some sort of cancel
+		UNKNOWN_EVENT_5 = 5,
+		// Add / remove currency.
+		// (SK Crowns / Energy are, other stackables are not.)
+		CURRENCY_CHANGED = 6,
+		// Chat (message = "text")
+		MESSAGE_ADDED = 7,
+		// Update stackable item count?  Initial add uses ITEM_ADDED.
+		STACKABLE_CHANGED = 8;
 	}
 }

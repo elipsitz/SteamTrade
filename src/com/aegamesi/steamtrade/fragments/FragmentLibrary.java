@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -156,9 +157,53 @@ public class FragmentLibrary extends FragmentBase implements View.OnClickListene
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.game_card) {
-			int appid = (Integer) view.getTag();
-			String url = String.format("http://store.steampowered.com/app/%d/", appid);
-			FragmentWeb.openPage(activity(), url, true);
+			final LibraryEntry entry = (LibraryEntry) view.getTag();
+			final int appid = entry.appid;
+
+			PopupMenu popup = new PopupMenu(activity(), view);
+			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+				@Override
+				public boolean onMenuItemClick(MenuItem item) {
+					switch (item.getItemId()) {
+						case R.id.menu_library_store_page:
+							String url = String.format("http://store.steampowered.com/app/%d/", appid);
+							FragmentWeb.openPage(activity(), url, true);
+							break;
+						case R.id.menu_library_idle:
+							boolean premium = activity().billingProcessor.listOwnedProducts().contains("ice.removeads");
+							premium |= SteamUtil.iapOverride();
+							if (premium) {
+								activity().steamUser.setPlayingGame(appid);
+								SteamService.singleton.idling_app = appid;
+								Toast.makeText(activity(), String.format(getString(R.string.idling_started), entry.name), Toast.LENGTH_LONG).show();
+							} else {
+								AlertDialog.Builder builder = new AlertDialog.Builder(activity());
+								builder.setTitle(R.string.error);
+								builder.setMessage(R.string.premium_only);
+								builder.setCancelable(true);
+								builder.setNegativeButton(R.string.cancel, null);
+								builder.setPositiveButton(R.string.premium_unlock, new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialogInterface, int i) {
+										Toast.makeText(getActivity(), R.string.purchase_pending, Toast.LENGTH_LONG).show();
+										activity().billingProcessor.purchase(activity(), "ice.removeads");
+									}
+								});
+								builder.show();
+							}
+							break;
+						case R.id.menu_library_stop_idle:
+							activity().steamUser.setPlayingGame(0);
+							Toast.makeText(activity(), R.string.idling_stopped, Toast.LENGTH_LONG).show();
+					}
+					return true;
+				}
+			});
+			popup.inflate(R.menu.fragment_library_action);
+			if (SteamService.singleton.idling_app == 0) {
+				popup.getMenu().findItem(R.id.menu_library_stop_idle).setVisible(false);
+			}
+			popup.show();
 		}
 	}
 

@@ -79,46 +79,46 @@
                 android:id="@+id/profile_button_chat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/chat"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                android:text="@string/chat"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/profile_button_add_friend"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/friend_add"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:text="@string/friend_add"/>
 
                 <Button
                     android:id="@+id/profile_button_remove_friend"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/friend_remove"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:text="@string/friend_remove"/>
 
                 <Button
                     android:id="@+id/profile_button_unblock_friend"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/friend_unblock"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:text="@string/friend_unblock"/>
 
                 <Button
                     android:id="@+id/profile_button_block_friend"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/friend_block"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:text="@string/friend_block"/>
 
             </LinearLayout>
 

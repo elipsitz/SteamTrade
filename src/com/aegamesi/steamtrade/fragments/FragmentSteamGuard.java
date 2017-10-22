@@ -3,7 +3,9 @@ package com.aegamesi.steamtrade.fragments;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
@@ -16,18 +18,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aegamesi.lib.android.AndroidUtil;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.support.SteamGuardCodeView;
 import com.aegamesi.steamtrade.steam.AccountLoginInfo;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamTwoFactor;
 
-import org.json.JSONObject;
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import uk.co.thomasc.steamkit.base.generated.SteammessagesTwofactorSteamclient.CTwoFactor_AddAuthenticator_Response;
 import uk.co.thomasc.steamkit.base.generated.SteammessagesTwofactorSteamclient.CTwoFactor_FinalizeAddAuthenticator_Response;
@@ -79,7 +83,7 @@ public class FragmentSteamGuard extends FragmentBase implements OnClickListener 
 						// don't set "has authenticator" but save all of the data
 						AccountLoginInfo info = getAccountLoginInfo();
 						info.tfa_sharedSecret = response.sharedSecret;
-						info.tfa_serialNumber = response.serialNumber;
+						info.tfa_serialNumber = Long.toString(response.serialNumber);
 						info.tfa_revocationCode = response.revocationCode;
 						info.tfa_uri = response.uri;
 						info.tfa_serverTime = response.serverTime;
@@ -113,12 +117,7 @@ public class FragmentSteamGuard extends FragmentBase implements OnClickListener 
 							errorMessage = getString(R.string.steamguard_duplicate);
 						}
 
-						AlertDialog.Builder builder = new AlertDialog.Builder(activity());
-						builder.setTitle(R.string.error);
-						builder.setMessage(errorMessage);
-						builder.setCancelable(true);
-						builder.setNeutralButton(R.string.ok, null);
-						builder.show();
+						AndroidUtil.showBasicAlert(activity(), getString(R.string.error), errorMessage, null);
 					}
 				}
 
@@ -140,21 +139,19 @@ public class FragmentSteamGuard extends FragmentBase implements OnClickListener 
 							AccountLoginInfo info = getAccountLoginInfo();
 							info.has_authenticator = true;
 							saveAccountLoginInfo(info);
+							updateView();
 
-							AlertDialog.Builder builder = new AlertDialog.Builder(activity());
-							builder.setTitle(R.string.steamguard_mobile_authenticator);
-							builder.setMessage(String.format(getString(R.string.steamguard_enable_success), info.tfa_revocationCode));
-							builder.setCancelable(true);
-							builder.setNeutralButton(R.string.ok, null);
-							builder.show();
+
+							AndroidUtil.showBasicAlert(activity(),
+									getString(R.string.steamguard_mobile_authenticator),
+									String.format(getString(R.string.steamguard_enable_success), info.tfa_revocationCode),
+									null);
 						}
 					} else {
-						AlertDialog.Builder builder = new AlertDialog.Builder(activity());
-						builder.setTitle(R.string.error);
-						builder.setMessage(String.format(getString(R.string.steamguard_enable_failure), status.name()));
-						builder.setCancelable(true);
-						builder.setNeutralButton(R.string.ok, null);
-						builder.show();
+						AndroidUtil.showBasicAlert(activity(),
+								getString(R.string.error),
+								String.format(getString(R.string.steamguard_enable_failure), status.name()),
+								null);
 					}
 				}
 			}
@@ -255,17 +252,26 @@ public class FragmentSteamGuard extends FragmentBase implements OnClickListener 
 				AccountLoginInfo info = getAccountLoginInfo();
 				SteamID id = SteamService.singleton.steamClient.getSteamId();
 
+				String json = info.exportToJson(id);
+				String filename = "mafiles/" + id.convertToLong() + ".mafile";
+				try {
+					AndroidUtil.createCachedFile(activity(), filename, json);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				File mafile = new File(activity().getCacheDir(), filename);
+				Uri contentUri = FileProvider.getUriForFile(getContext(), "com.aegamesi.steamtrade.fileprovider", mafile);
+
 				// export
 				Intent sendIntent = new Intent();
 				sendIntent.setAction(Intent.ACTION_SEND);
-				sendIntent.putExtra(Intent.EXTRA_TEXT, info.exportToJson(id));
+				sendIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+				sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 				sendIntent.setType("application/json");
 				startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.steamguard_export_authenticator)));
 			} else {
-				// import
-				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-				intent.setType("application/octet-stream");
-				startActivityForResult(intent, REQUEST_CODE_LOAD);
+				SteamTwoFactor.promptForMafile(activity(), REQUEST_CODE_LOAD);
 			}
 		}
 	}
@@ -273,13 +279,13 @@ public class FragmentSteamGuard extends FragmentBase implements OnClickListener 
 	@Override
 	public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_CODE_LOAD) {
-			if(resultCode == Activity.RESULT_OK) {
-				String file = data.getData().getPath();
-				Toast.makeText(activity(), file, Toast.LENGTH_SHORT).show();
+			boolean success = false;
+			if (resultCode == Activity.RESULT_OK) {
 
 				try {
 					StringBuilder b = new StringBuilder();
-					BufferedReader reader = new BufferedReader(new FileReader(new File(file)));
+					InputStream is = activity().getContentResolver().openInputStream(data.getData());
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 					String s;
 					while ((s = reader.readLine()) != null) {
 						b.append(s);
@@ -287,15 +293,44 @@ public class FragmentSteamGuard extends FragmentBase implements OnClickListener 
 					}
 
 					AccountLoginInfo accountLoginInfo = getAccountLoginInfo();
-					if (accountLoginInfo == null) {
-						// todo error
-					} else {
+					if (accountLoginInfo != null) {
 						accountLoginInfo.importFromJson(b.toString());
-						saveAccountLoginInfo(accountLoginInfo);
+
+						if (accountLoginInfo.tfa_accountName.equals(accountLoginInfo.username)) {
+							accountLoginInfo.has_authenticator = true;
+							saveAccountLoginInfo(accountLoginInfo);
+
+							AlertDialog.Builder builder = new AlertDialog.Builder(activity());
+							builder.setTitle(R.string.steamguard_mobile_authenticator);
+							builder.setMessage(String.format(getString(R.string.steamguard_enable_success), accountLoginInfo.tfa_revocationCode));
+							builder.setCancelable(true);
+							builder.setNeutralButton(R.string.ok, null);
+							builder.show();
+							success = true;
+
+							updateView();
+						} else {
+							AlertDialog.Builder builder = new AlertDialog.Builder(activity());
+							builder.setTitle(R.string.steamguard_mobile_authenticator);
+							builder.setMessage(String.format(getString(R.string.steamguard_import_error_wrong_account), accountLoginInfo.tfa_accountName));
+							builder.setCancelable(true);
+							builder.setNeutralButton(R.string.ok, null);
+							builder.show();
+						}
 					}
-				} catch (IOException e) {
+				} catch (IOException | JSONException | NumberFormatException e) {
 					e.printStackTrace();
+					AlertDialog.Builder builder = new AlertDialog.Builder(activity());
+					builder.setTitle(R.string.error);
+					builder.setMessage(e.toString());
+					builder.setCancelable(true);
+					builder.setNeutralButton(R.string.ok, null);
+					builder.show();
 				}
+			}
+			if (!success) {
+				Toast.makeText(activity(), R.string.error, Toast.LENGTH_SHORT).show();
+				Log.d("ImportAuthenticator", "import failed? " + resultCode);
 			}
 		}
 		return false;

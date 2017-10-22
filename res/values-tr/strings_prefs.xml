@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_vibrate">Mesajda Titret</string>
+    <string name="pref_vibrate_summ">Mesaj alınca titret</string>
+    <string name="persist_notification">Kalıcı Bildirim</string>
+    <string name="persist_notification_summ"> Bunun işaretini kaldırmak, Android\'e, Ice\'nin düşük öncelikli olduğunu söyleyecektir.(Önerilmez)</string>
+    <string name="pref_reconnect">Otomatik Bağlantı</string>
+    <string name="pref_reconnect_summ">Steam ağından düştüğünüzde tekrar bağlantı kurun</string>
+    <string name="pref_advanced">Gelişmiş Ayarlar</string>
+    <string name="pref_advanced_summ">Ne işe yaradığını bilmiyorsanız dokunmayınız.</string>
+    <string name="pref_machineauth">Geçersiz machineAuth</string>
+    <string name="pref_machineauth_prompt">MachineAuth gir:</string>
+    <string name="pref_remove_ads">Reklamları Kaldır</string>
+    <string name="pref_remove_ads_summ">Bağış yaparak bize destek verin! &lt;3</string>
+    <string name="pref_notification_sound">Bildirim Sesi</string>
+    <string name="pref_recent_chats">Geçmiş Mesajlar</string>
+    <string name="pref_recent_chats_summ">Son yapılan sohbetler için sınırlamayı ayarlayın.</string>
+    <string name="pref_chat_compact">Kompakt Sohbet Ekranı</string>
+    <string name="pref_chat_compact_summ">Büyük kabarcıklar yerine kompakt çizgileri gösterin.</string>
+    <string name="pref_currency">Para Birimi Seçimi</string>
+    <string name="pref_webapikey">Düzenle:Bellekteki WebAPI Anahtarı</string>
+    <string name="pref_webapikey_prompt">Gir:WebAPI Anahtarı:</string>
+    <string name="pref_webapikey_summary">Tam işlevsellik için hesap anahtarını gerektirir.</string>
+    <string name="pref_notification">Bildirim Ayarları</string>
+    <string name="pref_notification_chat">Mesajlaşma Bildirimleri</string>
+    <string name="pref_notification_friendrequest">Arkadaşlık İsteği Bildirimleri</string>
+    <string name="pref_notification_trade">Takas Bildirimleri</string>
+    <string name="pref_hide_blocked_users">Bloklu kişileri gizle</string>
+
+    <string-array name="pref_recent_chats_entries">
+        <item>Son 7 gün içerisindekiler</item>
+        <item>Son 2 gün içerisindekiler</item>
+        <item>Son 24 saat içerisindekiler</item>
+        <item>Son 1 saat içerisindekiler</item>
+        <item>Geçmiş mesajları görüntüleme</item>
+    </string-array>
+</resources>

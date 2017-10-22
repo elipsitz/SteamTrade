@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_library_store_page"
+        android:title="@string/library_view_store_page"/>
+    <item
+        android:id="@+id/menu_library_idle"
+        android:title="@string/library_begin_idling"/>
+    <item
+        android:id="@+id/menu_library_stop_idle"
+        android:title="@string/library_stop_idling"/>
+</menu>

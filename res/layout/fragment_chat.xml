@@ -4,74 +4,75 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<LinearLayout android:id="@+id/chat_main"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:visibility="gone"
+    <LinearLayout
+        android:id="@+id/chat_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
         >
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_margin="1dip"
-        android:background="@android:color/darker_gray"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_margin="1dip"
+            android:background="@android:color/darker_gray"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/chat"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:scrollbars="vertical">
-    </android.support.v7.widget.RecyclerView>
-
-    <TextView
-        android:id="@+id/chat_typing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:text="@string/friend_is_typing"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textStyle="italic"
-        android:visibility="gone"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp">
-
-        <EditText
-            android:id="@+id/chat_input"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/chat"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
             android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/chat_hint"
-            android:imeOptions="actionSend"
-            android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect"
-            />
+            android:scrollbars="vertical">
+        </android.support.v7.widget.RecyclerView>
 
-        <ImageButton
-            android:id="@+id/chat_button"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/chat_typing"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/send_button"
-            android:padding="8dp"
-            android:src="@drawable/ic_send"
-            />
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:text="@string/friend_is_typing"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textStyle="italic"
+            android:visibility="gone"/>
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp">
+
+            <EditText
+                android:id="@+id/chat_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/chat_hint"
+                android:imeOptions="actionSend"
+                android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect"
+                />
+
+            <ImageButton
+                android:id="@+id/chat_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/send_button"
+                android:padding="8dp"
+                android:src="@drawable/ic_send"
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/chat_participants"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:visibility="gone"/>
 
 </FrameLayout>

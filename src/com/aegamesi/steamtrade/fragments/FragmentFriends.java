@@ -59,11 +59,12 @@ public class FragmentFriends extends FragmentBase implements OnClickListener, Ch
 		// update list of recent chats
 		recentChatThreshold = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity()).getString("pref_recent_chats", "48"));
 		recentChatThreshold *= 60 * 60 * 1000; // hours -> millis
-		List<SteamID> recentChats = SteamService.singleton.chatManager.getRecentChats(recentChatThreshold);
-		adapter.updateRecentChats(recentChats);
-
-		adapter.notifyDataSetChanged(); // just to make sure
-		SteamService.singleton.chatManager.receivers.add(this);
+		if (SteamService.singleton != null && SteamService.singleton.chatManager != null) {
+			List<SteamID> recentChats = SteamService.singleton.chatManager.getRecentChats(recentChatThreshold);
+			adapter.updateRecentChats(recentChats);
+			adapter.notifyDataSetChanged(); // just to make sure
+			SteamService.singleton.chatManager.receivers.add(this);
+		}
 	}
 
 	@Override

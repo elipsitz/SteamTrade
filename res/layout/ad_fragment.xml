@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:ads="http://schemas.android.com/apk/res-auto"
-             xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:background="#555">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#555">
 
     <TextView
         android:layout_width="match_parent"
@@ -14,20 +14,10 @@
         android:text="@string/remove_ads_ad"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <com.amazon.device.ads.AdLayout
-        android:id="@+id/adview_amazon"
-        xmlns:Amazon="http://schemas.android.com/apk/lib/com.amazon.device.ads"
+    <com.appodeal.ads.BannerView
+        android:id="@+id/appodealBannerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
-        Amazon:adSize="320x50"/>
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adview_admob"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/admob_ad_unit_id"/>
+        android:visibility="gone"/>
 
 </FrameLayout>

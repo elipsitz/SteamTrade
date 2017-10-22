@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_vibrate">채팅시 진동</string>
+    <string name="pref_vibrate_summ">채팅 메시지를 받으면 진동합니다.</string>
+    <string name="persist_notification">항상 알림</string>
+    <string name="persist_notification_summ">해제하면 정상적으로 알림이 오지 않을 수도 있습니다.</string>
+    <string name="pref_reconnect">자동으로 재접속</string>
+    <string name="pref_reconnect_summ">Steam 네트워크의 접속이 끊기면 자동으로 다시 접속을 시도합니다.</string>
+    <string name="pref_advanced">고급 설정</string>
+    <string name="pref_advanced_summ">뭘 의미하는지 모르겠다면 가만히 두세요</string>
+    <string name="pref_machineauth">machineAuth 강제 설정</string>
+    <string name="pref_machineauth_prompt">machineAuth:</string>
+    <string name="pref_remove_ads">광고 제거</string>
+    <string name="pref_remove_ads_summ">Ice를 도와주세요 &lt;3</string>
+    <string name="pref_notification_sound">알림 소리</string>
+    <string name="pref_recent_chats">지난 채팅</string>
+    <string name="pref_recent_chats_summ">지난 채팅 표시 기준 설정</string>
+    <string name="pref_chat_compact">간소화된 채팅 디자인</string>
+    <string name="pref_chat_compact_summ">채팅 버블 방식에서 공식 채팅창처럼 변경합니다.</string>
+    <string name="pref_currency">선호하는 화폐</string>
+    <string name="pref_webapikey">캐싱된 WebAPI 키 편집</string>
+    <string name="pref_webapikey_prompt">WebAPI 키값:</string>
+    <string name="pref_webapikey_summary">완벽하게 작동하기 위해 필요합니다.\nWebAPI 키값은 http://steamcommunity.com/dev/apikey 에서 할당받을 수 있습니다.</string>
+    <string name="pref_notification">알림 설정</string>
+    <string name="pref_notification_chat">채팅 알림</string>
+    <string name="pref_notification_friendrequest">친구 요청 알림</string>
+    <string name="pref_notification_trade">거래 알림</string>
+    <string name="pref_hide_blocked_users">차단된 유저 표시하지 않기</string>
+
+    <string-array name="pref_recent_chats_entries">
+        <item>7일 이내</item>
+        <item>2일 이내</item>
+        <item>24시간 이내</item>
+        <item>1시간 이내</item>
+        <item>지난 채팅을 표시하지 않음</item>
+    </string-array>
+</resources>

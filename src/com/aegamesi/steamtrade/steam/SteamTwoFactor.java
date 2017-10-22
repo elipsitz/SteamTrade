@@ -1,9 +1,13 @@
 package com.aegamesi.steamtrade.steam;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Base64;
 
 import com.aegamesi.lib.android.AndroidUtil;
+import com.aegamesi.steamtrade.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -143,5 +147,19 @@ public class SteamTwoFactor {
 
 	public static double getCodeValidityTime() {
 		return 30.0 - ((System.currentTimeMillis() / 1000.0) % 30.0);
+	}
+
+	public static void promptForMafile(final Activity activity, final int requestCode) {
+		AndroidUtil.showBasicAlert(activity,
+				activity.getString(R.string.steamguard_mobile_authenticator),
+				activity.getString(R.string.steamguard_select_mafile),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+						intent.setType("*/*");
+						activity.startActivityForResult(intent, requestCode);
+					}
+				});
 	}
 }

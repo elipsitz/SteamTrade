@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">%1$s \'e rakas isteği yolla</string>
+    <string name="trade_got_request">%1$s sana takas isteği yolladı</string>
+    <string name="trade_new_request">Takas İsteği</string>
+    <string name="trade_currently_trading">%1$s ile takas.</string>
+    <string name="trade_result_accepted">%1$s takas isteğinizi kabul etti!</string>
+    <string name="trade_result_alreadytrading">%1$s başka biri ile ticaret yapıyor. </string>
+    <string name="trade_result_timeout">%1$s zamanında cevap vermedi. </string>
+    <string name="trade_result_declined">%1$s takas\'ı reddetti.</string>
+    <string name="trade_result_unknown">%1$s bilinmeyen bir nedenle takas yapamadı: %2$s</string>
+    <string name="trade_result_cancelled">Takas talebi iptal edildi.</string>
+    <string name="trade_result_targetcannotrade">%1$s takas yapamıyor. Takas talep ettikleri takdirde daha fazla bilgi gösterilecektir.</string>
+    <string name="trade_result_steamguard">Takas için SteamGuard etkinleştirilmiş olmalıdır.</string>
+    <string name="trade_result_steamguard_duration">Takas için StemGuard\'ın 15 gün boyunca etkinleştirilmiş olması gerekir.</string>
+    <string name="trade_result_steamguard_newdevice">Valve kısıtlamaları nedeniyle, 7 gün boyunca yeni bir cihazla takas yapamazsınız.</string>
+    <string name="trade_result_password_reset">Yakın zamanda şifrenizi sıfırladınız ve takas yapamıyorsunuz.</string>
+    <string name="trade_result_require_email">Takas yapmak için e-posta adresinizi doğrulamanız gerekir.</string>
+    <string name="trade_result_tradeban_target">%1$s takas olarak yasaklanmış ve takas yapamamıştır.</string>
+    <string name="trade_result_tradeban_initiator">Takas\'ta yasaklanmışsın ve takas yapamazsın.</string>
+
+    <color name="color_trade_white">#A3A099</color>
+    <color name="color_trade_blacktext">#282827</color>
+    <color name="color_trade_result_background">#1D1D1D</color>
+
+    <string name="trading_with">%1$s ile takas</string>
+
+    <string-array name="trade_tabs">
+        <item>Envanter</item>
+        <item>Teklifler</item>
+        <item>Sohbet</item>
+    </string-array>
+
+    <string name="trade_ready">Hazır</string>
+    <string name="trade_your_offerings">Senin Tekliflerin</string>
+    <string name="trade_their_offerings">Onun Teklifleri</string>
+    <string name="trade_accept">Takas\'ı kabul et</string>
+    <string name="trade_tap_to_view">Tap to view</string>
+    <string name="trade_error">Takas hatası</string>
+    <string name="trade_completed">Takas Tamamlandı</string>
+    <string name="trade_new_items">%1$d new items acquired</string>
+    <string name="trade_cancel">İptal</string>
+    <string name="trade_confirm_email">Siz ve / veya eşinizin bu takas\'ı e-posta ile onaylamanız gerekebilir.</string>
+    <string name="trade_status_unknown">Durum bilinmiyor.</string>
+
+    <!-- offers -->
+    <string name="trade_offers">Takas Teklifleri</string>
+    <string name="trade_offer">Takas Teklifi</string>
+    <string name="offer_trade">Teklif Takası</string>
+    <string-array name="offer_tabs">
+        <item>Envanterler</item>
+        <item>Teklifler</item>
+        <item>İnceleme</item>
+    </string-array>
+    <string-array name="offer_status">
+        <item>Bilinmeyen</item>
+        <item>Geçersiz</item>
+        <item>Aktif</item>
+        <item>Kabul Edilmiş</item>
+        <item>Karşılık</item>
+        <item>Süresi Geçmiş</item>
+        <item>İptal Edilmiş</item>
+        <item>Reddedilmiş</item>
+        <item>Geçersiz Eşya</item>
+        <item>E-posta Onayı Bekleniyor</item>
+        <item>E-posta ile İptal Edildi</item>
+        <item>Beklemede</item>
+    </string-array>
+    <string name="offer_status_escrow_date">Bekleyene kadar\n%1$s</string>
+    <string name="offer_radio_incoming">Gelen Teklifler</string>
+    <string name="offer_radio_sent">Giden Teklifler</string>
+    <string name="offer_inventory_us">Senin Envanterin</string>
+    <string name="offer_inventory_them">Partnerin Envanteri</string>
+    <string name="offer_message">Mesaj</string>
+    <string name="offer_accept">Teklifi Kabul et</string>
+    <string name="offer_decline">Teklifi Reddet</string>
+    <string name="offer_button_respond">Yanıtlamak</string>
+    <string name="offer_button_decline">Reddet</string>
+    <string name="offer_button_cancel">İptal</string>
+    <string name="offer_counter">Karşı Davranma Yap</string>
+    <string name="offer_cancel">Teklifi iptal et</string>
+    <string name="offer_send">Teklif Gönder</string>
+    <string name="offer_contents">Şu eşyaları verip %1$d , şunları alacaksınız: %2$d .</string>
+    <string name="offer_will_give">Şunları Vereceksin:</string>
+    <string name="offer_will_receive">Şu eşyaları alacaksın:</string>
+    <string name="offer_no_message">[Mesaj Yok]</string>
+    <string name="offer_count">Gösteriliyor %1$d aktif takas teklifleri.</string>
+    <string name="offer_error_loading">Takas Detayları yüklenirken hata oluştu.</string>
+    <string name="offers_error_loading">Takas Teklifleri yüklenirken hata oluştu.</string>
+    <string name="offer_with">%1$s ile teklif</string>
+    <string name="offer_received_heading">%1$s teklif takas etti:</string>
+    <string name="offer_sent_heading">Sen gönderdin %1$s takas teklifi.:</string>
+    <string name="offer_cancelled">Teklif iptal edildi.</string>
+    <string name="offer_declined">Teklif reddedildi.</string>
+    <string name="offer_submitted">Teklif gönderildi.</string>
+    <string name="offer_accepted">Teklif Kabul Edildi.</string>
+    <string name="offer_message_quote">Mesaj:\n\"%1$s\"</string>
+    <string name="offer_declining">Reddedilen teklif…</string>
+    <string name="offer_accepting">Kabul edilen teklif…</string>
+    <string name="offer_submitting">Teklif sunmak …</string>
+    <string name="offer_loading">Teklif Yükleniyor…</string>
+    <string name="offer_send_message">Teklifinizle bir mesaj gönderin\n(maksimum 128 karakter)</string>
+    <string name="offer_fromurl">URL\'den teklif oluştur</string>
+    <string name="offer_create">Takas Teklifi oluştur</string>
+    <string name="offer_create_prompt"> Ticaret teklifi oluşturmak için lütfen paylaşılabilir bir ticaret teklifi URL\'si girin. \n\nAlternatif olarak, arkadaşların listenizdeki bir arkadaşınıza dokunun ve \"Teklif Takas\" seçiniz.</string>
+    <string name="offer_invalid_url">Geçersiz takas teklifi URL\'si.</string>
+    <string name="offer_confirm_decline">Bu takas teklifini reddetmek istediğinizden emin misiniz?</string>
+    <string name="offer_confirm_cancel">Bu takas teklifini iptal etmek istediğinizden emin misiniz?</string>
+    <string name="offer_successful">Takas teklifi başarılı oldu.</string>
+    <string name="offer_confirm_email">Bu ticaret teklifini tamamlamak için ek doğrulama adımını tamamlamanız gerekir.Adresinize ("%1$s" ile biten) ek talimatlarla bir e-posta gönderildi.</string>
+    <string name="offer_must_counter">Teklifi değiştirmek için karşı teklif vermelisiniz.</string>
+    <string name="offer_confirmations">Takas\nOnayları</string>
+
+</resources>

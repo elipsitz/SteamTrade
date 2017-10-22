@@ -11,11 +11,10 @@
     <string name="friends">Friends</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="unknown">\?</string>
     <string name="action_successful">Action successful.</string>
     <string name="action_failed">Action failed.</string>
     <string name="search">Search</string>
-    <string name="quote" translatable="false">“%1$s”</string>
+    <string name="quote">“%1$s”</string>
 
     <string name="steamguard_new">This is the first time you are logging into this account on this device.\n\nAs per Valve restrictions, you may not be allowed to trade or send trade offers from this device for the next 7 days.</string>
     <string name="api_key_not_loaded">A WebAPI key was not properly retrieved. This feature will not work.</string>
@@ -117,8 +116,9 @@
     <string name="steamguard_code">Your Steam Guard Code:</string>
     <string name="steamguard_enable_authenticator">Enable Authenticator</string>
     <string name="steamguard_manage_authenticator">Manage Authenticator</string>
-    <string name="steamguard_import_authenticator">Import Authenticator</string>
-    <string name="steamguard_export_authenticator">Export Authenticator</string>
+    <string name="steamguard_import_authenticator_mafile">Import .mafile</string>
+    <string name="steamguard_import_authenticator">Import Authenticator (.mafile)</string>
+    <string name="steamguard_export_authenticator">Export Authenticator (.mafile)</string>
     <string name="steamguard_get_revocation_code">View Revocation Code</string>
     <string name="steamguard_revocation_code">Your revocation code is:\n%1$s</string>
     <string name="steamguard_instructions_finalize">To finalize adding the Mobile Authenticator, please enter the code sent to you by Steam via SMS.</string>
@@ -127,6 +127,8 @@
     <string name="steamguard_export">Export Mobile Authenticator</string>
     <string name="steamguard_import">Import Mobile Authenticator</string>
     <string name="steamguard_duplicate">Your account is already using the Official Mobile Authenticator. You cannot use two authenticators at the same time.</string>
+    <string name="steamguard_import_password">Please enter the password for the account \'%1$s\'.</string>
+    <string name="steamguard_select_mafile">Please select the .mafile you wish to import.</string>
 
     <string-array name="store_tabs">
         <item>Catalog</item>
@@ -165,4 +167,12 @@
         <item quantity="one">%d new trade notification</item>
         <item quantity="other">%d new trade notifications</item>
     </plurals>
+    <string name="steamguard_import_error_wrong_account">Error: this authentication information is for a different Steam account: %1$s</string>
+    <string name="library_view_store_page">View Store Page</string>
+    <string name="library_begin_idling">Start Idling Session</string>
+    <string name="library_stop_idling">Stop Idling Session</string>
+    <string name="idling_started">Now idling:  %1$s</string>
+    <string name="idling_stopped">No longer idling.</string>
+    <string name="premium_only">This is a premium feature only.</string>
+    <string name="premium_unlock">Purchase Premium</string>
 </resources>

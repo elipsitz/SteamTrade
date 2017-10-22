@@ -100,7 +100,7 @@ public class TF2AssetBuilder extends AssetBuilder {
 		 * The defindex of the item. Good to have if you'd like to refer to the
 		 * schema for some reason.
 		 */
-		int defIndex;
+		long defIndex;
 		/**
 		 * The quality indicator of the item. Also only good with the schema
 		 * really, though the name should have it.
@@ -116,7 +116,7 @@ public class TF2AssetBuilder extends AssetBuilder {
 			JSONObject appData = rgDescriptionItem.optJSONObject("app_data");
 			if (appData != null) {
 				if (appData.has("def_index")) {
-					defIndex = Integer.parseInt(appData.getString("def_index"));
+					defIndex = Long.parseLong(appData.getString("def_index"));
 				}
 
 				if (appData.has("quality")) {

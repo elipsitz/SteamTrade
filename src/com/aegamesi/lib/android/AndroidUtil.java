@@ -2,11 +2,13 @@ package com.aegamesi.lib.android;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.util.Base64;
 
@@ -20,6 +22,10 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -176,6 +182,26 @@ public class AndroidUtil {
 			}
 		}
 		return dataStringBuffer.toString();
+	}
+
+	public static void createCachedFile(Context context, String fileName, String content) throws IOException {
+		File cacheFile = new File(context.getCacheDir() + File.separator + fileName);
+		cacheFile.getParentFile().mkdirs();
+		cacheFile.createNewFile();
+		FileOutputStream fos = new FileOutputStream(cacheFile);
+		OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF8");
+		PrintWriter pw = new PrintWriter(osw);
+		pw.println(content);
+		pw.flush();
+		pw.close();
+	}
+
+	public static void showBasicAlert(Context context, String title, String message, DialogInterface.OnClickListener callback) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+		alert.setTitle(title);
+		alert.setMessage(message);
+		alert.setNeutralButton(R.string.ok, callback);
+		alert.show();
 	}
 
 

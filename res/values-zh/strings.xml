@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error">错误</string>
+    <string name="error_disconnected">已断开Steam网络连接</string>
+    <string name="drawer_open">打开抽屉</string>
+    <string name="drawer_close">关闭抽屉</string>
+    <string name="steam_avatar">头像</string>
+    <string name="chat">聊天</string>
+    <string name="trade">交易</string>
+    <string name="friends">好友</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="action_successful">配置成功。</string>
+    <string name="action_failed">配置失败。</string>
+    <string name="search">搜索</string>
+
+    <string name="steamguard_new">这是您首次在这台设备上登录此帐号。\n\n根据Valve规定，7天内您无法使用这台设备交易或发送交易报价。</string>
+    <string name="api_key_not_loaded">未设置WebAPI key，此功能无法正常使用。</string>
+    <string name="rate_snackbar_text">您喜欢Ice吗?</string>
+    <string name="rate_snackbar_action">评分</string>
+
+    <string name="nav_friends">好友</string>
+    <string name="nav_inventory">库存</string>
+    <string name="nav_offers">交易报价</string>
+    <string name="nav_games">库</string>
+    <string name="nav_store">Steam商店</string>
+    <string name="nav_market">Steam社区市场</string>
+    <string name="nav_browser">Steam浏览器</string>
+    <string name="nav_settings">设置</string>
+    <string name="nav_about">关于Ice</string>
+    <string name="nav_signout">登出</string>
+
+    <string name="purchase_pending">付款中...</string>
+    <string name="purchase_complete">付款成功！谢谢！</string>
+    <string name="signed_out">登出</string>
+    <string name="send_button">发送</string>
+    <string name="chat_hint">点击聊天</string>
+    <string name="app_crashed_toast">Ice客户端已崩溃，报告已发送给开发者！</string>
+    <string name="playing">运行</string>
+    <string name="cancel">取消</string>
+    <string name="accept">接受</string>
+    <string name="add">添加</string>
+    <string name="change_display_name">个人资料名称</string>
+    <string name="change_display_name_prompt">请输入新的个人资料名称：</string>
+    <string name="set_currently_playing_game">设置正在运行的游戏</string>
+
+    <string name="x_new_messages">%1$d 条信息</string>
+
+    <string-array name="allowed_states">
+        <item>在线</item>
+        <item>离开</item>
+        <item>忙碌</item>
+        <item>打盹儿</item>
+        <item>想交易</item>
+        <item>想玩游戏</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>离线</item>
+        <item>在线</item>
+        <item>忙碌</item>
+        <item>离开</item>
+        <item>打盹儿</item>
+        <item>想交易</item>
+        <item>想玩游戏</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>未知状态</item>
+        <item>初始化中...</item>
+        <item>连接中...</item>
+        <item>登录中...</item>
+        <item>验证中...</item>
+        <item>获取密钥...</item>
+        <item>已连接</item>
+        <item>已断开</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">复制到剪贴板。</string>
+
+    <string name="change">更改</string>
+    <string name="baa">moo</string>
+    <string name="dismiss">关闭</string>
+    <string name="feature_not_implemented">功能未执行</string>
+    <string name="error_getting_key">获取WebAPI key出错，一些功能（如交易报价）无法正常运行。</string>
+    <string name="error_steamapi">SteamAPI错误</string>
+    <string name="ok">OK</string>
+
+    <string name="action_settings">设置</string>
+
+    <string name="web_back">后退</string>
+    <string name="web_forward">前进</string>
+    <string name="web_reload">刷新</string>
+    <string name="web_community">Steam社区</string>
+    <string name="web_store">Steam商店</string>
+    <string name="web_toggle_view">切换到桌面版网页</string>
+
+    <string name="library_playtime">%1$.1f 小时</string>
+    <string name="library_playtime_full">%1$.1f 小时（过去两周）\n%2$.1f 小时</string>
+    <string name="library_sort">改变排序方式</string>
+    <string name="library_sort_name">按字母顺序排序</string>
+    <string name="library_sort_playtime">按运行时间排序</string>
+    <string name="library_activate_product">激活产品</string>
+    <string name="library_enter_key">请输入您想要激活的产品代码。</string>
+    <string name="library_validating_key">激活中。</string>
+    <string name="library_activation_successful">激活成功</string>
+    <string name="library_activation_failed">激活失败</string>
+    <string name="library_activation_invalid_code">无效的产品代码</string>
+    <string name="library_activation_error">未知错误。</string>
+    <string name="library_activation_code_used">这个产品代码已被使用。</string>
+
+    <string name="steamguard_mobile_authenticator">手机验证器</string>
+    <string name="steamguard_unavailable">您只能使用已保存的帐号开启手机验证器。</string>
+    <string name="steamguard_not_enabled">这台设备上并未设置Steam令牌手机验证器。</string>
+    <string name="steamguard_code">您的Steam令牌代码：</string>
+    <string name="steamguard_enable_authenticator">启用验证器</string>
+    <string name="steamguard_manage_authenticator">管理验证器</string>
+    <string name="steamguard_import_authenticator_mafile">导入.mafile文件</string>
+    <string name="steamguard_import_authenticator">导入验证器(.mafile)</string>
+    <string name="steamguard_export_authenticator">移除验证器(.mafile)</string>
+    <string name="steamguard_get_revocation_code">救援代码</string>
+    <string name="steamguard_revocation_code">您的救援代码是:\n%1$s</string>
+    <string name="steamguard_instructions_finalize">请输入steam短信验证码，以完成手机验证器的设置。</string>
+    <string name="steamguard_enable_success">手机验证器设置成功。\n\n请记下您的救援代码: %1$s</string>
+    <string name="steamguard_enable_failure">启用手机验证器失败: %1$s</string>
+    <string name="steamguard_export">移除手机验证器</string>
+    <string name="steamguard_import">导入手机验证器</string>
+    <string name="steamguard_duplicate">您的帐号正在使用官方客户端的手机验证器，无法同时使用两个验证器。</string>
+    <string name="steamguard_import_password">请输入密码 \'%1$s\'.</string>
+    <string name="steamguard_select_mafile">请选择您想要导入的.mafile文件。</string>
+
+    <string-array name="store_tabs">
+        <item>产品目录</item>
+        <item>购物车</item>
+        <item>搜索</item>
+        <item>愿望单</item>
+        <item>steam新闻</item>
+        <item>账户明细</item>
+    </string-array>
+
+    <plurals name="notification_comments">
+        <item quantity="one">%d 条新留言</item>
+        <item quantity="other">%d 条新留言</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d 件新物品</item>
+        <item quantity="other">%d 件新物品</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d 未读聊天信息</item>
+        <item quantity="other">%d 未读聊天信息</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d 新的交易通知</item>
+        <item quantity="other">%d 新的交易通知</item>
+    </plurals>
+    <string name="steamguard_import_error_wrong_account">错误: 这条验证信息属于另一个Steam账号: %1$s</string>
+    <string name="library_view_store_page">商店页面</string>
+    <string name="library_begin_idling">开始挂卡</string>
+    <string name="library_stop_idling">停止挂卡</string>
+    <string name="idling_started">正在挂卡:  %1$s</string>
+    <string name="idling_stopped">停止挂卡。</string>
+    <string name="premium_only">付费版功能</string>
+    <string name="premium_unlock">购买付费版</string>
+</resources>

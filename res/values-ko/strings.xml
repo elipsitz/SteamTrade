@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error">에러</string>
+    <string name="error_disconnected">Steam 네트워크의 연결이 종료되었습니다.</string>
+    <string name="drawer_open">서랍 열기</string>
+    <string name="drawer_close">서랍 닫기</string>
+    <string name="steam_avatar">아바타</string>
+    <string name="chat">대화</string>
+    <string name="trade">거래</string>
+    <string name="friends">친구</string>
+    <string name="yes">예</string>
+    <string name="no">아니요</string>
+    <string name="action_successful">액션 성공</string>
+    <string name="action_failed">액션 실패</string>
+    <string name="search">검색</string>
+
+    <string name="steamguard_new">이 기기에서 최초로 로그인하셨습니다.\n\n공식 정책에 의해 7일간 거래가 제한됩니다.</string>
+    <string name="api_key_not_loaded">WepAPI 키가 올바르게 설정되지 않았습니다. 이 기능은 지금 당장 작동하지 않습니다.</string>
+    <string name="rate_snackbar_text">이 앱이 마음에 드시나요?</string>
+    <string name="rate_snackbar_action">평점 주기</string>
+
+    <string name="nav_friends">친구</string>
+    <string name="nav_inventory">보관함</string>
+    <string name="nav_offers">거래 제안</string>
+    <string name="nav_games">라이브러리</string>
+    <string name="nav_store">Steam 상점</string>
+    <string name="nav_market">Steam 커뮤니티 장터</string>
+    <string name="nav_browser">Steam 브라우저</string>
+    <string name="nav_settings">설정</string>
+    <string name="nav_about">Ice 에 대하여</string>
+    <string name="nav_signout">로그아웃</string>
+
+    <string name="purchase_pending">결제 대기 중…</string>
+    <string name="purchase_complete">결제 완료! 감사합니다!</string>
+    <string name="signed_out">로그아웃됨</string>
+    <string name="send_button">보내기</string>
+    <string name="chat_hint">대화하려면 누르세요</string>
+    <string name="app_crashed_toast">Ice Client 가 충돌하였습니다. 빠른 문제 해결을 위해 개발자에게 보고서가 전송되었습니다.</string>
+    <string name="playing">게임 중</string>
+    <string name="cancel">취소</string>
+    <string name="accept">수락</string>
+    <string name="add">추가</string>
+    <string name="change_display_name">닉네임 변경</string>
+    <string name="change_display_name_prompt">바꿀 닉네임을 입력해주세요 :</string>
+    <string name="set_currently_playing_game">현재 플레이 중인 게임 변경</string>
+
+    <string name="x_new_messages">%1$d 개의 새 메시지</string>
+
+    <string-array name="allowed_states">
+        <item>온라인</item>
+        <item>자리 비움</item>
+        <item>다른 용무 중</item>
+        <item>수면 중</item>
+        <item>거래할 사람 찾는 중</item>
+        <item>같이 게임 해요</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>오프라인</item>
+        <item>온라인</item>
+        <item>다른 용무 중</item>
+        <item>자리 비움</item>
+        <item>수면 중</item>
+        <item>거래할 사람 찾는 중</item>
+        <item>같이 게임 해요</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>알 수 없는 상태</item>
+        <item>초기화 중…</item>
+        <item>접속 중...</item>
+        <item>로그중 중...</item>
+        <item>인증 중…</item>
+        <item>키 얻어오는 중…</item>
+        <item>접속 됨</item>
+        <item>접속 종료됨</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">클립보드에 복사됨</string>
+
+    <string name="change">변경</string>
+    <string name="baa">음메</string>
+    <string name="dismiss">버리기</string>
+    <string name="feature_not_implemented">구현되지 않은 기능입니다.</string>
+    <string name="error_getting_key">WebAPI 키를 얻어올 수 없습니다. 거래 제안과 같은 몇몇 기능이 제한됩니다.</string>
+    <string name="error_steamapi">SteamAPI에 접근하는데 실패하였습니다.</string>
+    <string name="ok">확인</string>
+
+    <string name="action_settings">설정</string>
+
+    <string name="web_back">뒤로 가기</string>
+    <string name="web_forward">앞으로 가기</string>
+    <string name="web_reload">페이지 새로 고침</string>
+    <string name="web_community">Steam 커뮤니티</string>
+    <string name="web_store">Steam 상점</string>
+    <string name="web_toggle_view">데스크탑 버전으로 보기</string>
+
+    <string name="library_playtime">기록상 %1$.1f시간</string>
+    <string name="library_playtime_full">지난 2주 동안 %1$.1f시간\n기록상 %2$.1f시간</string>
+    <string name="library_sort">정렬 방식 변경</string>
+    <string name="library_sort_name">A-Z 순</string>
+    <string name="library_sort_playtime">플레이 시간 순</string>
+    <string name="library_activate_product">라이브러리에 제품 추가</string>
+    <string name="library_enter_key">추가하고 싶은 제품의 제품 코드를 입력해주세요 :</string>
+    <string name="library_validating_key">제품 코드 확인 중...</string>
+    <string name="library_activation_successful">활성화 성공</string>
+    <string name="library_activation_failed">활성화 실패</string>
+    <string name="library_activation_invalid_code">올바르지 않은 제품 코드입니다.</string>
+    <string name="library_activation_error">알 수 없는 문제가 발생하였습니다.</string>
+    <string name="library_activation_code_used">이미 사용된 제품 코드입니다.</string>
+
+    <string name="steamguard_mobile_authenticator">모바일 인증기</string>
+    <string name="steamguard_unavailable">모바일 인증기는 자동 로그인 정보가 저장된 계정에서만 사용 가능합니다.</string>
+    <string name="steamguard_not_enabled">이 기기엔 모바일 인증기가 설정되지 않았습니다.</string>
+    <string name="steamguard_code">Steam 가드 코드:</string>
+    <string name="steamguard_enable_authenticator">인증기 사용</string>
+    <string name="steamguard_manage_authenticator">인증기 관리</string>
+    <string name="steamguard_import_authenticator">인증기 불러오기</string>
+    <string name="steamguard_export_authenticator">인증기 내보내기</string>
+    <string name="steamguard_get_revocation_code">복구 코드 보기</string>
+    <string name="steamguard_revocation_code">당신의 복구 코드:\n%1$s</string>
+    <string name="steamguard_instructions_finalize">모바일 인증기 추가 작업을 마무리하려면 SMS로 온 코드를 입력해주세요.</string>
+    <string name="steamguard_enable_success">모바일 인증기를 성공적으로 활성화했습니다.\n\n마지막으로 복구 코드를 기록해 두십시오: %1$s</string>
+    <string name="steamguard_enable_failure">모바일 인증기 활성화 실패: %1$s</string>
+    <string name="steamguard_export">모바일 인증기 내보내기</string>
+    <string name="steamguard_import">모바일 인증기 가져오기</string>
+    <string name="steamguard_duplicate">이 계정은 이미 공식 Steam 앱의 모바일 인증기를 사용 중입니다.\n두 개의 모바일 인증기를 동시에 사용할 순 없습니다.</string>
+
+    <string-array name="store_tabs">
+        <item>특집</item>
+        <item>장바구니</item>
+        <item>탐색</item>
+        <item>찜 목록</item>
+        <item>뉴스</item>
+        <item>계좌</item>
+    </string-array>
+
+    <plurals name="notification_comments">
+        <item quantity="one">%d개의 새로운 댓글</item>
+        <item quantity="other">%d개의 새로운 댓글</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d개의 새로운 보관함 항목</item>
+        <item quantity="other">%d개의 새로운 보관함 항목</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d개의 읽지 않은 대화</item>
+        <item quantity="other">%d개의 읽지 않은 대화</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d개의 새로운 거래 알림</item>
+        <item quantity="other">%d개의 새로운 거래 알림</item>
+    </plurals>
+</resources>

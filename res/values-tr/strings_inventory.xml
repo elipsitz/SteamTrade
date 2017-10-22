@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Eşya Resmi</string>
+
+    <string name="inv_error_private">Bu envanter özel.</string>
+    <string name="inventory">Envanter</string>
+
+    <string name="search_inventory">Envanter Arama</string>
+    <string name="search_result_count">Görüntüleniyor %1$d de %2$d</string>
+    <string name="toggle_view_mode">Görüntüleme Modunu Aç / Kapat</string>
+    <string name="inv_error_loading">Envanter yüklenirken hata:\n%1$s</string>
+
+    <string name="craft_x_items">Craft-oluştur %1$d TF2 Eşyaları</string>
+    <string name="craft_noncraftable">Seçtiğiniz öğelerden bir veya daha fazlası hazırlanmamıştır.</string>
+    <string name="craft_nontradable">Seçtiğiniz öğelerden biri veya daha fazlası çekilemiyor. Sonuç ayrıca koparılmayacak. Devam edelim mi?</string>
+    <string name="craft_failed">Crafting başarısız..</string>
+    <string name="craft_successful">Crafting başarılı: %1$d eşya oluşturuldu. Yükleniyor…</string>
+    <string name="craft_completed">Craft Tamamlandı</string>
+    <string name="craft_crafting">Crafting…</string>
+    <string name="craft_enable">Crafting etkinleştir</string>
+
+    <string name="market_item_notfound">Market Bilgisi bulunamadı</string>
+    <string name="market_info_loading">Market bilgisi yükleniyor…</string>
+    <string name="market_low">%1$s \'dan başlıyor.</string>
+    <string name="market_median">Yaklaşık Tutar: %1$s</string>
+    <string name="market_volume">%1$s son 24 saat içinde satıldılar.</string>
+
+    <dimen name="itemlist_gridsize">72dp</dimen>
+    <color name="item_default_background">#292929</color>
+    <color name="item_default_border">#d2d2d2</color>
+</resources>

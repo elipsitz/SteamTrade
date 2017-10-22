@@ -24,7 +24,6 @@
     </style>
 
 
-
     <style name="MaterialStyleImageButton" parent="Widget.AppCompat.Button">
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
