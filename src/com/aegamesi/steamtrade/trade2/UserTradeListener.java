@@ -27,7 +27,6 @@ import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.fragments.FragmentTrade;
 import com.aegamesi.steamtrade.steam.SteamChatManager;
 import com.aegamesi.steamtrade.steam.SteamService;
-import com.google.android.gms.analytics.HitBuilders;
 import com.nosoop.steamtrade.TradeListener;
 import com.nosoop.steamtrade.inventory.TradeInternalAsset;
 import com.nosoop.steamtrade.inventory.TradeInternalItem;
@@ -315,10 +314,6 @@ public class UserTradeListener extends TradeListener {
 		MainActivity.instance.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (fragment() == null)
-					if (fragment().activity() != null)
-						fragment().activity().tracker().send(new HitBuilders.EventBuilder().setCategory("Steam").setAction("Trade_Complete").setValue(trade.getPartner().getOffer().size()).build());
-
 				fragment().onCompleted(new ArrayList<TradeInternalAsset>(trade.getPartner().getOffer()));
 			}
 		});

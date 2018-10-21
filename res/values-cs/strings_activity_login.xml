@@ -1,0 +1,29 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Přezdívka</string>
+    <string name="prompt_password">Heslo</string>
+    <string name="prompt_steamguard">Steam Guard Kód</string>
+    <string name="action_sign_in">Přihlásit se</string>
+    <string name="error_loginkey_expired">Nepodařilo se přihlásit. Prosíme, přihlašte se znovu.</string>
+    <string name="error_incorrect_password">Vaše heslo je nesprávné</string>
+    <string name="error_field_required">Toto pole je důležité</string>
+    <string name="error_incorrect_steamguard">Steam Guard kód je nesprávný</string>
+    <string name="error_steamguard_required">Tento účet je chráněn Steam Guardem</string>
+    <string name="prompt_remember">Pamatovat</string>
+    <string name="description_logo">Logo</string>
+    <string name="authenticating">Potvrzování…</string>
+    <string name="cannot_auth_with_steamweb">Nepodařilo se připojit ke Steam Webu. Steam servery mohou mít výpadek.</string>
+    <string name="not_connected_to_internet">Nejsi připojen k internetu.</string>
+    <string name="connected_via_mobiledata">Jsi připojen pomocí mobilních dat.\nMůže být obtížné se připojit ke Steam serverům.</string>
+    <string name="initializing">Aktualizování…</string>
+    <string name="signingout">Odhlašování…</string>
+    <string name="logging_on">Přihlašování…</string>
+    <string name="connecting">Připojování…</string>
+    <string name="fetching_key">Načítání API Kódu…</string>
+    <string name="cannot_connect_to_steam">Nejde se připojit ke Steamu!</string>
+    <string name="login_saved">Přihlásit se z uloženého účtu</string>
+    <string name="login_different">Přihlásit se na jiný účet</string>
+    <string name="login_confirm_delete_account">Opravdu chcete odstranit účet \'%1$s\'?</string>
+
+</resources>

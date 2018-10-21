@@ -32,7 +32,7 @@
     <string name="nav_about">Об Ice</string>
     <string name="nav_signout">Выйти</string>
 
-    <string name="purchase_pending">Ожидание оплатывЂ¦</string>
+    <string name="purchase_pending">Ожидание оплаты…</string>
     <string name="purchase_complete">Покупка успешна! Спасибо!</string>
     <string name="signed_out">Вы вышли</string>
     <string name="send_button">Отправить</string>
@@ -68,11 +68,11 @@
 
     <string-array name="connection_status">
         <item>Неизвестный статус</item>
-        <item>ИнициализациявЂ¦</item>
-        <item>ПодключениевЂ¦</item>
-        <item>ВходвЂ¦</item>
-        <item>АутентификациявЂ¦</item>
-        <item>Получение ключавЂ¦</item>
+        <item>Инициализация…</item>
+        <item>Подключение…</item>
+        <item>Вход…</item>
+        <item>Аутентификация…</item>
+        <item>Получение ключа…</item>
         <item>Подключено</item>
         <item>Отключено</item>
     </string-array>

@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.steam.SteamMessageHandler;
-import com.google.android.gms.analytics.HitBuilders;
 
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 
@@ -31,8 +30,7 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 	}
 
 	public void setAnalyticsScreen(String name) {
-		activity().tracker().setScreenName(name);
-		activity().tracker().send(new HitBuilders.AppViewBuilder().build());
+		// no op
 	}
 
 	public final MainActivity activity() {
@@ -40,13 +38,7 @@ public class FragmentBase extends Fragment implements SteamMessageHandler {
 	}
 
 	public void sendAnalyticsEvent(String category, String action, String label, Long value) {
-		activity().tracker().send(new HitBuilders.EventBuilder()
-				.setCategory(category)
-				.setAction(action)
-				.setLabel(label)
-				.setValue(value)
-				.build());
-
+		// no op
 	}
 
 	public void setTitle(CharSequence title) {

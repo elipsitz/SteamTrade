@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_vibrate">Vibrar com mensagem</string>
+    <string name="pref_vibrate_summ">Vibrar quando receber mensagem</string>
+    <string name="persist_notification">Notificação persistente</string>
+    <string name="persist_notification_summ">Desmarcando isso você diz ao Android que o Ice é de baixa prioridade.</string>
+    <string name="pref_reconnect">Reconectar automaticamente</string>
+    <string name="pref_reconnect_summ">Reconectar quando desconectar da rede Steam</string>
+    <string name="pref_advanced">Configurações avançadas</string>
+    <string name="pref_advanced_summ">Não use isso a não ser que saiba o que está fazendo.</string>
+    <string name="pref_machineauth">Sobrescrever máquina de autenticação</string>
+    <string name="pref_machineauth_prompt">Inserir machineAuth:</string>
+    <string name="pref_remove_ads">Remover propagandas</string>
+    <string name="pref_remove_ads_summ">Ajude o Ice nos doando! &lt;3</string>
+    <string name="pref_notification_sound">Som de notificação</string>
+    <string name="pref_recent_chats">Chats Recentes</string>
+    <string name="pref_recent_chats_summ">Ajustar cut-off dos chats recentes.</string>
+    <string name="pref_chat_compact">Chat compacto</string>
+    <string name="pref_chat_compact_summ">Mostrar linhas invés de bolhas de chat.</string>
+    <string name="pref_currency">Cotação preferida</string>
+    <string name="pref_webapikey">Editar WebAPI Key</string>
+    <string name="pref_webapikey_prompt">Inserir WebAPI Key:</string>
+    <string name="pref_webapikey_summary">Requere a chave da sua conta para funcionalidade completa.</string>
+    <string name="pref_notification">Configurações de notificação</string>
+    <string name="pref_notification_chat">Notificações de Chat</string>
+    <string name="pref_notification_friendrequest">Notificações de pedido de amizade</string>
+    <string name="pref_notification_trade">Notificações de troca</string>
+    <string name="pref_hide_blocked_users">Esconder usuários bloqueados</string>
+
+    <string-array name="pref_recent_chats_entries">
+        <item>Dentro 7 days</item>
+        <item>Dentro 2 days</item>
+        <item>Dentro 24 hours</item>
+        <item>Dentro 1 hour</item>
+        <item>Não mostrar chats recentes</item>
+    </string-array>
+</resources>

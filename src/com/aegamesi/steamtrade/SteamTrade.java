@@ -9,8 +9,6 @@ import android.util.Log;
 
 import com.aegamesi.steamtrade.steam.SteamLogcatDebugListener;
 import com.aegamesi.steamtrade.steam.SteamWeb;
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -32,7 +30,6 @@ public class SteamTrade extends Application {
 		FixNoClassDefFoundError81083(); // code workaround for GPG bug #81083 -- remove later
 
 		super.onCreate();
-		getTracker().enableAdvertisingIdCollection(true);
 		filesDir = getFilesDir();
 
 		DebugLog.addListener(new SteamLogcatDebugListener());
@@ -65,11 +62,6 @@ public class SteamTrade extends Application {
 			Class.forName("android.os.AsyncTask");
 		} catch (Throwable ignore) {
 		}
-	}
-
-	public Tracker getTracker() {
-		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-		return analytics.newTracker(R.xml.tracker);
 	}
 
 	protected void attachBaseContext(Context base) {

@@ -16,10 +16,10 @@
     <string name="friend_view_steam">Посмотреть в Steam</string>
     <string name="friend_view_steamrep">Посмотреть в SteamRep</string>
     <string name="friend_view_library">Посмотреть игры</string>
-    <string name="friend_is_typing">Другой пользователь пишетвЂ¦</string>
+    <string name="friend_is_typing">Другой пользователь пишет…</string>
     <string name="profile_view">Посмотреть профиль</string>
     <string name="profile_summary">Краткое описание</string>
-    <string name="profile_loading_summary">Загрузка описаниявЂ¦</string>
+    <string name="profile_loading_summary">Загрузка описания…</string>
     <string name="friend_request">Запрос в друзья</string>
     <string name="friend_request_text">%1$s добавил вас.</string>
     <string name="friend_request_multi">У вас %1$d ожидающих запросов.</string>
@@ -29,7 +29,7 @@
 
     <string name="chat_group">Групповой чат</string>
     <string name="chat_with">Диалог с %1$s</string>
-    <string name="friend_invite_to_chat">Пригласить в чатвЂ¦</string>
+    <string name="friend_invite_to_chat">Пригласить в чат…</string>
     <string name="friend_invite_to_trade">Предложить обменяться</string>
     <string name="friend_send_trade_offer">Отправить предложение обмена</string>
     <string name="chat_you">Вы</string>

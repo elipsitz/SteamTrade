@@ -97,10 +97,10 @@
     <string name="offer_submitted">Предложение отправлено.</string>
     <string name="offer_accepted">Предложение принято.</string>
     <string name="offer_message_quote">Сообщение:\n\"%1$s\"</string>
-    <string name="offer_declining">Отклонение предложениявЂ¦</string>
-    <string name="offer_accepting">Принятие предложениявЂ¦</string>
-    <string name="offer_submitting">Отправление предложениявЂ¦</string>
-    <string name="offer_loading">Загрузка предложениявЂ¦</string>
+    <string name="offer_declining">Отклонение предложения…</string>
+    <string name="offer_accepting">Принятие предложения…</string>
+    <string name="offer_submitting">Отправление предложения…</string>
+    <string name="offer_loading">Загрузка предложения…</string>
     <string name="offer_send_message">Отправить сообщение с вашим предложением\n(максимум 128 символов)</string>
     <string name="offer_fromurl">Создать предложение по трейд-ссылке</string>
     <string name="offer_create">Создать предложение обмена</string>

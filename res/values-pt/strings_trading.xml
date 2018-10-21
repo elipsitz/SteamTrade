@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">Propor uma troca para %1$s</string>
+    <string name="trade_got_request">%1$s propôs uma troca.</string>
+    <string name="trade_new_request">Pedido de Troca</string>
+    <string name="trade_currently_trading">Trocando com %1$s.</string>
+    <string name="trade_result_accepted">%1$s aceitou a sua troca!</string>
+    <string name="trade_result_alreadytrading">%1$s está trocando com alguém.</string>
+    <string name="trade_result_timeout">%1$s não respondeu a tempo.</string>
+    <string name="trade_result_declined">%1$s recusou a troca.</string>
+    <string name="trade_result_unknown">%1$s está impossibilitado de troca por motivo desconhecido: %2$s</string>
+    <string name="trade_result_cancelled">Proposta de troca cancelada.</string>
+    <string name="trade_result_targetcannotrade">%1$s está impossibilado de trocar. Mais informação será mostrada se ele propor uma troca.</string>
+    <string name="trade_result_steamguard">SteamGuard deve ser ativado para trocar.</string>
+    <string name="trade_result_steamguard_duration">SteamGuard deve ser ativado por 15 dias para trocar.</string>
+    <string name="trade_result_steamguard_newdevice">De acordo com as restrições da Valve, você não pode trocar por 7 dias.</string>
+    <string name="trade_result_password_reset">Você trocou a senha recentemente e não pode trocar.</string>
+    <string name="trade_result_require_email">Você deve verificar seu email para trocar.</string>
+    <string name="trade_result_tradeban_target">%1$s foi banido das trocas.</string>
+    <string name="trade_result_tradeban_initiator">Você foi banido das trocas.</string>
+
+    <color name="color_trade_white">#A3A099</color>
+    <color name="color_trade_blacktext">#282827</color>
+    <color name="color_trade_result_background">#1D1D1D</color>
+
+    <string name="trading_with">Trocando com %1$s</string>
+
+    <string-array name="trade_tabs">
+        <item>Inventário</item>
+        <item>Oferecendo</item>
+        <item>Chat</item>
+    </string-array>
+
+    <string name="trade_ready">Pronto</string>
+    <string name="trade_your_offerings">Sua oferta</string>
+    <string name="trade_their_offerings">Oferta dele</string>
+    <string name="trade_accept">Aceitar troca</string>
+    <string name="trade_tap_to_view">Toque para ver</string>
+    <string name="trade_error">Erro na troca</string>
+    <string name="trade_completed">Troca completa</string>
+    <string name="trade_new_items">%1$d novos itens adquiridos</string>
+    <string name="trade_cancel">Cancelar</string>
+    <string name="trade_confirm_email">Você e a outra parte devem acessar a troca via email.</string>
+    <string name="trade_status_unknown">Status desconhecido.</string>
+
+    <!-- offers -->
+    <string name="trade_offers">Ofertas de Troca</string>
+    <string name="trade_offer">Oferta de Troca</string>
+    <string name="offer_trade">Oferta de Troca</string>
+    <string-array name="offer_tabs">
+        <item>Inventário</item>
+        <item>Ofertas</item>
+        <item>Revisar</item>
+    </string-array>
+    <string-array name="offer_status">
+        <item>Desconhecido</item>
+        <item>Inválido</item>
+        <item>Ativo</item>
+        <item>Aceito</item>
+        <item>Contraproposto</item>
+        <item>Expirado</item>
+        <item>Cancelado</item>
+        <item>Recusado</item>
+        <item>Itens Inválidos</item>
+        <item>Esperando confirmação por email</item>
+        <item>Cancelado via Email</item>
+        <item>Em espera...</item>
+    </string-array>
+    <string name="offer_status_escrow_date">Em espera até\n%1$s</string>
+    <string name="offer_radio_incoming">Ofertas recebidas</string>
+    <string name="offer_radio_sent">Ofertas enviadas</string>
+    <string name="offer_inventory_us">Seu inventário</string>
+    <string name="offer_inventory_them">Inventário do parceiro</string>
+    <string name="offer_message">Mensagem</string>
+    <string name="offer_accept">Aceitar oferta</string>
+    <string name="offer_decline">Recusar oferta</string>
+    <string name="offer_button_respond">Responder</string>
+    <string name="offer_button_decline">Recusar</string>
+    <string name="offer_button_cancel">Cancelar</string>
+    <string name="offer_counter">Fazer uma contra-oferta</string>
+    <string name="offer_cancel">Cancelar Oferta</string>
+    <string name="offer_send">Enviar Oferta</string>
+    <string name="offer_contents">Você irá dar %1$d itens e receber %2$d items.</string>
+    <string name="offer_will_give">Você irá dar:</string>
+    <string name="offer_will_receive">Você irá receber:</string>
+    <string name="offer_no_message">[Sem mensagem]</string>
+    <string name="offer_count">Mostrando %1$d ofertas de troca ativas.</string>
+    <string name="offer_error_loading">Erro carregando descrição de troca.</string>
+    <string name="offers_error_loading">Erro carregando oferta de troca.</string>
+    <string name="offer_with">Ofertando com %1$s</string>
+    <string name="offer_received_heading">%1$s proprôs uma troca:</string>
+    <string name="offer_sent_heading">Você enviou a %1$s uma troca:</string>
+    <string name="offer_cancelled">Oferta cancelada.</string>
+    <string name="offer_declined">Oferta recusada.</string>
+    <string name="offer_submitted">Oferta enviada.</string>
+    <string name="offer_accepted">Oferta aceita.</string>
+    <string name="offer_message_quote">Mensagem:\n\"%1$s\"</string>
+    <string name="offer_declining">Recusando oferta…</string>
+    <string name="offer_accepting">Aceitando oferta…</string>
+    <string name="offer_submitting">Enviando oferta…</string>
+    <string name="offer_loading">Carregando oferta…</string>
+    <string name="offer_send_message">Envie uma mensagem com a sua oferta\n(máximo 128 caracteres)</string>
+    <string name="offer_fromurl">Criar oferta com URL</string>
+    <string name="offer_create">Criar oferta de troca</string>
+    <string name="offer_create_prompt">Por favor entre com um link de troca.\n\nAlternativamente, clique em um amigo da lista e escolha \"Offer Trade\".</string>
+    <string name="offer_invalid_url">URL de troca inválida.</string>
+    <string name="offer_confirm_decline">Tem certeza que quer recusar essa oferta?</string>
+    <string name="offer_confirm_cancel">Tem certeza que quer cancelar essa oferta?</string>
+    <string name="offer_successful">A troca foi um sucessp.</string>
+    <string name="offer_confirm_email">Para concluir a troca um email de confirmação foi enviada para você (terminando em "%1$s") com instruções adicionais.</string>
+    <string name="offer_must_counter">Você deve fazer uma contra-proposta.</string>
+    <string name="offer_confirmations">Confirmações de\nTroca</string>
+
+</resources>

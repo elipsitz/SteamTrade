@@ -7,7 +7,7 @@
     <string name="pref_reconnect">Автопереподключение</string>
     <string name="pref_reconnect_summ">Переподключаться, когда произойдет отключение от сети Steam</string>
     <string name="pref_advanced">Расширенные настройки</string>
-    <string name="pref_advanced_summ">Не используйте это, если в не знаете, что вы делаете.</string>
+    <string name="pref_advanced_summ">Не используйте это, если не знаете, что вы делаете.</string>
     <string name="pref_machineauth">Override machineAuth</string>
     <string name="pref_machineauth_prompt">Input machineAuth:</string>
     <string name="pref_remove_ads">Убрать рекламу</string>

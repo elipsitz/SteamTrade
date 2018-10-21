@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error">Chyba</string>
+    <string name="error_disconnected">Odhlášeno ze Sítě Steam</string>
+    <string name="drawer_open">Otevřít</string>
+    <string name="drawer_close">Zavřít</string>
+    <string name="steam_avatar">Avatar</string>
+    <string name="chat">Zprávy</string>
+    <string name="trade">Obchodovat</string>
+    <string name="friends">Přátelé</string>
+    <string name="yes">Ano</string>
+    <string name="no">Ne</string>
+    <string name="action_successful">Akce úspěšná.</string>
+    <string name="action_failed">Akce selhala.</string>
+    <string name="search">Hledat</string>
+    <string name="quote">“%1$s”</string>
+
+    <string name="steamguard_new">Tohle je poprvé, co jste se přihlášeli přes toto zařízení.\n\nKvůli omezení Valve nemůžete obchodovat následujících 7 dní.</string>
+    <string name="api_key_not_loaded">WebAPI kód nebyl nalezen. Tato funkce nebude fungovat.</string>
+    <string name="rate_snackbar_text">Máte rádi Ice?</string>
+    <string name="rate_snackbar_action">HODNOTIT</string>
+
+    <string name="nav_friends">Přátelé</string>
+    <string name="nav_inventory">Inventář</string>
+    <string name="nav_offers">Obchodní Nabídky</string>
+    <string name="nav_games">Knihovna</string>
+    <string name="nav_store">Obchod Steam</string>
+    <string name="nav_market">Steam Komunitní Trh</string>
+    <string name="nav_browser">Steam Prohlížeč</string>
+    <string name="nav_settings">Nastave</string>
+    <string name="nav_about">O Ice</string>
+    <string name="nav_signout">Odhlásit Se</string>
+
+    <string name="purchase_pending">Provádění platby…</string>
+    <string name="purchase_complete">Platba byla úspěšná! Děkuji!</string>
+    <string name="signed_out">Odhlášen</string>
+    <string name="send_button">Poslat</string>
+    <string name="chat_hint">Stiskem pište</string>
+    <string name="app_crashed_toast">Ice Client spadnul ale automaticky se chyba poslala vývojáři k opravení této chyby!</string>
+    <string name="playing">Hraje</string>
+    <string name="cancel">Zrušit</string>
+    <string name="accept">Příjmout</string>
+    <string name="add">Přidat</string>
+    <string name="change_display_name">Změnit Přezdívku</string>
+    <string name="change_display_name_prompt">Zadejte novou přezdívku:</string>
+    <string name="set_currently_playing_game">Nastavit pro automatické hraní</string>
+
+    <string name="x_new_messages">%1$d zprávy</string>
+
+    <string-array name="allowed_states">
+        <item>Online</item>
+        <item>Pryč</item>
+        <item>Zaneprázdněn</item>
+        <item>Neaktivní</item>
+        <item>Chci Obchodovat</item>
+        <item>Chci Hrát</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>Offline</item>
+        <item>Online</item>
+        <item>Zaneprázdněn</item>
+        <item>Pryč</item>
+        <item>Neaktivní</item>
+        <item>Chci Obchodovat</item>
+        <item>Chci Hrát</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>Neznámý Status</item>
+        <item>Aktualizování…</item>
+        <item>Přihlašování…</item>
+        <item>Přihlašování…</item>
+        <item>Potvrzování…</item>
+        <item>Potvrzování Kódu…</item>
+        <item>Přihlášen</item>
+        <item>Odhlášen</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">Zkopírováno.</string>
+
+    <string name="change">Změnit</string>
+    <string name="baa">moo</string>
+    <string name="dismiss">Zrušit</string>
+    <string name="feature_not_implemented">Funkce není dostupná.</string>
+    <string name="error_getting_key">Chyba v hledání WebAPI kódu. Některé funkce (jako obchody) nebudou fungovat.</string>
+    <string name="error_steamapi">Chyba v přihlašování do SteamAPI.</string>
+    <string name="ok">OK</string>
+
+    <string name="action_settings">Nastavení</string>
+
+    <string name="web_back">Jít Zpátky</string>
+    <string name="web_forward">Jít Dále</string>
+    <string name="web_reload">Obnovit</string>
+    <string name="web_community">Steam Komunita</string>
+    <string name="web_store">Steam Obchod</string>
+    <string name="web_toggle_view">Pohled plochy</string>
+
+    <string name="library_playtime">%1$.1f nahraných hodin</string>
+    <string name="library_playtime_full">%1$.1f za poslední dva týdny\n%2$.1f nahraných hodin</string>
+    <string name="library_sort">Srovnat</string>
+    <string name="library_sort_name">Podle abecedy</string>
+    <string name="library_sort_playtime">Podle herního času</string>
+    <string name="library_activate_product">Aktivovat Produkt</string>
+    <string name="library_enter_key">Prosíme, zadejte klíč produktu který chcete aktivovat.</string>
+    <string name="library_validating_key">Potvrzování klíče produktu.</string>
+    <string name="library_activation_successful">Aktivace Úspěšná</string>
+    <string name="library_activation_failed">Aktivace Selhala</string>
+    <string name="library_activation_invalid_code">Nesprávný kód produktu.</string>
+    <string name="library_activation_error">Neznámá chyba.</string>
+    <string name="library_activation_code_used">Kód produktu je již použitý.</string>
+
+    <string name="steamguard_mobile_authenticator">Mobilní Autentifikátor</string>
+    <string name="steamguard_unavailable">Mobile Autentifikátor lze zapnout jen na uloženém účtu.</string>
+    <string name="steamguard_not_enabled">Steam Guard Mobilní Autentifikátor není zapnut na tomto zařízení.</string>
+    <string name="steamguard_code">Váš Steam Guard kód:</string>
+    <string name="steamguard_enable_authenticator">Zapnout Autentifikátor</string>
+    <string name="steamguard_manage_authenticator">Spravovat Autentifikátor</string>
+    <string name="steamguard_import_authenticator_mafile">Vložit .mafile</string>
+    <string name="steamguard_import_authenticator">Vložit Autentifikátor (.mafile)</string>
+    <string name="steamguard_export_authenticator">Vytvořit Autentifikátor (.mafile)</string>
+    <string name="steamguard_get_revocation_code">Ukázat Nouzový Kód</string>
+    <string name="steamguard_revocation_code">Váš nouzový kód je:\n%1$s</string>
+    <string name="steamguard_instructions_finalize">K přidání Steam Autentifikátor, zadejte klíč, který byl poslán na vaše mobilní číslo.</string>
+    <string name="steamguard_enable_success">Úspěšně přidán Steam Autentifikátor.\n\nProsíme, napište si váš nouzový kód: %1$s</string>
+    <string name="steamguard_enable_failure">Selhalo přidat Steam Autentifikátor: %1$s</string>
+    <string name="steamguard_export">Vytvořit Mobilní Autentifikátor</string>
+    <string name="steamguard_import">Přidat Mobilní Autentifikátor</string>
+    <string name="steamguard_duplicate">Váš účet používgá Oficiální Steam Autentifikátor. Nemůžete používat dva autentifikátory najednou.</string>
+    <string name="steamguard_import_password">Prosíme, zadejte heslo pro účet \'%1$s\'.</string>
+    <string name="steamguard_select_mafile">Prosíme, vyberte .mafile který chcete použít.</string>
+
+    <string-array name="store_tabs">
+        <item>Katalog</item>
+        <item>Košík</item>
+        <item>Hledat</item>
+        <item>Seznam Přání</item>
+        <item>Novinky</item>
+        <item>Účet</item>
+    </string-array>
+
+    <color name="notification_on">#5C7E10</color>
+    <color name="notification_off">#777</color>
+    <color name="notification_text_on">#70ba24</color>
+    <color name="notification_text_off">#bfbfbf</color>
+    <plurals name="notification_comments">
+        <item quantity="one">%d nový komentář</item>
+        <item quantity="other">%d nové komentáře</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d nový předmět v inventáři</item>
+        <item quantity="other">%d nové předměty v inventáři</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d nepřečtená zpráva</item>
+        <item quantity="other">%d nepřečtené zprávy</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d nová obchodní nabídka</item>
+        <item quantity="other">%d neové obchodní nabídky</item>
+    </plurals>
+    <string name="steamguard_import_error_wrong_account">Chyba: tato autentifikace je pro jiný Steam účet: %1$s</string>
+    <string name="library_view_store_page">Ukázat Stránku Obchodu</string>
+    <string name="library_begin_idling">Spustit Farmování</string>
+    <string name="library_stop_idling">Přestat Farmovat</string>
+    <string name="idling_started">Nyní farmuje:  %1$s</string>
+    <string name="idling_stopped">Již nefarmuje.</string>
+    <string name="premium_only">Tohle je prémium funkce.</string>
+    <string name="premium_unlock">Zakoupit Prémium</string>
+</resources>

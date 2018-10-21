@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ice</string>
+    <string name="error">Erro</string>
+    <string name="error_disconnected">Desconectado da Steam</string>
+    <string name="drawer_open">Abrir Navegador</string>
+    <string name="drawer_close">Fechar Navegador</string>
+    <string name="steam_avatar">Avatar</string>
+    <string name="chat">Chat</string>
+    <string name="trade">Trocas</string>
+    <string name="friends">Amigos</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="action_successful">Ação bem-sucedida</string>
+    <string name="action_failed">Ação mal-sucedida</string>
+    <string name="search">Busca</string>
+    <string name="quote">“%1$s”</string>
+
+    <string name="steamguard_new">Essa é a primeira vez que loga nessa conta por esse dispositivo.\n\nPelas restrições da Valve, você não tem permissão para propor ou aceitar trocas neste dispositivo nos próximos 7 dias.</string>
+    <string name="api_key_not_loaded">Uma chave de API não foi corretamente recuperada. Essa função não funcionará corretamente.</string>
+    <string name="rate_snackbar_text">Você gostou do Ice?</string>
+    <string name="rate_snackbar_action">AVALIAR</string>
+
+    <string name="nav_friends">Amigos</string>
+    <string name="nav_inventory">Inventário</string>
+    <string name="nav_offers">Ofertas de troca</string>
+    <string name="nav_games">Biblioteca</string>
+    <string name="nav_store">Loja da Steam</string>
+    <string name="nav_market">Mercado da Comunidade Steam</string>
+    <string name="nav_browser">Navegador Steam</string>
+    <string name="nav_settings">Configurações</string>
+    <string name="nav_about">Sobre o Ice</string>
+    <string name="nav_signout">Deslogar</string>
+
+    <string name="purchase_pending">Compra pendente…</string>
+    <string name="purchase_complete">Compra efetuada! Obrigado!</string>
+    <string name="signed_out">Deslogar</string>
+    <string name="send_button">Enviar</string>
+    <string name="chat_hint">Toque para conversar</string>
+    <string name="app_crashed_toast">O cliente Ice teve problemas, mas um relátorio está sendo enviado ao desenvolvedor para ser corrigido!</string>
+    <string name="playing">Jogando</string>
+    <string name="cancel">Cancelar</string>
+    <string name="accept">Aceitar</string>
+    <string name="add">Adicionar</string>
+    <string name="change_display_name">Trocar nome de perfil</string>
+    <string name="change_display_name_prompt">Por favor insira seu nome de perfil:</string>
+    <string name="set_currently_playing_game">Escolher jogo sendo jogado</string>
+
+    <string name="x_new_messages">%1$d mensagens</string>
+
+    <string-array name="allowed_states">
+        <item>Online</item>
+        <item>Ausente</item>
+        <item>Ocupado</item>
+        <item>Sonolento</item>
+        <item>Querendo uma troca</item>
+        <item>Querendo jogar</item>
+    </string-array>
+    <string-array name="persona_states">
+        <item>Offline</item>
+        <item>Online</item>
+        <item>Ocupado</item>
+        <item>Ausente</item>
+        <item>Sonolento</item>
+        <item>Querendo uma troca</item>
+        <item>Querendo jogar</item>
+    </string-array>
+
+    <string-array name="connection_status">
+        <item>Status Desconhecido</item>
+        <item>Inicializando…</item>
+        <item>Conectando…</item>
+        <item>Logando…</item>
+        <item>Autenticando…</item>
+        <item>Buscando chave…</item>
+        <item>Conectado</item>
+        <item>Desconectado</item>
+    </string-array>
+
+    <string name="copied_to_clipboard">Copiado para a área de transferência.</string>
+
+    <string name="change">Mudar</string>
+    <string name="baa">moo</string>
+    <string name="dismiss">Dispensar</string>
+    <string name="feature_not_implemented">Função não implementada</string>
+    <string name="error_getting_key">Uma chave de API não foi corretamente recuperada. Essa função não funcionará corretamente.</string>
+    <string name="error_steamapi">Erro ao acessar a SteamAPI.</string>
+    <string name="ok">OK</string>
+
+    <string name="action_settings">Configurações</string>
+
+    <string name="web_back">Voltar</string>
+    <string name="web_forward">Avançar</string>
+    <string name="web_reload">Recarregar Página</string>
+    <string name="web_community">Comunidade Steam</string>
+    <string name="web_store">Loja Steam</string>
+    <string name="web_toggle_view">Modo Desktop</string>
+
+    <string name="library_playtime">%1$.1f hrs registradas</string>
+    <string name="library_playtime_full">%1$.1f hrs nas últimas 2 semanas\n%2$.1f hrs registradas</string>
+    <string name="library_sort">Mudar ordem</string>
+    <string name="library_sort_name">Ordenar alfabeticamente</string>
+    <string name="library_sort_playtime">Ordenar pelo tempo de jogo</string>
+    <string name="library_activate_product">Ativar um produto</string>
+    <string name="library_enter_key">Por favor entre com o código do produto que deseja ativar</string>
+    <string name="library_validating_key">Verificando código</string>
+    <string name="library_activation_successful">Ativado com sucesso</string>
+    <string name="library_activation_failed">Erro na ativação</string>
+    <string name="library_activation_invalid_code">Código inválido.</string>
+    <string name="library_activation_error">Erro desconhecido.</string>
+    <string name="library_activation_code_used">Código de produto já usado.</string>
+
+    <string name="steamguard_mobile_authenticator">Autenticador Mobile</string>
+    <string name="steamguard_unavailable">Você só pode ativar o autenticador em uma conta salva</string>
+    <string name="steamguard_not_enabled">Steam Guard Mobile Authenticator não está configurado em seu dispositivo</string>
+    <string name="steamguard_code">Seu cógido do Steam Guard:</string>
+    <string name="steamguard_enable_authenticator">Ativar autenticador</string>
+    <string name="steamguard_manage_authenticator">Gerenciar autenticador</string>
+    <string name="steamguard_import_authenticator_mafile">Importar .mafile</string>
+    <string name="steamguard_import_authenticator">Importar Autenticador (.mafile)</string>
+    <string name="steamguard_export_authenticator">Export Autenticador (.mafile)</string>
+    <string name="steamguard_get_revocation_code">Mostrar Código de Cancelamento</string>
+    <string name="steamguard_revocation_code">Seu código de cancelamento é:\n%1$s</string>
+    <string name="steamguard_instructions_finalize">Para terminar de adicionar o Mobile Authenticator, por favor entrar com o código Steam enviado via SMS.</string>
+    <string name="steamguard_enable_success">Autenticador ativo com sucesso.\n\nPor favor, guarde o código de emergência abaixo: %1$s</string>
+    <string name="steamguard_enable_failure">Falha na ativação do autenticador: %1$s</string>
+    <string name="steamguard_export">Exportar Mobile Authenticator</string>
+    <string name="steamguard_import">Importar Mobile Authenticator</string>
+    <string name="steamguard_duplicate">Sua conta já está usando um Mobile Authenticator. Você não pode usar dois ao mesmo tempo.</string>
+    <string name="steamguard_import_password">Por favor entre com a senha da sua conta \'%1$s\'.</string>
+    <string name="steamguard_select_mafile">Por favor escolha o .mafile que você deseja importar.</string>
+
+    <string-array name="store_tabs">
+        <item>Catálogo</item>
+        <item>Carrinho</item>
+        <item>Busca</item>
+        <item>Lista de desejo</item>
+        <item>Notícias</item>
+        <item>Conta</item>
+    </string-array>
+
+    <color name="notification_on">#5C7E10</color>
+    <color name="notification_off">#777</color>
+    <color name="notification_text_on">#70ba24</color>
+    <color name="notification_text_off">#bfbfbf</color>
+    <plurals name="notification_comments">
+        <item quantity="one">%d novo comentário</item>
+        <item quantity="other">%d novos comentários</item>
+    </plurals>
+    <plurals name="notification_items">
+        <item quantity="one">%d novo item no seu inventário</item>
+        <item quantity="other">%d novos itens no seu inventário</item>
+    </plurals>
+    <plurals name="notification_messages">
+        <item quantity="one">%d mensagem não lida</item>
+        <item quantity="other">%d mensagens não lidas</item>
+    </plurals>
+    <plurals name="notification_trades">
+        <item quantity="one">%d nova notificação de troca</item>
+        <item quantity="other">%d novas notificações de troca</item>
+    </plurals>
+    <string name="steamguard_import_error_wrong_account">Erro: essa informação de autenticação está diferente da sua conta Steam: %1$s</string>
+    <string name="library_view_store_page">Ver página da loja</string>
+    <string name="library_begin_idling">Iniciar sessão inativa</string>
+    <string name="library_stop_idling">Parar sessão inativa</string>
+    <string name="idling_started">Inativo no momento:  %1$s</string>
+    <string name="idling_stopped">Não está mais inativo.</string>
+    <string name="premium_only">Isso é uma função premium.</string>
+    <string name="premium_unlock">Comprar Premium</string>
+</resources>

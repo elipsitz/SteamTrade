@@ -22,7 +22,6 @@ import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.fragments.FragmentTrade;
 import com.aegamesi.steamtrade.trade2.Trade;
-import com.google.android.gms.analytics.HitBuilders;
 
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.SessionStartCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamtrading.callbacks.TradeProposedCallback;
@@ -115,7 +114,6 @@ public class SteamTradeManager implements OnClickListener {
 
 	public void callbackSessionStart(SessionStartCallback obj) {
 		Log.i("Trade", "Starting trade with " + obj.getOtherClient().convertToLong());
-		activity().tracker().send(new HitBuilders.EventBuilder().setCategory("Steam").setAction("Trade_Start").build());
 
 		SteamID myID = SteamService.singleton.steamClient.getSteamId();
 		String sessionID = SteamService.singleton.sessionID;
