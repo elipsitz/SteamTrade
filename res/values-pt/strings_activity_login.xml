@@ -1,0 +1,29 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Senha</string>
+    <string name="prompt_steamguard">Código do Steam Guard</string>
+    <string name="action_sign_in">Logar</string>
+    <string name="error_loginkey_expired">Seu login expirou, por favor logue novamente.</string>
+    <string name="error_incorrect_password">Senha incorrete</string>
+    <string name="error_field_required">Este campo é obrigatório</string>
+    <string name="error_incorrect_steamguard">O cógido do SteamGuard está incorreto</string>
+    <string name="error_steamguard_required">Esta conta está protegida pelo SteamGuard</string>
+    <string name="prompt_remember">Lembrar-me</string>
+    <string name="description_logo">Logo</string>
+    <string name="authenticating">Autenticando…</string>
+    <string name="cannot_auth_with_steamweb">Incapaz de conectar com a SteamWeb. Os servidores Steam talvez estejam offline.</string>
+    <string name="not_connected_to_internet">Você não está conectado com a internet.</string>
+    <string name="connected_via_mobiledata">Você está conectado pela rede móvel.\nIsso pode dificultar sua conexão com a Steam.</string>
+    <string name="initializing">Iniciando…</string>
+    <string name="signingout">Deslogando…</string>
+    <string name="logging_on">Logando…</string>
+    <string name="connecting">Conectando…</string>
+    <string name="fetching_key">Buscando API Key…</string>
+    <string name="cannot_connect_to_steam">Não pode conectar a Steam!</string>
+    <string name="login_saved">Logar com uma conta salva</string>
+    <string name="login_different">Logar com outra conta</string>
+    <string name="login_confirm_delete_account">Você tem certeza que deseja remover a conta \'%1$s\'?</string>
+
+</resources>

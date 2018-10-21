@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Imagem do Item</string>
+
+    <string name="inv_error_private">Esse inventário é privado.</string>
+    <string name="inventory">Inventário</string>
+
+    <string name="search_inventory">Buscar no Inventário</string>
+    <string name="search_result_count">Mostrando %1$d de %2$d</string>
+    <string name="toggle_view_mode">Alternar modo de exibição</string>
+    <string name="inv_error_loading">Erro ao carregar o inventário:\n%1$s</string>
+
+    <string name="craft_x_items">Construir %1$d Itens de TF2</string>
+    <string name="craft_noncraftable">Um ou mais itens que você selecionou não podem ser contruidos.</string>
+    <string name="craft_nontradable">Um ou mais itens que você selecionou não são trocáveis, logo o resultado também não. Continuar?</string>
+    <string name="craft_failed">Falha na construção.</string>
+    <string name="craft_successful">Sucesso na construção: %1$d itens criados. Carregando…</string>
+    <string name="craft_completed">Construção concluída</string>
+    <string name="craft_crafting">Cronstruindo…</string>
+    <string name="craft_enable">Ativar construção</string>
+
+    <string name="market_item_notfound">Informação de mercado não encontrada</string>
+    <string name="market_info_loading">Carregando informação de mercado…</string>
+    <string name="market_low">Começando em: %1$s</string>
+    <string name="market_median">Preço Médio: %1$s</string>
+    <string name="market_volume">%1$s vendidos nas últimas 24 horas</string>
+
+    <dimen name="itemlist_gridsize">72dp</dimen>
+    <color name="item_default_background">#292929</color>
+    <color name="item_default_border">#d2d2d2</color>
+</resources>

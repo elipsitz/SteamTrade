@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="trade_sent_request">Sent a trade request to %1$s</string>
+    <string name="trade_got_request">%1$s has requested to trade.</string>
+    <string name="trade_new_request">Trade Request</string>
+    <string name="trade_currently_trading">Trading with %1$s.</string>
+    <string name="trade_result_accepted">%1$s accepted your trade request!</string>
+    <string name="trade_result_alreadytrading">%1$s is trading with someone else.</string>
+    <string name="trade_result_timeout">%1$s did not respond in time.</string>
+    <string name="trade_result_declined">%1$s declined to trade.</string>
+    <string name="trade_result_unknown">%1$s was unable to trade for an unknown reason: %2$s</string>
+    <string name="trade_result_cancelled">Trade request cancelled.</string>
+    <string name="trade_result_targetcannotrade">%1$s is unable to trade. More information will be shown if they request to trade.</string>
+    <string name="trade_result_steamguard">SteamGuard must be enabled to trade.</string>
+    <string name="trade_result_steamguard_duration">SteamGuard must have been enabled for 15 days to trade.</string>
+    <string name="trade_result_steamguard_newdevice">Due to Valve restrictions, you cannot trade for 7 days on a new device.</string>
+    <string name="trade_result_password_reset">You have recently reset your password and cannot trade.</string>
+    <string name="trade_result_require_email">You must verify your email address to trade.</string>
+    <string name="trade_result_tradeban_target">%1$s has been tradebanned, and cannot trade.</string>
+    <string name="trade_result_tradeban_initiator">You have been tradebanned, and cannot trade.</string>
+
+    <color name="color_trade_white">#A3A099</color>
+    <color name="color_trade_blacktext">#282827</color>
+    <color name="color_trade_result_background">#1D1D1D</color>
+
+    <string name="trading_with">Obchodování s %1$s</string>
+
+    <string-array name="trade_tabs">
+        <item>Inventář</item>
+        <item>Nabídky</item>
+        <item>Zprávy</item>
+    </string-array>
+
+    <string name="trade_ready">Připraven</string>
+    <string name="trade_your_offerings">Vaše Nabídka</string>
+    <string name="trade_their_offerings">Nabídka Druhého</string>
+    <string name="trade_accept">Příjmout Nabídku</string>
+    <string name="trade_tap_to_view">Kliknutím zobrazíte</string>
+    <string name="trade_error">Chyba při Obchodování</string>
+    <string name="trade_completed">Obchodování Dokončeno</string>
+    <string name="trade_new_items">%1$d nových předmětů</string>
+    <string name="trade_cancel">Zrušit</string>
+    <string name="trade_confirm_email">Vy a/nebo váš partner musí potvrdit obchod pomocí emailu.</string>
+    <string name="trade_status_unknown">Status neznámý.</string>
+
+    <!-- market -->
+
+    <!-- offers -->
+    <string name="trade_offers">Obchodní Nabídky</string>
+    <string name="trade_offer">Obchodní Nabídka</string>
+    <string name="offer_trade">Nabídnout Obchod</string>
+    <string-array name="offer_tabs">
+        <item>Inventáře</item>
+        <item>Nabídky</item>
+        <item>Hodnocení</item>
+    </string-array>
+    <string-array name="offer_status">
+        <item>Neznámé</item>
+        <item>Neplatné</item>
+        <item>Aktivní</item>
+        <item>Příjmuté</item>
+        <item>Změněno</item>
+        <item>Vypršené</item>
+        <item>Zrušeno</item>
+        <item>Odmítnuto</item>
+        <item>Neplatné Předměty</item>
+        <item>Čekání na Email Potvrzení</item>
+        <item>Zrušení přes Email</item>
+        <item>Pozastaveno</item>
+    </string-array>
+    <string name="offer_status_escrow_date">Pozastaveno Do\n%1$s</string>
+    <string name="offer_radio_incoming">Příchozí Nabídky</string>
+    <string name="offer_radio_sent">Odeslané Nabídky</string>
+    <string name="offer_inventory_us">Váš Inventář</string>
+    <string name="offer_inventory_them">Partnerův Inventář</string>
+    <string name="offer_message">Zpráva</string>
+    <string name="offer_accept">Příjmout Nabídku</string>
+    <string name="offer_decline">Odmítnout Nabídku</string>
+    <string name="offer_button_respond">Odpovědět</string>
+    <string name="offer_button_decline">Odmítnout</string>
+    <string name="offer_button_cancel">Zrušit</string>
+    <string name="offer_counter">Změnit Nabídku</string>
+    <string name="offer_cancel">Zrušit Nabídku</string>
+    <string name="offer_send">Poslat Nabídku</string>
+    <string name="offer_contents">Vy dáte %1$d předmět(y) a získáte %2$d předmět(y).</string>
+    <string name="offer_will_give">Vy dáte:</string>
+    <string name="offer_will_receive">Získáte:</string>
+    <string name="offer_no_message">[Žádná zpráva]</string>
+    <string name="offer_count">Ukazování %1$d aktivní obchodní nabídky.</string>
+    <string name="offer_error_loading">Chyba načítání detailů nabídky.</string>
+    <string name="offers_error_loading">Chyba načítání obchodních nabídek.</string>
+    <string name="offer_with">Nabídka s %1$s</string>
+    <string name="offer_received_heading">%1$s vám nabídnul:</string>
+    <string name="offer_sent_heading">Poslali jste %1$s nabídku:</string>
+    <string name="offer_cancelled">Nabídka zrušena.</string>
+    <string name="offer_declined">Nabídka odmítnuta.</string>
+    <string name="offer_submitted">Nabídka poslána.</string>
+    <string name="offer_accepted">Nabídka potvrzena.</string>
+    <string name="offer_message_quote">Zpráva:\n\"%1$s\"</string>
+    <string name="offer_declining">Zrušení nabídky…</string>
+    <string name="offer_accepting">Příjmutí nabídky…</string>
+    <string name="offer_submitting">Odesílání nabídky…</string>
+    <string name="offer_loading">Načítání nabídky…</string>
+    <string name="offer_send_message">Napište zprávu ke své nabídce\n(maximálně 128 znaků)</string>
+    <string name="offer_fromurl">Vytvořit nabídku z URL</string>
+    <string name="offer_create">Vytvořit Obchodní Nabídku</string>
+    <string name="offer_create_prompt">Prosíme, zadejte URL pro poslání obchodní nabídky.\n\nTaké můžete zvolit vašeho přítele a dát \"Poslat Nabídku\".</string>
+    <string name="offer_invalid_url">Neplatné obchodní URL.</string>
+    <string name="offer_confirm_decline">Opravdu chcete zrušit tuto nabídku?</string>
+    <string name="offer_confirm_cancel">Opravdu chcete zrušit tuto nabídku?</string>
+    <string name="offer_successful">Obchodování bylo úspěšné.</string>
+    <string name="offer_confirm_email">Pro dokončení nabídky musíte nabídku potvrdit. Byl vám poslán email na váš účet (končící "%1$s") s instrukcemi.</string>
+    <string name="offer_must_counter">Musíte změnit nabídku.</string>
+    <string name="offer_confirmations">Obchodní\nPotvrzení</string>
+
+</resources>

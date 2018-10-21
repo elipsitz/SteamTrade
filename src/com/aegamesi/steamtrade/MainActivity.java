@@ -52,9 +52,6 @@ import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.appodeal.ads.Appodeal;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.Locale;
@@ -178,12 +175,6 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 		SteamService.singleton.tradeManager.setupTradeStatus();
 		SteamService.singleton.tradeManager.updateTradeStatus();
 
-		if (getIntent().getBooleanExtra("isLoggingIn", false)) {
-			tracker().send(new HitBuilders.EventBuilder()
-					.setCategory("Steam")
-					.setAction("Login")
-					.build());
-		}
 
 		// handle our URL stuff
 		if (getIntent() != null && ((getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_VIEW)) || getIntent().getStringExtra("url") != null)) {
@@ -241,13 +232,6 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 						}
 					}).show();
 		}
-
-
-		// setup Appodeal
-		Appodeal.disableLocationPermissionCheck();
-		Appodeal.disableWriteExternalStoragePermissionCheck();
-		Appodeal.setBannerViewId(R.id.appodealBannerView);
-		Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.BANNER);
 	}
 
 	@Override
@@ -318,10 +302,6 @@ public class MainActivity extends AppCompatActivity implements SteamMessageHandl
 				PreferenceManager.getDefaultSharedPreferences(this).edit().putString(key, avatarURL).apply();
 			}
 		}
-	}
-
-	public Tracker tracker() {
-		return ((SteamTrade) getApplication()).getTracker();
 	}
 
 	@Override

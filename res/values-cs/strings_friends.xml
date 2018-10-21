@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_friend_unread">#555</color>
+    <string name="friend_add">Přidat Přátele</string>
+    <string name="friend_accept">Příjmout Žádost</string>
+    <string name="friend_ignore">Ignorovat Žádost</string>
+    <string name="friend_add_prompt">Prosíme, zadejte SteamID64 nebo emailovou adresu přítele, kterého si chcete přidat:</string>
+    <string name="friend_add_fail">Nepodařilo se přidat: %1$s</string>
+    <string name="friend_add_success">Přítel přidán.</string>
+    <string name="friend_remove">Odebrat Přítelé</string>
+    <string name="friend_remove_message">Opravdu chcete odstranit \'%1$s\' ze seznamu přátel?</string>
+    <string name="friend_removed">Odstraněn \'%1$s\'.</string>
+    <string name="friend_search">Prohledat přátelé</string>
+    <string name="friend_request_accept">Příjmutá Žádost o Přátelství</string>
+    <string name="friend_request_ignore">Ignorovaná Žádost o Přátelství</string>
+    <string name="friend_view_steam">Ukázat na Steamu</string>
+    <string name="friend_view_steamrep">Ukázat na SteamRep</string>
+    <string name="friend_view_library">Ukázat hry</string>
+    <string name="friend_is_typing">Píše…</string>
+    <string name="profile_view">Ukázat profil</string>
+    <string name="profile_summary">Shrnutí</string>
+    <string name="profile_loading_summary">Načítání shrnutí…</string>
+    <string name="friend_request">Žádost o Přátelství</string>
+    <string name="friend_request_text">%1$s si vás přidal.</string>
+    <string name="friend_request_multi">Máte %1$d probíhající žádost.</string>
+    <string name="friend_block">Blokovoat</string>
+    <string name="friend_unblock">Odblokovat</string>
+    <string name="profile_playing_game">Právě ve hře %1$s</string>
+
+    <string name="chat_group">Skupinové Psaní</string>
+    <string name="chat_with">Psát s %1$s</string>
+    <string name="friend_invite_to_chat">Pozvat k Psaní…</string>
+    <string name="friend_invite_to_trade">Pozvat k Obchodování</string>
+    <string name="friend_send_trade_offer">Poslat Obchodní Nabídku</string>
+    <string name="chat_you">Vy</string>
+    <string name="chat_them">Oni</string>
+    <string name="chat_chat">Zprávy</string>
+    <string name="chat_participants">Účastníci</string>
+    <color name="color_chat_left">#B3E5FC</color>
+    <color name="color_chat_right">#607D8B</color>
+    <color name="chat_divider">#22FFFFFF</color>
+    <dimen name="chat_margin_minor">4dp</dimen>
+    <dimen name="chat_margin_major">48dp</dimen>
+    <dimen name="chat_vertical_margin_major">14dp</dimen>
+    <dimen name="chat_vertical_margin_minor">-1dp</dimen>
+
+    <color name="steam_online">#9CC6FF</color>
+    <color name="steam_game">#AED04E</color>
+    <color name="steam_offline">#CFD2D3</color>
+    <color name="steam_blocked">#F26C4F</color>
+</resources>

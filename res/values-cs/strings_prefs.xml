@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_vibrate">Vibrovat u Zpráv</string>
+    <string name="pref_vibrate_summ">Vibruje když održíte novou zprávu</string>
+    <string name="persist_notification">Trvalé Upozornění</string>
+    <string name="persist_notification_summ">Zakazování této funkce oznámí Androidu, že Ice má malou prioritu.</string>
+    <string name="pref_reconnect">Auto-Přihlašování</string>
+    <string name="pref_reconnect_summ">Přihlásí se znovu pokud budete odpojeni ze Steam sítě</string>
+    <string name="pref_advanced">Pokročilé Nastavení</string>
+    <string name="pref_advanced_summ">Nepoužívejte pokud nevíte, co děláte.</string>
+    <string name="pref_machineauth">Přepsat machineAuth</string>
+    <string name="pref_machineauth_prompt">Přidat machineAuth:</string>
+    <string name="pref_remove_ads">Odstranit Reklamy</string>
+    <string name="pref_remove_ads_summ">Podpořte Ice příspěvkem! &lt;3</string>
+    <string name="pref_notification_sound">Zvuk Notifikací</string>
+    <string name="pref_recent_chats">Poslední Zprávy</string>
+    <string name="pref_recent_chats_summ">Změní odezvu posledních zpráv.</string>
+    <string name="pref_chat_compact">Kompaktní Zobrazení Zpráv</string>
+    <string name="pref_chat_compact_summ">Zobrazí řádky textů místo bublin.</string>
+    <string name="pref_currency">Preferovaná Měna</string>
+    <string name="pref_webapikey">Upravit WebAPI Kód</string>
+    <string name="pref_webapikey_prompt">Zadejte WebAPI Kód:</string>
+    <string name="pref_webapikey_summary">Pro všechny funkce je potřebný kód účtu.</string>
+    <string name="pref_notification">Nastavení Notifikací</string>
+    <string name="pref_notification_chat">Notifikace Zpráv</string>
+    <string name="pref_notification_friendrequest">Notifikace Žádostí</string>
+    <string name="pref_notification_trade">Obchodní Notifikace</string>
+    <string name="pref_hide_blocked_users">Schovat Blokované Účty</string>
+
+    <string-array name="pref_recent_chats_entries">
+        <item>Za 7 dní</item>
+        <item>Za 2 dny</item>
+        <item>Za 24 hodin</item>
+        <item>Za 1 hodinu</item>
+        <item>Neukazovat nejnovější zprávy</item>
+    </string-array>
+</resources>

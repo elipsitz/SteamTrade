@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="inv_item_image">Obrázek Předmětu</string>
+
+    <string name="inv_error_private">Batoh je soukromý.</string>
+    <string name="inventory">Inventář</string>
+
+    <string name="search_inventory">Prohledat Inventář</string>
+    <string name="search_result_count">Zobrazuje %1$d z %2$d</string>
+    <string name="toggle_view_mode">Zapnout Pohledový Mód</string>
+    <string name="inv_error_loading">Chyba načítání inventáře:\n%1$s</string>
+
+    <string name="craft_x_items">Vytvořit %1$d TF2 Předmět(y)</string>
+    <string name="craft_noncraftable">Jeden nebo více vybraných předmětů nelze vytvořit.</string>
+    <string name="craft_nontradable">Jeden nebo více vybraných předmětů nelze obchodovat. Výsledek také nepůjde obchodovat. Pokračovat?</string>
+    <string name="craft_failed">Tvorba selhala.</string>
+    <string name="craft_successful">Tvorba úspěšná: %1$d předměty vytvořeny. Načítání...</string>
+    <string name="craft_completed">Tvorba Dokončena</string>
+    <string name="craft_crafting">Tvoření…</string>
+    <string name="craft_enable">Povolit Tvoření</string>
+
+    <string name="market_item_notfound">Informace v trhu nenalezeny</string>
+    <string name="market_info_loading">Načítání informací…</string>
+    <string name="market_low">Začíná na: %1$s</string>
+    <string name="market_median">Přibližná Cena: %1$s</string>
+    <string name="market_volume">%1$s prodáno za 24 hodin</string>
+
+    <dimen name="itemlist_gridsize">72dp</dimen>
+    <color name="item_default_background">#292929</color>
+    <color name="item_default_border">#d2d2d2</color>
+</resources>

@@ -8,15 +8,12 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.aegamesi.steamtrade.MainActivity;
 import com.aegamesi.steamtrade.R;
 import com.aegamesi.steamtrade.steam.SteamItemUtil;
 import com.aegamesi.steamtrade.steam.SteamService;
 import com.aegamesi.steamtrade.steam.SteamUtil;
-import com.appodeal.ads.Appodeal;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 public class FragmentSettings extends PreferenceFragment {
@@ -30,31 +27,6 @@ public class FragmentSettings extends PreferenceFragment {
 
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.preferences);
-
-		// more actions for removing ads
-		findPreference("pref_remove_ads").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				MainActivity activity = ((MainActivity) getActivity());
-
-				if ((boolean) newValue) {
-					if (activity.billingProcessor.listOwnedProducts().contains(IAP_REMOVEADS) || SteamUtil.iapOverride()) {
-						// okay, remove ads
-						activity.findViewById(R.id.adFragment).setVisibility(View.GONE);
-						Appodeal.hide(getActivity(), Appodeal.BANNER);
-						return true;
-					} else {
-						Toast.makeText(getActivity(), R.string.purchase_pending, Toast.LENGTH_LONG).show();
-						activity.billingProcessor.purchase(activity, IAP_REMOVEADS);
-						return false;
-					}
-				} else {
-					activity.findViewById(R.id.adFragment).setVisibility(View.VISIBLE);
-					Appodeal.show(getActivity(), Appodeal.BANNER);
-				}
-				return true;
-			}
-		});
 
 		// reset pricing cache when you change preferred currency
 		findPreference("pref_currency").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
